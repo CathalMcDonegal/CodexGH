@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.4.4";
+const APP_VERSION="2.4.5";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -9,8 +9,8 @@ const DEFAULT_SHIFTS=[
 {id:"mati",nom:"Matí",abbr:"M",hores:7.5,inici:"07:00",fi:"15:00",color:"#f4d35e"},
 {id:"tarda",nom:"Tarda",abbr:"T",hores:7.5,inici:"14:30",fi:"22:00",color:"#f59e0b"},
 {id:"nit",nom:"Nit",abbr:"N",hores:9,inici:"22:00",fi:"07:00",color:"#60a5fa"},
-{id:"cs_dia",nom:"Cap de setmana / festiu Dia",abbr:"Dia 12h",hores:12,inici:"07:00",fi:"19:00",color:"#fffdf0"},
-{id:"cs_nit",nom:"Cap de setmana / festiu Nit",abbr:"Nit 12h",hores:12,inici:"19:00",fi:"07:00",color:"#6366f1"},
+{id:"cs_dia",nom:"Cap de setmana Dia",abbr:"Dia 12h",hores:12,inici:"07:00",fi:"19:00",color:"#fffdf0"},
+{id:"cs_nit",nom:"Cap de setmana Nit",abbr:"Nit 12h",hores:12,inici:"19:00",fi:"07:00",color:"#6366f1"},
 {id:"fd",nom:"Festiu Dia",abbr:"FD 12h",hores:12,inici:"07:00",fi:"19:00",color:"#fffaf0"},
 {id:"fn",nom:"Festiu Nit",abbr:"FN 12h",hores:12,inici:"19:00",fi:"07:00",color:"#312e81"},
 {id:"festa",nom:"Festa",abbr:"Festa",hores:7.5,inici:"07:00",fi:"15:00",color:"#4ade80"}
@@ -20,8 +20,8 @@ const FIXED_SHIFTS={
  mati:{nom:"Matí",abbr:"M",hores:7.5,inici:"07:00",fi:"15:00"},
  tarda:{nom:"Tarda",abbr:"T",hores:7.5,inici:"14:30",fi:"22:00"},
  nit:{nom:"Nit",abbr:"N",hores:9,inici:"22:00",fi:"07:00"},
- cs_dia:{nom:"Cap de setmana / festiu Dia",abbr:"Dia 12h",hores:12,inici:"07:00",fi:"19:00"},
- cs_nit:{nom:"Cap de setmana / festiu Nit",abbr:"Nit 12h",hores:12,inici:"19:00",fi:"07:00"}
+ cs_dia:{nom:"Cap de setmana Dia",abbr:"Dia 12h",hores:12,inici:"07:00",fi:"19:00"},
+ cs_nit:{nom:"Cap de setmana Nit",abbr:"Nit 12h",hores:12,inici:"19:00",fi:"07:00"}
 };
 const DEFAULT_HOLIDAYS={"2026-01-01":"Cap d'Any","2026-01-06":"Reis","2026-04-03":"Divendres Sant","2026-04-06":"Dilluns de Pasqua","2026-05-01":"Festa del Treball","2026-06-24":"Sant Joan","2026-08-15":"Assumpció","2026-09-11":"Diada Nacional CAT","2026-09-24":"La Mercè","2026-10-12":"Dia Nacional Espanya","2026-12-08":"Immaculada","2026-12-25":"Nadal","2026-12-26":"Sant Esteve","2027-01-01":"Cap d'Any","2027-01-06":"Reis"};
 
