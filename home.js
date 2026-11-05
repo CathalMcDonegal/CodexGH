@@ -40,6 +40,17 @@ function readSpecial(){
   const a=document.getElementById('daySpecialPay'),b=document.getElementById('daySpecialPaid');
   const sp=!!a?.checked;return {pagamentEspecial:sp,pagamentEspecialCobrat:sp&&!!b?.checked};
 }
+
+/* Avui: tot el que hi ha planificat per al dia (icona + observacions, judicis del dia, cobrament especial), amb el mateix format que «Pròxim». */
+function todayExtras(k){
+  const st=S();if(!st)return '';
+  const r=st.registres?.[k]||{},out=[];
+  const icon=r.noteIcon==='red_plus'?'➕':txt(r.noteIcon),obs=observation(r);
+  if(icon||obs)out.push(`<div class="row" onclick="openDay('${k}')" style="cursor:pointer"><div class="grow"><strong>🔔 ${esc(dayLabel(k))}</strong>${obs?`<small>${esc(obs)}</small>`:''}</div>${icon?`<span class="chip info">${esc(icon)}</span>`:''}</div>`);
+  (Array.isArray(st.judicis)?st.judicis:[]).forEach((j,i)=>{if(txt(dateRaw(j))===k)out.push(trialRow(j,i,held(j)&&!paid(j)))});
+  if(special(r))out.push(`<div class="row" onclick="openDay('${k}')" style="cursor:pointer"><div class="grow"><strong>💶 Cobrament especial</strong></div><span class="chip ${specialPaid(r)?'ok':'warn'}">${specialPaid(r)?'Cobrat':'Per cobrar'}</span></div>`);
+  return out.length?`<div class="today-extra" style="display:flex;flex-direction:column;gap:8px;margin-top:12px">${out.join('')}</div>`:'';
+}
 function render(){try{renderUpcoming();renderPending()}catch(e){}}
-window.HomeActions={init:addSpecialFields,fillSpecial,readSpecial,render};
+window.HomeActions={todayExtras,init:addSpecialFields,fillSpecial,readSpecial,render};
 })();

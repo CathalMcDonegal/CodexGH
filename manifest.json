@@ -1,5 +1,5 @@
 {
-  "id": "/Registre-Horari/",
+  "id": "codex-gh",
   "name": "Codex Gestió Horaria",
   "short_name": "Codex GH",
   "description": "Gestió horària personal per a Mossos d'Esquadra: 1580 h, vacances, nits, GNP i més. Dades al dispositiu i, si inicies sessió, sincronitzades amb el teu compte.",
@@ -8,7 +8,7 @@
   "display": "standalone",
   "orientation": "any",
   "background_color": "#000000",
-  "theme_color": "#0f172a",
+  "theme_color": "#b91c1c",
   "lang": "ca",
   "dir": "ltr",
   "categories": [

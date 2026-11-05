@@ -2,7 +2,7 @@
 // - Pàgina i scripts propis: xarxa primer (sempre l'última versió si hi ha connexió), cache com a recurs si no n'hi ha.
 // - Icones/manifest i SDK de Firebase (gstatic): cache primer amb refresc en segon pla.
 // - Mai s'intercepten les peticions a Firestore/Auth (googleapis.com): les gestiona Firebase.
-const VERSION='codex-gh-v2.4.1';
+const VERSION='codex-gh-v2.4.2';
 const SHELL=['./','index.html','manifest.json','ui.js','merge.js','home.js','app.js','sync.js','firebase-config.js','app-icon.png','icon-192.png','icon-512.png','icon-512-maskable.png','apple-touch-icon.png'];
 const SDK=['https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js','https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js','https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js'];
 
@@ -41,7 +41,7 @@ self.addEventListener('fetch',e=>{
   e.respondWith((async()=>{
     const c=await caches.open(VERSION);
     try{
-      const r=await fetch(req);
+      const r=await fetch(req,{cache:'no-cache'}); // revalida sempre amb el servidor (GitHub Pages cacheja 10 min)
       if(r&&r.ok)c.put(req,r.clone());
       return r;
     }catch(err){

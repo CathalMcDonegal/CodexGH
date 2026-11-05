@@ -1,5 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
-const KEY="registreHorariMossos";
+const KEY="codexGH";
+const APP_VERSION="2.4.2";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -126,7 +127,7 @@ function recoverLocalData(forceEmpty){
   for(let i=0;i<localStorage.length;i++){
     const k=localStorage.key(i);
     if(!k||k===KEY)continue;
-    if(!k.startsWith(KEY) && !k.startsWith("registreHorari"))continue;
+    if(!k.startsWith(KEY) && !k.startsWith("codexGH"))continue;
     if(skipSuffixes.some(s=>k.includes(s)))continue;
     try{
       const raw=JSON.parse(localStorage.getItem(k));
@@ -194,10 +195,10 @@ function save(){
 /* Còpia local diària (es conserven les 7 últimes). El prefix conté "Backup-" perquè la recuperació automàtica l'ignori. */
 function dailyBackup(){
  try{
-  const day=todayKey(),k="registreHorariDailyBackup-"+day;
+  const day=todayKey(),k="codexGHDailyBackup-"+day;
   if(localStorage.getItem(k)||!Object.keys(state.registres||{}).length)return;
   localStorage.setItem(k,JSON.stringify(state));
-  const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(x&&x.startsWith("registreHorariDailyBackup-"))ks.push(x)}
+  const ks=[];for(let i=0;i<localStorage.length;i++){const x=localStorage.key(i);if(x&&x.startsWith("codexGHDailyBackup-"))ks.push(x)}
   ks.sort().slice(0,-7).forEach(x=>localStorage.removeItem(x));
  }catch(e){}
 }
@@ -283,9 +284,10 @@ function renderHeader(){
 }
 function renderHome(){
  const c=calc();document.getElementById("saldo").textContent=fmtHours(c.saldo);document.getElementById("saldoText").textContent=saldoText(c.saldo);document.getElementById("progressPct").textContent=Math.round(c.progress)+"%";document.getElementById("progressBar").style.width=c.progress+"%";document.getElementById("workedLabel").textContent=plainHours(c.worked)+" h fetes";document.getElementById("targetLabel").textContent="de "+plainHours(state.horesAnuals)+" h";
- const d=parseKey(todayKey()),r=state.registres[todayKey()],box=document.getElementById("todayCard");
+ const d=parseKey(todayKey()),rAll=state.registres[todayKey()],r=(rAll&&rAll.tipus!=="planificat")?rAll:null,box=document.getElementById("todayCard"); // «planificat» = només icona/notes, sense jornada
  if(r){const s=r.tipus==="treball"?getShift(r.torn):null;box.innerHTML=`<div class="card-title">Avui · ${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}</div><div class="today"><div class="today-date"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()].slice(0,3)}</span></div><div class="today-main"><b>${escapeHtml(r.tipus==="treball"?(s?.nom||"Treball"):TYPE_NAMES[r.tipus]||r.tipus)}</b><small>${r.tipus==="treball"?`${r.entrada||s?.inici||""} → ${r.sortida||s?.fi||""} · ${plainHours(r.hores||0)} h`:(plainHours(r.horesConcepte||0)+" h")}</small></div><button class="btn secondary small" onclick="openDay('${todayKey()}')">Editar</button></div>`}
  else box.innerHTML=`<div class="card-title">Avui · ${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}</div><div class="today"><div class="today-date"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()].slice(0,3)}</span></div><div class="today-main"><b>Encara sense registre</b><small>${holiday(d)?"Avui és festiu · ":""}Prepara la jornada en segons.</small></div><button class="btn primary small" onclick="openDay('${todayKey()}')">Registrar</button></div>`;
+ if(window.HomeActions)box.insertAdjacentHTML("beforeend",HomeActions.todayExtras(todayKey()));
  const qs=[
   ["green",fmtHours(c.accum),"Acumulades","accum"],
   ["purple",plainHours(state.vacancesTotals-c.vac)+" h","Vacances restants","vacances"],
@@ -431,7 +433,7 @@ function renderStats(){
  const c=calc();document.getElementById("statsDetail").innerHTML=[["blue",plainHours(c.worked)+" h","Treball / còmput"],["green",plainHours(c.accum)+" h","Acumulades"],["pink",plainHours(c.gnit)+" h","Nits"],["orange",plainHours(c.extra)+" h","Extres"],["purple",plainHours(c.vac)+" h","Vacances usades"],["cyan",plainHours(c.pers)+" h","AP usats"],["blue",plainHours(c.gnp)+" h","GNP"],["green",plainHours(c.blue)+" h","Blaus usats"]].map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
  const weeks=Math.max(1,Math.round((new Date()-new Date(state.anyInici,1,1))/604800000)+1),rate=c.worked/weeks,remaining=Math.max(0,state.horesAnuals-c.worked),forecast=c.worked+rate*10;document.getElementById("forecast").innerHTML=`<div class="row"><div class="grow"><strong>Ritme actual</strong><small>${plainHours(rate)} h/setmana · ${weeks} setmana(es) amb dades</small></div><span class="chip info">Previsió: ${plainHours(Math.min(state.horesAnuals,forecast))} h</span></div><div class="hint" style="margin-top:10px">La previsió és orientativa i extrapola el ritme actual; no modifica cap dada.</div>`;
 }
-function renderMore(){document.getElementById("cfgHours").value=state.horesAnuals;document.getElementById("cfgVac").value=state.vacancesTotals;document.getElementById("cfgPers").value=state.assumptesTotals;document.getElementById("cfgBlue").value=state.blausTotals;document.getElementById("cfgGnp").value=state.gnpTotals;document.getElementById("cfgGnit").value=state.gnitTotals;document.getElementById("cfgAccum").value=state.acumTotals;document.getElementById("cfgTitle").value=state.titol;document.getElementById("cfgSubtitle").value=state.subtitol;document.getElementById("cfgTip").value=state.tip||"";
+function renderMore(){const av=document.getElementById("appVersion");if(av)av.textContent="Codex GH v"+APP_VERSION;document.getElementById("cfgHours").value=state.horesAnuals;document.getElementById("cfgVac").value=state.vacancesTotals;document.getElementById("cfgPers").value=state.assumptesTotals;document.getElementById("cfgBlue").value=state.blausTotals;document.getElementById("cfgGnp").value=state.gnpTotals;document.getElementById("cfgGnit").value=state.gnitTotals;document.getElementById("cfgAccum").value=state.acumTotals;document.getElementById("cfgTitle").value=state.titol;document.getElementById("cfgSubtitle").value=state.subtitol;document.getElementById("cfgTip").value=state.tip||"";
  const darkEl=document.getElementById("cfgDark");if(darkEl)darkEl.value=state.darkMode||"auto";
  const notEl=document.getElementById("cfgNotify");if(notEl)notEl.checked=!!state.notifyDaily;document.getElementById("shiftConfig").innerHTML=state.torns.map((s,i)=>`<div class="setting-row"><div><strong><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${escapeHtml(s.color||"#93c5fd")};margin-right:6px;vertical-align:-1px"></span>${escapeHtml(s.nom)}</strong><small>${s.inici} → ${s.fi} · ${s.hores} h</small></div><div style="display:flex;align-items:center;gap:7px"><input type="color" value="${escapeHtml(s.color||"#93c5fd")}" title="Color del torn" onchange="setShiftColor(${i},this.value)" style="width:38px;height:32px;padding:2px;margin:0"><button class="btn secondary small" onclick="editShift(${i})">Editar</button><button class="btn danger small" onclick="deleteShift(${i})">Esborrar</button></div></div>`).join("");document.getElementById("pwaStatus").textContent=window.matchMedia("(display-mode: standalone)").matches?"Aplicació instal·lada.":"Pots instal·lar-la com a PWA si el navegador ho permet."}
 function saveConfig(){
@@ -502,7 +504,7 @@ function download(blob,name){const a=document.createElement("a");a.href=URL.crea
 async function resetAll(){
   if(!await uiConfirm("Es crearà una còpia de seguretat i després s'esborraran totes les dades (també als altres dispositius). Continuar?",{ok:"Esborrar-ho tot",danger:true}))return;
   // Còpia fora del prefix que es recupera automàticament
-  try{ localStorage.setItem("registreHorariBackup-"+Date.now(),JSON.stringify(state)); }catch(e){}
+  try{ localStorage.setItem("codexGHBackup-"+Date.now(),JSON.stringify(state)); }catch(e){}
   // Neteja també .latest perquè no reapareguin dades antigues
   try{ localStorage.removeItem(KEY+".latest"); }catch(e){}
   state=defaultState();
@@ -699,7 +701,7 @@ function scheduleDailyCheck(){
     if(!state.registres[key] && now.getHours()>=18){
       const last=localStorage.getItem(KEY+".lastNotify");
       if(last!==key){
-        try{new Notification("Codex GH",{body:"Encara no has registrat la jornada d'avui.",icon:"app-icon.png",tag:"registre-daily"});localStorage.setItem(KEY+".lastNotify",key)}catch(e){}
+        try{new Notification("Codex GH",{body:"Encara no has registrat la jornada d'avui.",icon:"app-icon.png",tag:"codexgh-daily"});localStorage.setItem(KEY+".lastNotify",key)}catch(e){}
       }
     }
   };
@@ -766,6 +768,9 @@ window.addEventListener("online",()=>toast("Connexió recuperada"));window.addEv
 if("serviceWorker" in navigator){
   window.addEventListener("load",async()=>{
     try{
+      // Quan arriba una versió nova del service worker, recarrega una vegada perquè s'apliqui sense haver de tancar l'app.
+      let reloaded=false,had=!!navigator.serviceWorker.controller;
+      navigator.serviceWorker.addEventListener("controllerchange",()=>{if(had&&!reloaded){reloaded=true;location.reload()}had=true});
       const registration=await navigator.serviceWorker.register("sw.js");
       await registration.update();
     }catch(e){}

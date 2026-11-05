@@ -6,7 +6,7 @@ const sleep=ms=>new Promise(r=>setTimeout(r,ms));
 /* ---- Firestore fals compartit (amb la regla m >= m) ---- */
 const cloud={docs:{},subs:[]};
 function snapFor(col,changed){
-  const prefix='usuaris/u1/'+col+'/';
+  const prefix='codex/u1/'+col+'/';
   const docs=Object.keys(cloud.docs).filter(p=>p.startsWith(prefix)).map(p=>mkDoc(p));
   const ch=(changed||Object.keys(cloud.docs).filter(p=>p.startsWith(prefix))).filter(p=>p.startsWith(prefix)).map(p=>({type:'modified',doc:mkDoc(p)}));
   return {metadata:{fromCache:false},docs,docChanges:()=>ch,forEach:f=>docs.forEach(f)};
@@ -19,12 +19,12 @@ const fakeDb={
   collection:()=>({doc:uid=>({collection:col=>({
     get:async()=>snapFor(col),
     onSnapshot:(opts,cb)=>{const s={col,cb};cloud.subs.push(s);setTimeout(()=>cb(Object.assign(snapFor(col),{docChanges:()=>snapFor(col).docs.map(d=>({type:'added',doc:d}))})),5);return()=>{cloud.subs=cloud.subs.filter(x=>x!==s)}},
-    doc:id=>({path:`usuaris/${uid}/${col}/${id}`,set:async d=>{setDoc(`usuaris/${uid}/${col}/${id}`,d);notify([`usuaris/${uid}/${col}/${id}`])}})
+    doc:id=>({path:`codex/${uid}/${col}/${id}`,set:async d=>{setDoc(`codex/${uid}/${col}/${id}`,d);notify([`codex/${uid}/${col}/${id}`])}})
   })})}),
   batch:()=>{const ops=[];return {set:(ref,d)=>ops.push(['s',ref.path,d]),delete:ref=>ops.push(['d',ref.path]),commit:async()=>{ops.forEach(o=>{if(o[0]==='s')setDoc(o[1],o[2])});ops.forEach(o=>{if(o[0]==='d')delete cloud.docs[o[1]]});notify(ops.map(o=>o[1]))}}}
 };
 const user={uid:'u1',email:'a@b.cat',emailVerified:true,reload:async()=>{},sendEmailVerification:async()=>{}};
-const fakeFirebase={initializeApp(){},auth:Object.assign(()=>({onAuthStateChanged:cb=>setTimeout(()=>cb(user),5),currentUser:user}),{EmailAuthProvider:{}}),firestore:()=>fakeDb};
+const fakeFirebase={initializeApp(){return{auth:()=>fakeFirebase.auth(),firestore:()=>fakeDb}},auth:Object.assign(()=>({onAuthStateChanged:cb=>setTimeout(()=>cb(user),5),currentUser:user}),{EmailAuthProvider:{}}),firestore:()=>fakeDb};
 
 /* ---- Dispositiu: DOM de joguina + scripts reals ---- */
 function device(){
@@ -50,8 +50,8 @@ const days=d=>Object.keys(d.get('state.registres')).sort();
   const A=device();await sleep(80);
   A.run(`state.registres['2026-03-02']={tipus:'treball',torn:'mati',entrada:'07:00',sortida:'15:00',hores:8};state.registres['2026-03-03']={tipus:'vacances',horesConcepte:7.5};save()`);
   await sleep(1800);
-  assert.ok(cloud.docs['usuaris/u1/dies/2026_2026-03-02'],'el dia s\'ha pujat com a document propi');
-  assert.ok(cloud.docs['usuaris/u1/dades/config'],'config pujada');
+  assert.ok(cloud.docs['codex/u1/dies/2026_2026-03-02'],'el dia s\'ha pujat com a document propi');
+  assert.ok(cloud.docs['codex/u1/dades/config'],'config pujada');
   // B: dispositiu nou → rep els dies d'A
   const B=device();await sleep(150);
   assert.deepStrictEqual(days(B),['2026-03-02','2026-03-03'],'B rep les dades d\'A');

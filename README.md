@@ -23,7 +23,7 @@ Càlculs alineats amb el règim de 1580 h efectives dels Mossos d'Esquadra.
 | `test-*.js` | Proves: `node test-merge.js` · `node test-calc.js` · `node test-sync.js` |
 
 ## Publicació (GitHub Pages)
-Puja **tot el contingut** del zip (incloses les carpetes el fitxer `.nojekyll`). Esborra del repositori els fitxers antics: `sync.js`, `hours-auto.js`, `home-actions.js`, `_sync_trigger.txt`, `icon-512.jpg`, `icons/` i la carpeta `.github/workflows` (el workflow que reescrivia `index.html` ja no fa falta).
+**Puja-ho a un repositori/ruta diferent de l’app antiga** (p. ex. `Codex-GH`) i activa-hi GitHub Pages. Puja **tot el contingut** del zip (incloses les carpetes el fitxer `.nojekyll`). Esborra del repositori els fitxers antics: `sync.js`, `hours-auto.js`, `home-actions.js`, `_sync_trigger.txt`, `icon-512.jpg`, `icons/` i la carpeta `.github/workflows` (el workflow que reescrivia `index.html` ja no fa falta).
 
 ## Comptes i sincronització
 Veure `SYNC.md` (**cal actualitzar les regles de Firestore**). Sense `firebase-config.js` omplert, l'app funciona només en local i sense pantalla de bloqueig.

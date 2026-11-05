@@ -1,13 +1,13 @@
 /* Codex GH — comptes d'usuari + sincronització entre dispositius (Firebase Auth + Firestore), versió 2.4.
    Sincronització per element (config, un doc per dia, un per judici, un per any antic) amb fusió pel segell «m»:
    si edites dies diferents en dos dispositius es fusionen; si edites el mateix dia guanya l'última modificació.
-   Dades a usuaris/{uid}/{dades|anys|dies|judicis}/…  (veure SYNC.md per a les regles de Firestore). */
+   Dades a codex/{uid}/{dades|anys|dies|judicis}/…  (veure SYNC.md per a les regles de Firestore). */
 (function(){
 'use strict';
 const API=window.RHSync={};
 const cfg=window.FIREBASE_CONFIG||{};
 const configured=!!cfg.apiKey&&!/^PEGA/.test(cfg.apiKey);
-const OWNER_KEY=KEY+'.owner',META_KEY=KEY+'.syncmeta',BK_PREFIX='registreHorariSyncBackup-';
+const OWNER_KEY=KEY+'.owner',META_KEY=KEY+'.syncmeta',BK_PREFIX='codexGHSyncBackup-';
 const COLS=['dades','anys','dies','judicis'];
 const $=id=>document.getElementById(id);
 const hasSDK=typeof firebase!=='undefined'&&firebase.auth&&firebase.firestore;
@@ -35,8 +35,9 @@ if(!hasSDK){
   return;
 }
 
-firebase.initializeApp(cfg);
-const auth=firebase.auth(),db=firebase.firestore();
+// App Firebase amb nom propi: sessió i caché separades de l'app antiga (mateix origen). Dades a l'arrel «codex».
+const fbApp=firebase.initializeApp(cfg,'codex-gh');
+const auth=fbApp.auth(),db=fbApp.firestore();
 try{db.enablePersistence({synchronizeTabs:true}).catch(()=>{})}catch(e){}
 
 let uid=null,base=null,unsubs=[],meta={},ready=false,applying=false;
@@ -227,7 +228,7 @@ API.logout=async function(){
   if(RHMerge.pending(meta).length&&!await uiConfirm('Hi ha canvis sense sincronitzar que es perdran. Tancar sessió igualment?',{ok:'Tancar igualment',danger:true}))return;
   stopListeners();
   const rm=[KEY,KEY+'.latest',OWNER_KEY,META_KEY,KEY+'.lastSynced'];
-  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(k.startsWith('registreHorariDailyBackup-')||k.startsWith(BK_PREFIX)))rm.push(k)}
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(k.startsWith('codexGHDailyBackup-')||k.startsWith(BK_PREFIX)))rm.push(k)}
   rm.forEach(k=>localStorage.removeItem(k));
   await auth.signOut();location.reload();
 };
@@ -251,7 +252,7 @@ API.deleteAccount=async function(){
     await user.delete();
   }catch(e){setStatus('No s\'ha pogut eliminar: '+((e&&e.code)||'error'));await uiAlert('No s\'ha pogut eliminar tot ('+((e&&e.code)||'error')+'). Torna-ho a provar amb connexió.');startListeners();return}
   const rm=[KEY,KEY+'.latest',OWNER_KEY,META_KEY,KEY+'.lastSynced'];
-  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(k.startsWith('registreHorariDailyBackup-')||k.startsWith(BK_PREFIX)))rm.push(k)}
+  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&(k.startsWith('codexGHDailyBackup-')||k.startsWith(BK_PREFIX)))rm.push(k)}
   rm.forEach(k=>localStorage.removeItem(k));
   location.reload();
 };
@@ -262,7 +263,7 @@ auth.onAuthStateChanged(user=>{
     $('accountCard')&&($('accountCard').style.display='none');showLock();return;
   }
   uid=user.uid;
-  base=db.collection('usuaris').doc(uid);
+  base=db.collection('codex').doc(uid);
   // Aïllament: si aquest navegador tenia dades d'un altre compte, es guarden a part i no es barregen.
   const owner=localStorage.getItem(OWNER_KEY);
   if(owner&&owner!==uid){
