@@ -485,7 +485,7 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
 <button data-view="home" class="active" onclick="showView('home')"><span class="ico">⌂</span>Inici</button>
 <button data-view="calendar" onclick="showView('calendar')"><span class="ico">🗓️</span>Calendari</button>
 <button data-view="week" onclick="showView('week')"><span class="ico">📆</span>Setmana</button>
-<button data-view="trials" onclick="showView('trials')"><span class="ico">⚖</span>Judicis</button>
+<button data-view="trials" onclick="clearTrialDateFilter();document.getElementById('trialSearch').value='';showView('trials')"><span class="ico">⚖</span>Judicis</button>
 <button data-view="permisos" onclick="showView('permisos')"><span class="ico">📋</span>Permisos</button>
 <button data-view="more" onclick="showView('more')"><span class="ico">⋯</span>Més</button>
 </nav>
