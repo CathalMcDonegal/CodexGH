@@ -384,7 +384,7 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
 
 <section id="view-trials" class="view">
   <div class="toolbar"><input class="search" id="trialSearch" placeholder="Cerca per jutjat, procediment, agent…" oninput="renderTrials()"><button class="btn secondary small" id="trialDateClear" style="display:none" onclick="clearTrialDateFilter()">× Dia</button></div>
-  <div class="card"><div class="actions"><button class="btn primary" onclick="openTrial()">＋ Nou judici</button><span class="chip" id="trialPending"></span><span class="chip warn" id="trialPay"></span></div></div>
+  <div class="card"><div class="actions"><button class="btn primary" onclick="openTrial()">＋ Nou judici</button><span class="chip" id="trialPending"></span><span class="chip warn" id="trialSuspended"></span><span class="chip warn" id="trialPay"></span></div></div>
   <div class="list" id="trialsList"></div>
 </section>
 
@@ -622,7 +622,7 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
 <div class="modal-head"><h2 id="trialTitle">Nou judici</h2><button class="close" onclick="closeModal('trialModal')">×</button></div>
 <div class="form-grid"><div><label>Data</label><input type="date" id="jDate"></div><div><label>Hora</label><input type="time" id="jTime"></div></div>
 <label>Jutjat</label><input id="jCourt" placeholder="Ex. Jutjat Penal 3 Barcelona"><div class="form-grid"><div><label>Sala</label><input id="jRoom"></div><div><label>Procediment</label><input id="jProc"></div></div>
-<label>Agents citats</label><input id="jAgents"><div class="check"><input type="checkbox" id="jSuspended"><label for="jSuspended">Suspès</label></div><div class="check"><input type="checkbox" id="jHeld"><label for="jHeld">S'ha celebrat</label></div><div class="check"><input type="checkbox" id="jPaid"><label for="jPaid">Cobrat</label></div><div class="check"><input type="checkbox" id="jShift"><label for="jShift">Cal canviar el torn</label></div>
+<label>Agents citats</label><input id="jAgents"><div class="check"><input type="checkbox" id="jShift"><label for="jShift">Canviar torn</label></div><div class="check"><input type="checkbox" id="jSuspended"><label for="jSuspended">Suspès</label></div><div class="check"><input type="checkbox" id="jHeld"><label for="jHeld">Celebrat</label></div><div class="check"><input type="checkbox" id="jPaid"><label for="jPaid">Cobrat</label></div>
 <div class="form-actions"><button class="btn primary" onclick="saveTrial()">Desar judici</button><button class="btn secondary" onclick="closeModal('trialModal')">Cancel·lar</button><button class="btn danger" id="deleteTrialBtn" onclick="deleteTrial()">Esborrar</button></div>
 </div></div>
 
