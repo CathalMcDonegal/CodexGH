@@ -613,7 +613,7 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
 
 <div class="modal-bg" id="bulkModal"><div class="modal">
 <div class="modal-head"><h2>Aplicar als dies seleccionats</h2><button class="close" onclick="closeModal('bulkModal')">×</button></div>
-<p class="hint" id="bulkCount"></p><label>Acció</label><select id="bulkType" onchange="updateBulk()"><option value="treball">Treball</option><option value="vacances">Vacances</option><option value="assumptes">Assumptes personals</option><option value="dies_blaus">Dies Blaus</option><option value="guardia_np">Guàrdia No Presencial</option><option value="hores_acum">Hores acumulades</option><option value="hores_extres">Hores extres</option><option value="altres">Permís per hores</option><option value="baixa">Baixa</option><option value="esborrar">Esborrar</option></select>
+<p class="hint" id="bulkCount"></p><label>Acció</label><select id="bulkType" onchange="updateBulk()"><option value="treball">Treball</option><option value="vacances">Vacances</option><option value="assumptes">Assumptes personals</option><option value="dies_blaus">Dies Blaus</option><option value="guardia_np">Guàrdia No Presencial</option><option value="hores_acum">Hores acumulades</option><option value="hores_extres">Hores extres</option><option value="baixa">Baixa</option><option value="esborrar">Esborrar</option></select>
 <div id="bulkWork"><label>Torn</label><select id="bulkShift"></select></div><div id="bulkHours"><label>Hores</label><input type="number" id="bulkHoursInput" value="7.5" step=".25"></div>
 <div class="form-actions"><button class="btn primary" onclick="applyBulk()">Aplicar</button><button class="btn secondary" onclick="closeModal('bulkModal')">Cancel·lar</button></div>
 </div></div>
