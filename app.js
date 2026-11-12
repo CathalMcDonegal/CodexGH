@@ -463,7 +463,37 @@ function renderStats(){
  const elapsedWeeks=elapsedDays/7,remainingWeeks=Math.max(0,(totalDays-elapsedDays)/7),rate=elapsedWeeks>0?c.worked/elapsedWeeks:0,projection=fraction>0?c.worked/fraction:0,needed=remainingWeeks>0?Math.max(0,state.horesAnuals-c.worked)/remainingWeeks:0,diff=projection-state.horesAnuals;
  const projectionLabel=fraction===0?"Encara no ha començat el període":(diff>=0?"Al ritme actual, arribaries a l'objectiu":"Al ritme actual, quedaries per sota");
  document.getElementById("forecast").innerHTML=`<div class="stats forecast-stats"><div class="stat blue"><b>${plainHours(c.worked)} h</b><span>Fetes fins avui</span></div><div class="stat purple"><b>${plainHours(state.horesAnuals)} h</b><span>Objectiu anual</span></div><div class="stat green"><b>${plainHours(Math.max(0,state.horesAnuals-c.worked))} h</b><span>Pendents</span></div><div class="stat orange"><b>${plainHours(needed)} h/set.</b><span>Ritme necessari restant</span></div></div><div class="row" style="margin-top:10px"><div class="grow"><strong>${projectionLabel}</strong><small>${elapsedDays} de ${totalDays} dies del període · ritme observat ${plainHours(rate)} h/setmana</small></div><span class="chip ${diff>=0?"ok":"warn"}">${fraction>0?plainHours(projection)+" h":"—"}</span></div><div class="hint" style="margin-top:10px">Previsió lineal orientativa basada en el còmput efectiu registrat entre l'1 de febrer i el 31 de gener. No afegeix hores futures ni modifica registres; pot variar si canvia el teu torn o la planificació.</div>`;
+  renderShiftSimulator();
 }
+
+function simulatedShiftHours(item){
+ const s=state.torns.find(t=>t.id===item.shiftId);if(!s)return 0;
+ return recordHours({torn:s.id,entrada:s.inici,sortida:s.fi},s);
+}
+function renderShiftSimulator(){
+ const host=document.getElementById("shiftSimulator");if(!host)return;
+ const today=todayKey(),periodStart=String(state.anyInici)+"-02-01",periodEnd=String(state.anyInici+1)+"-01-31";
+ const options=state.torns.filter(s=>s.id!=="festa");
+ const oldDate=document.getElementById("simDate")?.value||"",oldShift=document.getElementById("simShift")?.value||"";
+ const minDate=today>periodStart?today:periodStart;
+ const dateValue=oldDate&&oldDate>=minDate&&oldDate<=periodEnd?oldDate:(minDate<=periodEnd?minDate:"");
+ const total=num(shiftSimulations.reduce((sum,x)=>sum+simulatedShiftHours(x),0));
+ const c=calc(),projected=num(c.worked+total),remaining=num(Math.max(0,state.horesAnuals-projected));
+ const list=shiftSimulations.slice().sort((a,b)=>a.date.localeCompare(b.date)).map(x=>{const s=state.torns.find(t=>t.id===x.shiftId);return '<div class="row"><div class="grow"><strong>'+x.date+' · '+escapeHtml(s?.nom||"Torn")+'</strong><small>'+escapeHtml(s?.inici||"")+'–'+escapeHtml(s?.fi||"")+' · '+plainHours(simulatedShiftHours(x))+' h</small></div><button class="btn danger small" type="button" onclick="removeShiftSimulation(\''+x.date+'\')">Treure</button></div>'}).join("");
+ const selected=options.some(s=>s.id===oldShift)?oldShift:options[0]?.id||"";
+ const valid=!!(dateValue&&dateValue>today&&dateValue<=periodEnd&&options.length);
+ host.innerHTML='<div class="sim-head"><span class="chip warn">PROVA · NO DESAT</span><p class="hint">Afegeix torns futurs per veure’n l’efecte estimat. No crea registres ni modifica el calendari.</p></div><div class="form-grid"><div><label for="simDate">Data futura</label><input type="date" id="simDate" min="'+minDate+'" max="'+periodEnd+'" value="'+dateValue+'"></div><div><label for="simShift">Torn</label><select id="simShift">'+options.map(s=>'<option value="'+escapeHtml(s.id)+'" '+(s.id===selected?"selected":"")+'>'+escapeHtml(s.nom)+' · '+escapeHtml(s.inici)+'–'+escapeHtml(s.fi)+'</option>').join("")+'</select></div></div><button class="btn primary" type="button" onclick="addShiftSimulation()" '+(!valid?"disabled":"")+' style="width:100%;margin-top:9px">＋ Afegir torn a la simulació</button><div class="stats forecast-stats" style="margin-top:12px"><div class="stat blue"><b>'+plainHours(total)+' h</b><span>Hores simulades</span></div><div class="stat green"><b>'+plainHours(projected)+' h</b><span>Còmput estimat</span></div><div class="stat purple"><b>'+plainHours(remaining)+' h</b><span>Pendents després</span></div><div class="stat orange"><b>'+fmtHours(c.saldo+total)+'</b><span>Saldo estimat vs avui</span></div></div><div class="sim-list">'+(list||'<div class="empty">Encara no has afegit cap torn.</div>')+'</div><button class="btn secondary small" type="button" onclick="clearShiftSimulations()" '+(!shiftSimulations.length?"disabled":"")+' style="width:100%;margin-top:8px">Esborrar tota la simulació</button><p class="hint">Es calculen les hores segons els horaris configurats. Només s’hi inclouen torns de treball; no s’hi simulen festes, permisos ni altres conceptes. El saldo estimat compara aquestes hores amb el ritme previst d’avui.</p>';
+}
+function addShiftSimulation(){
+ const date=document.getElementById("simDate")?.value,shiftId=document.getElementById("simShift")?.value,today=todayKey(),end=String(state.anyInici+1)+"-01-31";
+ if(!date||date<=today||date>end){toast("Tria una data futura dins del període anual");return}
+ if(shiftSimulations.some(x=>x.date===date)){toast("Ja hi ha un torn simulat en aquesta data");return}
+ if(!state.torns.some(s=>s.id===shiftId&&s.id!=="festa")){toast("Torn no disponible");return}
+ shiftSimulations.push({date,shiftId});renderShiftSimulator();
+}
+function removeShiftSimulation(date){shiftSimulations=shiftSimulations.filter(x=>x.date!==date);renderShiftSimulator()}
+function clearShiftSimulations(){shiftSimulations=[];renderShiftSimulator()}
+
 function renderMore(){for(const id of["appVersion","homeVersion"]){const av=document.getElementById(id);if(av)av.textContent="Codex GH v"+APP_VERSION}document.getElementById("cfgHours").value=state.horesAnuals;document.getElementById("cfgVac").value=state.vacancesTotals;document.getElementById("cfgPers").value=state.assumptesTotals;document.getElementById("cfgBlue").value=state.blausTotals;document.getElementById("cfgGnp").value=state.gnpTotals;document.getElementById("cfgGnit").value=state.gnitTotals;document.getElementById("cfgAccum").value=state.acumTotals;document.getElementById("cfgTitle").value=state.titol;document.getElementById("cfgSubtitle").value=state.subtitol;document.getElementById("cfgTip").value=state.tip||"";
  const darkEl=document.getElementById("cfgDark");if(darkEl)darkEl.value=state.darkMode||"auto";
  const notEl=document.getElementById("cfgNotify");if(notEl)notEl.checked=!!state.notifyDaily;document.getElementById("shiftConfig").innerHTML=state.torns.map((s,i)=>`<div class="setting-row"><div><strong><span style="display:inline-block;width:12px;height:12px;border-radius:50%;background:${escapeHtml(s.color||"#93c5fd")};margin-right:6px;vertical-align:-1px"></span>${escapeHtml(s.nom)}</strong><small>${s.inici} → ${s.fi} · ${s.hores} h</small></div><div style="display:flex;align-items:center;gap:7px"><input type="color" value="${escapeHtml(s.color||"#93c5fd")}" title="Color del torn" onchange="setShiftColor(${i},this.value)" style="width:38px;height:32px;padding:2px;margin:0"><button class="btn secondary small" onclick="editShift(${i})">Editar</button><button class="btn danger small" onclick="deleteShift(${i})">Esborrar</button></div></div>`).join("");document.getElementById("pwaStatus").textContent=window.matchMedia("(display-mode: standalone)").matches?"Aplicació instal·lada.":"Pots instal·lar-la com a PWA si el navegador ho permet."}
