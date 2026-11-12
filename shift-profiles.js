@@ -33,28 +33,56 @@
   return p.pattern[mod(diff+(Number(p.phase)||0),p.pattern.length)]||"";
  }
  function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+ function plannedText(id,s){
+  return s?"Torn previst: "+(s.abbr||s.nom):(id==="treball"?"Treball previst (torn pendent)":"Servei previst");
+ }
+ function ensurePlanStyle(){
+  if(document.getElementById("plannedTextStyle"))return;
+  const st=document.createElement("style");st.id="plannedTextStyle";
+  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:600;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:600;background:transparent!important;border:0!important;box-shadow:none!important}.planned-shift{background:inherit!important}";
+  document.head.appendChild(st);
+ }
  function decorateCalendar(){
+  ensurePlanStyle();
   document.querySelectorAll("#calendar .day").forEach(el=>{
-   const k=(el.getAttribute("onclick")||"").match(/clickDay\('([^']+)'\)/)?.[1];
-   if(!k||state.registres[k])return;
-   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&id!=="treball"&&!extras.length)return;
-   el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
+   const k=(el.getAttribute("onclick")||"").match(/clickDay\\('([^']+)'\\)/)?.[1];
+   if(!k)return;
+   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];
    const kind=el.querySelector(".kind"),hrs=el.querySelector(".hrs");
-   if(kind)kind.textContent=s?("Pla: "+(s.abbr||s.nom)):(id==="treball"?"Pla: Treball (torn pendent)":"Servei addicional");
-   if(hrs)hrs.textContent="previst";
-   el.title=(s?"Torn teòric: "+s.nom:(id==="treball"?"Jornada de treball prevista; torn pendent de confirmació":"Servei addicional planificat"))+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
+   kind?.querySelectorAll(".planned-label").forEach(n=>n.remove());
+   if(!s&&id!=="treball"&&!extras.length)return;
+   el.classList.add("planned-shift");
+   if(kind){
+    if(!state.registres[k])kind.textContent="";
+    const tag=document.createElement("span");tag.className="planned-label";tag.textContent=plannedText(id,s);kind.appendChild(tag);
+   }
+   if(!state.registres[k]&&hrs)hrs.textContent="previst";
+   el.title=(s?"Torn previst: "+s.nom:(id==="treball"?"Jornada prevista; torn pendent de confirmació":"Servei addicional planificat"))+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
+  });
+  document.querySelectorAll("#monthlyList .monthly-row").forEach(el=>{
+   const k=(el.getAttribute("onclick")||"").match(/openDay\\('([^']+)'\\)/)?.[1];if(!k)return;
+   const id=planForDate(k),s=state.torns.find(x=>x.id===id);if(!s&&id!=="treball")return;
+   const info=el.querySelector(".monthly-info");if(!info||info.querySelector(".week-planned-label"))return;
+   const tag=document.createElement("small");tag.className="week-planned-label";tag.textContent=plannedText(id,s);info.appendChild(tag);
   });
  }
  function decorateWeek(){
+  ensurePlanStyle();
   document.querySelectorAll("#weekList .week-row").forEach(el=>{
-   const k=(el.getAttribute("onclick")||"").match(/clickWeekDay\('([^']+)'\)/)?.[1];
-   if(!k||state.registres[k])return;
-   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&id!=="treball"&&!extras.length)return;
-   el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
+   const k=(el.getAttribute("onclick")||"").match(/clickWeekDay\\('([^']+)'\\)/)?.[1];
+   if(!k)return;
+   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];
    const strong=el.querySelector("strong"),small=el.querySelector("small"),sum=el.querySelector(".week-sum");
-   if(strong)strong.textContent=s?"Previst: "+s.nom:(id==="treball"?"Previst: Treball (torn pendent)":"Servei addicional");
-   if(small)small.textContent=(s?((s.inici||"")+" → "+(s.fi||"")):"")+" · "+(extras.length?"Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"Horari teòric");
-   if(sum)sum.textContent="Pla";
+   small?.querySelectorAll(".week-planned-label").forEach(n=>n.remove());
+   if(!s&&id!=="treball"&&!extras.length)return;
+   el.classList.add("planned-shift");
+   if(!state.registres[k]){
+    if(strong)strong.textContent=plannedText(id,s);
+    if(small)small.textContent=(s?((s.inici||"")+" → "+(s.fi||"")):"")+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):" · Horari teòric");
+    if(sum)sum.textContent="Pla";
+   }else if(small){
+    const tag=document.createElement("span");tag.className="week-planned-label";tag.textContent=plannedText(id,s);small.appendChild(tag);
+   }
   });
  }
  function renderProfiles(){
