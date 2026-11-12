@@ -740,9 +740,9 @@ function openDetail(kind){
 function applyTheme(){
   const mode=state.darkMode||"auto";
   const root=document.documentElement;
-  root.classList.remove("dark");
+  root.classList.remove("dark","light");
   if(mode==="dark") root.classList.add("dark");
-  else if(mode==="light"){/* force light: no class */}
+  else if(mode==="light") root.classList.add("light");
   else if(window.matchMedia("(prefers-color-scheme: dark)").matches) root.classList.add("dark");
 }
 window.matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{if((state.darkMode||"auto")==="auto")applyTheme()});
