@@ -45,7 +45,7 @@
  function decorateCalendar(){
   ensurePlanStyle();
   document.querySelectorAll("#calendar .day").forEach(el=>{
-   const k=(el.getAttribute("onclick")||"").match(/clickDay\\('([^']+)'\\)/)?.[1];
+   const k=(el.getAttribute("onclick")||"").match(/clickDay\('([^']+)'\)/)?.[1];
    if(!k)return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];
    const kind=el.querySelector(".kind"),hrs=el.querySelector(".hrs");
@@ -60,7 +60,7 @@
    el.title=(s?"Torn previst: "+s.nom:(id==="treball"?"Jornada prevista; torn pendent de confirmació":"Servei addicional planificat"))+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
   });
   document.querySelectorAll("#monthlyList .monthly-row").forEach(el=>{
-   const k=(el.getAttribute("onclick")||"").match(/openDay\\('([^']+)'\\)/)?.[1];if(!k)return;
+   const k=(el.getAttribute("onclick")||"").match(/openDay\('([^']+)'\)/)?.[1];if(!k)return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id);if(!s&&id!=="treball")return;
    const info=el.querySelector(".monthly-info");if(!info||info.querySelector(".week-planned-label"))return;
    const tag=document.createElement("small");tag.className="week-planned-label";tag.textContent=plannedText(id,s);info.appendChild(tag);
@@ -69,7 +69,7 @@
  function decorateWeek(){
   ensurePlanStyle();
   document.querySelectorAll("#weekList .week-row").forEach(el=>{
-   const k=(el.getAttribute("onclick")||"").match(/clickWeekDay\\('([^']+)'\\)/)?.[1];
+   const k=(el.getAttribute("onclick")||"").match(/clickWeekDay\('([^']+)'\)/)?.[1];
    if(!k)return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];
    const strong=el.querySelector("strong"),small=el.querySelector("small"),sum=el.querySelector(".week-sum");
