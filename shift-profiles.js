@@ -22,6 +22,12 @@
   if(state.planOverrides?.[dateKey])return state.planOverrides[dateKey];
   const p=state.shiftProfiles.find(x=>x.id===state.activeShiftProfileId);
   if(!p||!p.pattern?.length||!p.anchorDate)return "";
+  if(p.kind==="investigacio"){
+   const d0=new Date(dateKey+"T12:00:00");
+   const weekend=d0.getDay()===0||d0.getDay()===6;
+   const festiu=!!state.festius?.[dateKey];
+   if(weekend||festiu)return "";
+  }
   const d=new Date(dateKey+"T12:00:00"),a=new Date(p.anchorDate+"T12:00:00");
   const diff=p.unit==="day"?Math.round((d-a)/86400000):Math.round((weekStart(d)-weekStart(a))/604800000);
   return p.pattern[mod(diff+(Number(p.phase)||0),p.pattern.length)]||"";
