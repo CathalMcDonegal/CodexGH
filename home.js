@@ -19,7 +19,29 @@ function specialPaid(r){return truth(r,['pagamentEspecialCobrat','cobramentEspec
 function observation(r){return txt(r?.observacions??r?.observacio??r?.observación??r?.observacion??r?.notes??r?.nota)}
 function dayLabel(k){try{const d=parseKey(k);return `${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}`}catch(e){return k}}
 function renderUpcoming(){const st=S(),box=document.getElementById('upcoming');if(!st||!box)return;const today=typeof todayKey==='function'?todayKey():'';const trials=(Array.isArray(st.judicis)?st.judicis:[]).map((j,i)=>({...j,i})).filter(j=>{const d=dateOrder(dateRaw(j));return d!=='99999999'&&(!today||d>dateOrder(today))&&!held(j)&&!j.suspes}).sort((a,b)=>(dateOrder(dateRaw(a))+timeOrder(a.hora||a.time||a.horaJudici)).localeCompare(dateOrder(dateRaw(b))+timeOrder(b.hora||b.time||b.horaJudici))).slice(0,5);const planned=Object.entries(st.registres||{}).filter(([k,r])=>dateOrder(k)>dateOrder(today)&&r?.noteIcon).sort((a,b)=>dateOrder(a[0]).localeCompare(dateOrder(b[0]))).slice(0,5);const items=[...trials.map(j=>({date:dateOrder(dateRaw(j)),time:timeOrder(j.hora||j.time||j.horaJudici),html:trialRow(j,j.i,false)})),...planned.map(([k,r])=>{const icon=r.noteIcon==='red_plus'?'➕':txt(r.noteIcon);const obs=observation(r);return {date:dateOrder(k),time:'0000',html:`<div class="row" onclick="openDay('${k}')" style="cursor:pointer"><div class="grow"><strong>🔔 ${esc(dayLabel(k))}</strong>${obs?`<small>${esc(obs)}</small>`:''}</div>${icon?`<span class="chip info">${esc(icon)}</span>`:''}</div>`}})];items.sort((a,b)=>(a.date+a.time).localeCompare(b.date+b.time));box.innerHTML=items.map(x=>x.html).join('')||'<div class="empty">No hi ha judicis ni dies programats.</div>'}
-function renderPending(){const st=S(),box=document.getElementById('alerts');if(!st||!box)return;const out=[];(Array.isArray(st.judicis)?st.judicis:[]).forEach((j,i)=>{if(j?.suspes){const top=['⚖️',dateLabel(dateRaw(j)),timeLabel(j?.hora||j?.time||j?.horaJudici)].filter(Boolean).join(' ');const sub=detail(j);out.push('<div class="row" onclick="openTrial('+i+')" style="cursor:pointer"><div class="grow"><strong>'+esc(top)+'</strong>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</div><span class="chip warn">Reprogramar</span></div>')}else if(held(j)&&!paid(j))out.push(trialRow(j,i,true))});Object.entries(st.registres||{}).forEach(([k,r])=>{if(special(r)&&!specialPaid(r)){const o=observation(r);out.push(`<div class="row" onclick="openDay('${k}')" style="cursor:pointer"><div class="grow"><strong>💶 ${esc(dayLabel(k))}</strong>${o?`<small>${esc(o)}</small>`:''}</div><span class="chip warn">Per cobrar</span></div>`)}});box.innerHTML=out.length?out.join(''):'<div class="empty">Tot al dia.</div>'}
+function renderPending(){
+ const st=S(),box=document.getElementById('alerts');if(!st||!box)return;
+ const suspended=[],trialPayments=[],specialPayments=[];
+ (Array.isArray(st.judicis)?st.judicis:[]).forEach((j,i)=>{
+  if(j?.suspes)suspended.push({j,i});
+  else if(held(j)&&!paid(j))trialPayments.push({j,i});
+ });
+ Object.entries(st.registres||{}).forEach(([k,r])=>{if(special(r)&&!specialPaid(r))specialPayments.push({k,r})});
+ const metric=(n,label)=>'<span class="chip '+(n?'warn':'ok')+'" style="white-space:nowrap">'+n+' '+label+'</span>';
+ const summary='<div style="display:flex;flex-wrap:wrap;gap:7px;margin:0 0 12px">'+metric(suspended.length,'reprogramar')+metric(trialPayments.length,'judicis per cobrar')+metric(specialPayments.length,'pagaments especials')+'</div>';
+ const out=[];
+ suspended.forEach(({j,i})=>{
+  const top=['⚖️',dateLabel(dateRaw(j)),timeLabel(j?.hora||j?.time||j?.horaJudici)].filter(Boolean).join(' ');
+  const sub=detail(j);
+  out.push('<div class="row" onclick="openTrial('+i+')" style="cursor:pointer"><div class="grow"><strong>'+esc(top)+'</strong>'+(sub?'<small>'+esc(sub)+'</small>':'')+'</div><span class="chip warn">Reprogramar</span></div>');
+ });
+ trialPayments.forEach(({j,i})=>out.push(trialRow(j,i,true)));
+ specialPayments.forEach(({k,r})=>{
+  const o=observation(r);
+  out.push('<div class="row" onclick="openDay(\''+esc(k)+'\')" style="cursor:pointer"><div class="grow"><strong>💶 '+esc(dayLabel(k))+'</strong>'+(o?'<small>'+esc(o)+'</small>':'')+'</div><span class="chip warn">Per cobrar</span></div>');
+ });
+ box.innerHTML=summary+(out.length?out.join(''):'<div class="empty">Tot al dia. No tens accions pendents.</div>');
+}
 
 function addSpecialFields(){
   if(document.getElementById('specialPayFields'))return;
