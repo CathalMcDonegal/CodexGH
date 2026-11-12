@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.4.8";
+const APP_VERSION="2.4.9";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -427,11 +427,40 @@ function openTrial(i=null){editingTrial=i;const j=i==null?{}:state.judicis[i];do
 function saveTrial(){const j={data:document.getElementById("jDate").value,hora:document.getElementById("jTime").value,jutjat:document.getElementById("jCourt").value.trim(),sala:document.getElementById("jRoom").value.trim(),procediment:document.getElementById("jProc").value.trim(),agents:document.getElementById("jAgents").value.trim(),observacions:document.getElementById("jObservations").value.trim(),celebrat:document.getElementById("jHeld").checked,cobrament:document.getElementById("jPaid").checked,canviTorn:document.getElementById("jShift").checked,suspes:document.getElementById("jSuspended").checked};if(editingTrial==null)state.judicis.push(j);else state.judicis[editingTrial]=j;save();closeModal("trialModal");renderAll();toast("Judici desat")}
 function openTrialsForDate(k){trialDateFilter=k;document.getElementById("trialSearch").value="";showView("trials");renderTrials()}function clearTrialDateFilter(){trialDateFilter="";renderTrials()}async function deleteTrial(){if(editingTrial==null)return;if(!await uiConfirm("Esborrar aquest judici?",{ok:"Esborrar",danger:true}))return;state.judicis.splice(editingTrial,1);save();closeModal("trialModal");renderAll();toast("Judici esborrat")}
 
+function monthWorkHours(r){
+ if(!r?.tipus)return 0;
+ if(r.tipus==="treball"){const s=getShift(r.torn),h=recordHours(r,s);return r.torn==="festa"?-h:h}
+ if(["dies_blaus","assumptes","baixa"].includes(r.tipus))return Number(r.horesConcepte)||0;
+ return 0;
+}
+function annualMonths(){
+ const out=[];
+ for(let i=0;i<12;i++){
+  const d=new Date(state.anyInici,1+i,1),year=d.getFullYear(),month=d.getMonth(),prefix=year+"-"+String(month+1).padStart(2,"0");
+  let hours=0,days=0;
+  Object.entries(state.registres||{}).forEach(([k,r])=>{if(k.startsWith(prefix)){hours+=monthWorkHours(r);if(r?.tipus)days++}});
+  const trials=(state.judicis||[]).filter(j=>String(j?.data||"").startsWith(prefix)).length;
+  out.push({year,month,hours,days,trials});
+ }
+ return out;
+}
+function openAnnualMonth(year,month){
+ currentMonth=new Date(Number(year),Number(month),1);
+ const list=document.getElementById("monthlyList"),grid=document.getElementById("calendar"),btn=document.getElementById("calendarModeBtn");
+ if(list)list.style.display="none";if(grid)grid.style.display="grid";if(btn)btn.textContent="Resum mensual";
+ showView("calendar");
+}
 function renderStats(){
- const vals=[];for(let m=1;m<=12;m++){let total=0;Object.entries(state.registres).forEach(([k,r])=>{const d=parseKey(k);if(d.getFullYear()===state.anyInici+(m===1?0:0)&&d.getMonth()===m-1){const s=r.tipus==="treball"?getShift(r.torn):null;const h=r.tipus==="treball"?Number(r.hores)||0:Number(r.horesConcepte)||0;total+=r.tipus==="treball"&&s?.id==="festa"?-h:h}});vals.push(total)}
- const max=Math.max(1,...vals);document.getElementById("chart").innerHTML=vals.map((v,i)=>`<div class="bar-wrap"><div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center"><div class="bar" style="height:${Math.max(2,v/max*105)}px" title="${plainHours(v)} h"></div><div class="bar-label">${MONTHS[i].slice(0,3)}</div></div></div>`).join("");
- const c=calc();document.getElementById("statsDetail").innerHTML=[["blue",plainHours(c.worked)+" h","Treball / còmput"],["green",plainHours(c.accum)+" h","Acumulades"],["pink",plainHours(c.gnit)+" h","Nits"],["orange",plainHours(c.extra)+" h","Extres"],["purple",plainHours(c.vac)+" h","Vacances usades"],["cyan",plainHours(c.pers)+" h","AP usats"],["blue",plainHours(c.gnp)+" h","GNP"],["green",plainHours(c.blue)+" h","Blaus usats"]].map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
- const weeks=Math.max(1,Math.round((new Date()-new Date(state.anyInici,1,1))/604800000)+1),rate=c.worked/weeks,remaining=Math.max(0,state.horesAnuals-c.worked),forecast=c.worked+rate*10;document.getElementById("forecast").innerHTML=`<div class="row"><div class="grow"><strong>Ritme actual</strong><small>${plainHours(rate)} h/setmana · ${weeks} setmana(es) amb dades</small></div><span class="chip info">Previsió: ${plainHours(Math.min(state.horesAnuals,forecast))} h</span></div><div class="hint" style="margin-top:10px">La previsió és orientativa i extrapola el ritme actual; no modifica cap dada.</div>`;
+ const months=annualMonths(),vals=months.map(x=>x.hours),max=Math.max(1,...vals);
+ document.getElementById("chart").innerHTML=months.map(x=>`<div class="bar-wrap"><div style="width:100%;height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center"><div class="bar" style="height:${Math.max(2,x.hours/max*125)}px" title="${plainHours(x.hours)} h"></div><div class="bar-label">${MONTHS[x.month].slice(0,3)}</div></div></div>`).join("");
+ const annual=document.getElementById("annualCalendar");
+ if(annual)annual.innerHTML=months.map(x=>`<button type="button" class="annual-month" onclick="openAnnualMonth(${x.year},${x.month})"><span class="annual-month-head">${MONTHS[x.month]} <small>${x.year}</small></span><strong>${plainHours(x.hours)} h</strong><span class="annual-month-meta">${x.days} dies registrats · ${x.trials} judicis</span></button>`).join("");
+ const c=calc();document.getElementById("statsDetail").innerHTML=[["blue",plainHours(c.worked)+" h","Còmput efectiu"],["green",plainHours(c.accum)+" h","Acumulades"],["pink",plainHours(c.gnit)+" h","Nits"],["orange",plainHours(c.extra)+" h","Extres"],["purple",plainHours(c.vac)+" h","Vacances usades"],["cyan",plainHours(c.pers)+" h","AP usats"],["blue",plainHours(c.gnp)+" h","GNP"],["green",plainHours(c.blue)+" h","Blaus usats"]].map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
+ const start=new Date(state.anyInici,1,1),end=new Date(state.anyInici+1,0,31),today=new Date();start.setHours(0,0,0,0);end.setHours(0,0,0,0);const day=new Date(today.getFullYear(),today.getMonth(),today.getDate());
+ const totalDays=Math.max(1,Math.round((end-start)/86400000)+1),elapsedDays=day<start?0:day>end?totalDays:Math.min(totalDays,Math.round((day-start)/86400000)+1),fraction=elapsedDays/totalDays;
+ const elapsedWeeks=elapsedDays/7,remainingWeeks=Math.max(0,(totalDays-elapsedDays)/7),rate=elapsedWeeks>0?c.worked/elapsedWeeks:0,projection=fraction>0?c.worked/fraction:0,needed=remainingWeeks>0?Math.max(0,state.horesAnuals-c.worked)/remainingWeeks:0,diff=projection-state.horesAnuals;
+ const projectionLabel=fraction===0?"Encara no ha començat el període":(diff>=0?"Al ritme actual, arribaries a l'objectiu":"Al ritme actual, quedaries per sota");
+ document.getElementById("forecast").innerHTML=`<div class="stats forecast-stats"><div class="stat blue"><b>${plainHours(c.worked)} h</b><span>Fetes fins avui</span></div><div class="stat purple"><b>${plainHours(state.horesAnuals)} h</b><span>Objectiu anual</span></div><div class="stat green"><b>${plainHours(Math.max(0,state.horesAnuals-c.worked))} h</b><span>Pendents</span></div><div class="stat orange"><b>${plainHours(needed)} h/set.</b><span>Ritme necessari restant</span></div></div><div class="row" style="margin-top:10px"><div class="grow"><strong>${projectionLabel}</strong><small>${elapsedDays} de ${totalDays} dies del període · ritme observat ${plainHours(rate)} h/setmana</small></div><span class="chip ${diff>=0?"ok":"warn"}">${fraction>0?plainHours(projection)+" h":"—"}</span></div><div class="hint" style="margin-top:10px">Previsió lineal orientativa basada en el còmput efectiu registrat entre l'1 de febrer i el 31 de gener. No afegeix hores futures ni modifica registres; pot variar si canvia el teu torn o la planificació.</div>`;
 }
 function renderMore(){for(const id of["appVersion","homeVersion"]){const av=document.getElementById(id);if(av)av.textContent="Codex GH v"+APP_VERSION}document.getElementById("cfgHours").value=state.horesAnuals;document.getElementById("cfgVac").value=state.vacancesTotals;document.getElementById("cfgPers").value=state.assumptesTotals;document.getElementById("cfgBlue").value=state.blausTotals;document.getElementById("cfgGnp").value=state.gnpTotals;document.getElementById("cfgGnit").value=state.gnitTotals;document.getElementById("cfgAccum").value=state.acumTotals;document.getElementById("cfgTitle").value=state.titol;document.getElementById("cfgSubtitle").value=state.subtitol;document.getElementById("cfgTip").value=state.tip||"";
  const darkEl=document.getElementById("cfgDark");if(darkEl)darkEl.value=state.darkMode||"auto";
