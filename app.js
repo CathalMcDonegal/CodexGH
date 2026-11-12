@@ -26,6 +26,7 @@ const FIXED_SHIFTS={
 const DEFAULT_HOLIDAYS={"2026-01-01":"Cap d'Any","2026-01-06":"Reis","2026-04-03":"Divendres Sant","2026-04-06":"Dilluns de Pasqua","2026-05-01":"Festa del Treball","2026-06-24":"Sant Joan","2026-08-15":"Assumpció","2026-09-11":"Diada Nacional CAT","2026-09-24":"La Mercè","2026-10-12":"Dia Nacional Espanya","2026-12-08":"Immaculada","2026-12-25":"Nadal","2026-12-26":"Sant Esteve","2027-01-01":"Cap d'Any","2027-01-06":"Reis"};
 
 let state=defaultState(), currentMonth=new Date(), weekAnchor=startOfWeek(new Date()), selected=new Set(), multi=false, editingDay=null, editingTrial=null, trialDateFilter="", deferredPrompt=null;
+let shiftSimulations=[]; // Memòria temporal: mai no es desa ni entra al còmput real.
 
 function defaultState(){return {titol:"Codex GH",subtitol:"Personal",tip:"",darkMode:"auto",notifyDaily:false,anyInici:2026,horesAnuals:1580,vacancesTotals:200,assumptesTotals:68,blausTotals:0,gnpTotals:0,gnitTotals:0,acumTotals:0,torns:clone(DEFAULT_SHIFTS),festius:clone(DEFAULT_HOLIDAYS),registres:{},judicis:[],historic:{}}}
 function clone(x){return JSON.parse(JSON.stringify(x))}
