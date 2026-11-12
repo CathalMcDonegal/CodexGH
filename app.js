@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.7.1";
+const APP_VERSION="2.7.2";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
