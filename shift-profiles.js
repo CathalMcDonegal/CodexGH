@@ -89,10 +89,10 @@
   pat.oninput=()=>{const p=parsePattern(pat.value);phase.innerHTML=p.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("")};
  };
  window.createShiftProfile=function(){
-  const kind=document.getElementById("profileKind").value,raw=document.getElementById("profilePattern").value,pattern=parsePattern(raw),anchor=document.getElementById("profileAnchor").value,unit=document.getElementById("profileUnit").value,phase=Number(document.getElementById("profilePhase").value)||0;
+  const kind=document.getElementById("profileKind").value,escamot=document.getElementById("profileEscamot")?.value||"",raw=document.getElementById("profilePattern").value,pattern=parsePattern(raw),anchor=document.getElementById("profileAnchor").value,unit=document.getElementById("profileUnit").value,phase=Number(document.getElementById("profilePhase").value)||0;
   if(!anchor||!pattern.length){toast("Selecciona l’escamot i carrega una seqüència oficial vàlida");return}
-  if(["q5","q3"].includes(kind)&&!escamot){toast("Selecciona primer l’escamot");return}
-  const escamot=document.getElementById("profileEscamot")?.value||"",name=document.getElementById("profileName").value.trim()||([ "q5","q3","7x7" ].includes(kind)?kind.toUpperCase()+" · Escamot "+(escamot||"pendent"):({investigacio:"Investigació / especial flexible",custom:"Torn personalitzat"}[kind]));
+  if(["q5","q3","7x7"].includes(kind)&&!escamot){toast("Selecciona primer l’escamot");return}
+  const name=document.getElementById("profileName").value.trim()||([ "q5","q3","7x7" ].includes(kind)?kind.toUpperCase()+" · Escamot "+(escamot||"pendent"):({investigacio:"Investigació / especial flexible",custom:"Torn personalitzat"}[kind]));
   const labelsKind={q5:"Q5 · cicle oficial 2026",q3:"Q3 · cicle oficial 2026","7x7":"7x7",investigacio:"Investigació / especial flexible",custom:"Personalitzat"};
   const p={id:"sp_"+Date.now(),name,kind,escamot,kindLabel:labelsKind[kind],unit,anchorDate:anchor,phase,pattern};
   state.shiftProfiles.push(p);state.activeShiftProfileId=p.id;save();renderAll();toast("Perfil creat i activat");
