@@ -31,7 +31,7 @@
   document.querySelectorAll("#calendar .day").forEach(el=>{
    const k=(el.getAttribute("onclick")||"").match(/clickDay\('([^']+)'\)/)?.[1];
    if(!k||state.registres[k])return;
-   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&!extras.length)return;
+   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&id!=="treball"&&!extras.length)return;
    el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
    const kind=el.querySelector(".kind"),hrs=el.querySelector(".hrs");
    if(kind)kind.textContent=s?("Pla: "+(s.abbr||s.nom)):(id==="treball"?"Pla: Treball (torn pendent)":"Servei addicional");
