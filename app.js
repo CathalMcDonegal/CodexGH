@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.12.5";
+const APP_VERSION="2.12.8";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -99,7 +99,7 @@ function migrate(raw){
   const out={...base,...raw};
   out.torns=Array.isArray(raw.torns)&&raw.torns.length?raw.torns:clone(DEFAULT_SHIFTS);
   out.registres=raw.registres||{};out.judicis=raw.judicis||[];out.historic=raw.historic||{};
-  out.festius=raw.festius||clone(DEFAULT_HOLIDAYS); const defaultColors={mati:"#f4d35e",tarda:"#f59e0b",nit:"#60a5fa",cs_dia:"#fff4a8",cs_nit:"#6366f1",fd:"#ffe8b8",fn:"#312e81",festa:"#4ade80"}; out.torns.forEach(t=>{if(!t.color||["#facc15","#22c55e","#16a34a","#94a3b8"].includes(t.color))t.color=defaultColors[t.id]||t.color||"#93c5fd"});
+  out.festius=raw.festius||clone(DEFAULT_HOLIDAYS); const defaultColors={mati:"#38bdf8",tarda:"#fb923c",nit:"#7c3aed",cs_dia:"#eab308",cs_nit:"#14b8a6",fd:"#f472b6",fn:"#1e3a8a",festa:"#4ade80"},legacyColors={mati:"#f4d35e",tarda:"#f59e0b",nit:"#60a5fa",cs_dia:"#fff4a8",cs_nit:"#6366f1",fd:"#ffe8b8",fn:"#312e81"}; out.torns.forEach(t=>{if(!t.color||["#facc15","#22c55e","#16a34a","#94a3b8"].includes(t.color)||(legacyColors[t.id]&&String(t.color).toLowerCase()===legacyColors[t.id]))t.color=defaultColors[t.id]||t.color||"#93c5fd"});
   if(out.titol==="Registre Horari")out.titol="Codex GH"; // canvi de nom de l'app
   out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=raw.gnitTotals||0;out.acumTotals=raw.acumTotals||0;
   // Torns fixos: horaris marc sempre vigents (conserva el color triat).

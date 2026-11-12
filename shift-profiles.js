@@ -39,12 +39,12 @@
   return s?(s.abbr||s.nom):(id==="treball"?"Treball previst (torn pendent)":"Servei previst");
  }
  function plannedCodeClass(id){
-  return id==="mati"?" planned-code-m":id==="tarda"?" planned-code-t":"";
+  return " planned-code";
  }
  function ensurePlanStyle(){
   if(document.getElementById("plannedTextStyle"))return;
   const st=document.createElement("style");st.id="plannedTextStyle";
-  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:700;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:700;background:transparent!important;border:0!important;box-shadow:none!important}.planned-code-m{color:#2786d8!important}.planned-code-t{color:#d58a32!important}.monthly-info .week-planned-label{color:#7892b5!important}.monthly-info .planned-code-m{color:#2786d8!important}.monthly-info .planned-code-t{color:#d58a32!important}";
+  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:700;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:700;background:transparent!important;border:0!important;box-shadow:none!important}.planned-code,.monthly-info .planned-code{color:color-mix(in srgb,var(--pc,#7892b5) 68%,#0f172a)!important}html.dark .planned-code,html.dark .monthly-info .planned-code{color:color-mix(in srgb,var(--pc,#94a3b8) 72%,#fff)!important}.planned-label.planned-code{font-weight:800}";
   document.head.appendChild(st);
  }
  function decorateCalendar(){
@@ -58,16 +58,16 @@
    if(!s&&id!=="treball"&&!extras.length)return;
    if(kind){
     if(!state.registres[k])kind.textContent="";
-    const tag=document.createElement("span");tag.className="planned-label"+plannedCodeClass(id);tag.textContent=plannedText(id,s);kind.appendChild(tag);
+    const tag=document.createElement("span");tag.className="planned-label"+plannedCodeClass(id);if(s?.color)tag.style.setProperty("--pc",s.color);tag.textContent=plannedText(id,s);kind.appendChild(tag);
    }
-   if(!state.registres[k]&&hrs)hrs.textContent="previst";
+   if(!state.registres[k]&&hrs)hrs.textContent="";
    el.title=(s?"Torn previst: "+s.nom:(id==="treball"?"Jornada prevista; torn pendent de confirmació":"Servei addicional planificat"))+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
   });
   document.querySelectorAll("#monthlyList .monthly-row").forEach(el=>{
    const k=(el.getAttribute("onclick")||"").match(/openDay\('([^']+)'\)/)?.[1];if(!k)return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id);if(!s&&id!=="treball")return;
    const info=el.querySelector(".monthly-info");if(!info||info.querySelector(".week-planned-label"))return;
-   const tag=document.createElement("small");tag.className="week-planned-label"+plannedCodeClass(id);tag.textContent=plannedText(id,s);info.appendChild(tag);
+   const tag=document.createElement("small");tag.className="week-planned-label"+plannedCodeClass(id);if(s?.color)tag.style.setProperty("--pc",s.color);tag.textContent=plannedText(id,s);info.appendChild(tag);
   });
  }
  function decorateWeek(){
@@ -81,7 +81,7 @@
    if(!s&&id!=="treball"&&!extras.length)return;
    el.classList.add("planned-shift");
    if(!state.registres[k]){
-    if(strong){strong.textContent=plannedText(id,s);strong.classList.add(...plannedCodeClass(id).trim().split(/\\s+/).filter(Boolean));}
+    if(strong){strong.textContent=plannedText(id,s);if(s?.color)strong.style.setProperty("--pc",s.color);strong.classList.add(...plannedCodeClass(id).trim().split(/\\s+/).filter(Boolean));}
     if(small)small.textContent=(s?((s.inici||"")+" → "+(s.fi||"")):"")+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):" · Horari teòric");
     if(sum)sum.textContent="Pla";
    }else if(small){

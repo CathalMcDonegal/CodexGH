@@ -1,0 +1,853 @@
+<!doctype html>
+<html lang="ca">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Codex GH">
+<meta name="description" content="Registre horari personal">
+<link rel="manifest" href="manifest.json">
+<script src="firebase-config.js?v=2.4.6"></script>
+<link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<title>Codex GH 2.12.8</title>
+<style>
+:root{--bg:#eef5ff;--card:#fff;--text:#10203a;--muted:#5b6b82;--line:#cbd9ee;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;--cyan:#0891b2;--pink:#db2777;--shadow:0 6px 22px rgba(15,23,42,.06);--safe:env(safe-area-inset-bottom,0px);--r:16px}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);min-height:100dvh;padding-bottom:calc(82px + var(--safe));line-height:1.4}
+button,input,select,textarea{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #93c5fd;outline-offset:1px}
+.appbar{position:sticky;top:0;z-index:50;background:rgba(255,255,255,.94);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);padding:12px 16px}
+.appbar-row{width:100%;max-width:1440px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}.brand h1{font-size:1.05rem;margin:0}.brand small{display:block;color:var(--muted);font-size:.72rem;margin-top:1px}
+.year-pill{display:flex;align-items:center;gap:4px;background:#eef4ff;border:1px solid #cfe0ff;border-radius:999px;padding:4px}.year-pill button{border:0;background:transparent;width:30px;height:30px;border-radius:50%;font-size:1.15rem;color:var(--primary)}.year-pill select{border:0;background:transparent;font-weight:750;color:var(--text);padding:4px 2px}
+main{width:100%;max-width:1440px;margin:0 auto;padding:clamp(10px,1.5vw,20px)}.view{display:none}.view.active{display:block}.view.active>.card,.view.active>.section{animation:viewIn .18s ease-out}@keyframes viewIn{from{opacity:.82;transform:translateY(3px)}to{opacity:1;transform:none}}.section{margin-bottom:14px}.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:clamp(13px,1.4vw,20px);box-shadow:var(--shadow)}
+.hero{background:linear-gradient(135deg,#0f172a,#1e3a8a);color:#fff;border:0}.hero .muted{color:#cbd5e1}.hero-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.eyebrow{font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800;opacity:.78}.hero h2{font-size:2rem;line-height:1.05;margin:5px 0}.hero .saldo{font-size:.9rem;font-weight:700}.balance-detail{font-size:.68rem;line-height:1.45;color:#dbeafe;opacity:.88;margin-top:5px;max-width:430px}.hero h2{font-variant-numeric:tabular-nums}.progress{height:8px;border-radius:99px;background:rgba(255,255,255,.18);overflow:hidden;margin:14px 0 8px}.progress i{display:block;height:100%;background:#60a5fa;border-radius:inherit}.hero-foot{display:flex;justify-content:space-between;font-size:.74rem;color:#dbeafe}
+.card-title{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:#496789;font-weight:850;margin-bottom:12px}.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stat{border:1px solid var(--line);border-radius:13px;padding:11px;background:#f4f8ff}.stat b{display:block;font-size:1.2rem}.stat span{font-size:.68rem;color:var(--muted)}.green b{color:var(--green)}.red b{color:var(--red)}.blue b{color:var(--primary)}.purple b{color:var(--purple)}.pink b{color:var(--pink)}.orange b{color:var(--orange)}.cyan b{color:var(--cyan)}
+.today{display:flex;align-items:center;gap:12px}.today-date{min-width:50px;text-align:center}.today-date b{font-size:1.45rem;display:block}.today-date span{font-size:.62rem;color:var(--muted);text-transform:uppercase}.today-main{flex:1;min-width:0}.today-main b{display:block}.today-main small{color:var(--muted)}.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:0;border-radius:11px;padding:11px 14px;font-weight:750;font-size:.86rem}.btn.primary{background:var(--primary);color:#fff}.btn.primary:hover{background:var(--primary2)}.btn.secondary{background:#edf4ff;color:#17325c;border:1px solid #c4d8f5}.btn.danger{background:#fee2e2;color:#991b1b}.btn.small{padding:8px 10px;font-size:.75rem}.fab{position:fixed;right:18px;bottom:calc(78px + var(--safe));z-index:40;border:0;border-radius:999px;background:var(--primary);color:#fff;box-shadow:0 8px 25px rgba(37,99,235,.35);padding:13px 17px;font-weight:800}.list{display:flex;flex-direction:column;gap:8px}.row{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:13px;padding:11px;background:var(--card)}.row .grow{flex:1;min-width:0}.row strong{display:block;font-size:.87rem}.row small{display:block;color:var(--muted);font-size:.7rem;margin-top:2px}.chip{display:inline-flex;align-items:center;border-radius:999px;padding:3px 7px;font-size:.62rem;font-weight:800;background:#e8eef8;color:#334155}.chip.ok{background:#dcfce7;color:#166534}.chip.warn{background:#fef3c7;color:#92400e}.chip.bad{background:#fee2e2;color:#991b1b}.chip.info{background:#dbeafe;color:#1e40af}
+.nav{position:fixed;bottom:0;left:0;right:0;z-index:60;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);padding:7px 4px calc(7px + var(--safe));display:grid;grid-template-columns:repeat(5,1fr)}.nav button{border:0;background:none;color:var(--muted);font-size:.62rem;font-weight:750;padding:4px}.nav button.active{color:var(--primary);font-weight:850}.nav .ico{font-size:1.2rem;display:block;line-height:1.2;margin-bottom:2px}
+.month-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}.month-head h2{font-size:1rem;margin:0}.month-head button{border:1px solid var(--line);background:var(--card);border-radius:10px;width:38px;height:38px}.calendar{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:clamp(4px,0.55vw,8px);width:100%;min-height:520px}.dow{text-align:center;color:var(--muted);font-size:clamp(.62rem,.8vw,.78rem);font-weight:800;padding:5px 3px}.day{min-height:clamp(92px,9vw,124px);min-width:0;border:1px solid var(--line);background:var(--card);border-radius:14px;padding:10px;position:relative;text-align:left;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;overflow:hidden}.monthly-list{display:flex;flex-direction:column;gap:8px}.monthly-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:4px}.monthly-summary>div{background:linear-gradient(135deg,#eff6ff,#fff);border:1px solid #cbdcf5;border-radius:13px;padding:10px 12px}.monthly-summary strong{display:block;font-size:1rem;color:var(--primary)}.monthly-summary span{font-size:.62rem;color:var(--muted)}.monthly-row{display:grid;grid-template-columns:64px minmax(0,1fr) auto;align-items:center;gap:14px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:var(--card);cursor:pointer;transition:.15s}.monthly-row:nth-child(7n+6),.monthly-row:nth-child(7n+7){background:#f8fafc}.monthly-row.is-today{border-color:#60a5fa;box-shadow:0 0 0 2px #dbeafe}.monthly-row.is-empty{opacity:.72}.monthly-row:hover{border-color:#93c5fd;box-shadow:0 4px 12px rgba(37,99,235,.08);transform:translateY(-1px)}.monthly-date{display:flex;align-items:center;gap:8px;justify-content:flex-start}.monthly-date b{font-size:1.15rem}.monthly-date small{color:var(--muted);font-size:.68rem;text-transform:uppercase}.monthly-date{flex-direction:column;align-items:flex-start;gap:1px}.monthly-date b{font-size:1.15rem}.monthly-date small{color:var(--muted);font-size:.68rem;text-transform:uppercase}.monthly-info{min-width:0}.monthly-info strong{display:block;font-size:.88rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.monthly-info small{display:block;color:var(--muted);font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}.monthly-hours{font-weight:850;font-size:.78rem;white-space:nowrap;color:var(--primary)}@media(max-width:600px){.monthly-row{grid-template-columns:48px minmax(0,1fr) auto;gap:10px;padding:11px}.monthly-info strong{font-size:.8rem}.monthly-info small{font-size:.64rem}.monthly-hours{font-size:.7rem}.day{min-height:78px}.day .kind{font-size:.58rem}}.day.muted{opacity:.35}.day .num{font-size:clamp(.72rem,1vw,.9rem);font-weight:800;line-height:1.1}.day .kind{font-size:clamp(.58rem,.78vw,.76rem);font-weight:750;white-space:normal;overflow:hidden;text-overflow:ellipsis;margin-top:7px;line-height:1.2;max-width:100%;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.day .hrs{font-size:clamp(.58rem,.75vw,.72rem);color:var(--muted);margin-top:auto;line-height:1.15;max-width:100%;white-space:nowrap}.day.weekend{background:#f8fafc}.day.holiday{box-shadow:inset 0 0 0 1px #fb923c}.day.selected{outline:3px solid var(--primary)!important;box-shadow:0 0 0 4px rgba(37,99,235,.16),0 5px 14px rgba(37,99,235,.12)!important}.day[style*="--record-color"]{background:color-mix(in srgb,var(--record-color) 18%,var(--card));border-color:color-mix(in srgb,var(--record-color) 72%,var(--line))}.week-row[style*="--record-color"]{background:color-mix(in srgb,var(--record-color) 16%,var(--card))!important;border-color:color-mix(in srgb,var(--record-color) 72%,var(--line))!important}.day.work{background:#eff6ff;border-color:#93c5fd}.day.mati{background:#fef9c3;border-color:#facc15}.day.tarda{background:#ffedd5;border-color:#fb923c}.day.cs_dia{background:rgba(248,231,161,.48)!important;border-color:#8f7300!important;color:#5f4d00!important}.day.fd{background:rgba(246,217,138,.48)!important;border-color:#8a6700!important;color:#5a4500!important}.day.nit,.day.cs_nit,.day.fn{background:#dbeafe;border-color:#60a5fa}.day.vacances,.day.assumptes,.day.dies_blaus,.day.festa{background:#dcfce7;border-color:#86efac}.day.altres_general{background:#ffedd5;border-color:#fdba74}.day.baixa{background:rgba(247,194,194,.48);border-color:#a94f58;color:#7f1d1d}.day.judici{background:#f3e8ff;border-color:#c084fc}.trial-icon{position:absolute;top:5px;left:6px;display:inline-flex;align-items:center;gap:2px;font-size:1rem;line-height:1;z-index:4;cursor:pointer;filter:drop-shadow(0 1px 1px rgba(0,0,0,.18))}.trial-icon b{font-size:.58rem;line-height:1;font-weight:900;color:#6b21a8;background:#fff;border-radius:999px;padding:1px 4px}.day.has-trial{border-width:2px}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:2px}.toolbar .grow{flex:1}.search{width:100%;border:1px solid var(--line);background:var(--card);border-radius:11px;padding:10px 12px}
+.week{display:flex;flex-direction:column;gap:7px}.week-row{display:grid;grid-template-columns:50px minmax(0,1fr) auto;align-items:center;gap:12px;border:1px solid var(--line);border-radius:13px;padding:12px;background:linear-gradient(90deg,#f5f9ff,var(--card));transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden}.week-row.has-note::after{content:"";position:absolute;top:8px;right:9px;width:9px;height:9px;border-radius:50%;background:#f59e0b;box-shadow:0 0 0 2px rgba(255,255,255,.8)}.week-row.selected{outline:3px solid var(--primary)!important;box-shadow:0 0 0 4px rgba(37,99,235,.16)!important}.week-row.work{background:#e8f1ff;border-color:#93c5fd}.week-row.mati{background:#fff9d6;border-color:#facc15}.week-row.tarda{background:#ffead8;border-color:#fb923c}.week-row.nit,.week-row.cs_nit,.week-row.fn{background:#dbeafe;border-color:#60a5fa}.week-row.vacances{background:#dcfce7;border-color:#86efac}.week-row.assumptes{background:#bbf7d0;border-color:#4ade80}.week-row.hores_acum{background:#a7f3d0;border-color:#34d399}.week-row.dies_blaus{background:#86efac;border-color:#22c55e}.week-row.festa{background:#4ade80;border-color:#16a34a}.week-row.cs_dia{background:rgba(248,231,161,.48)!important;border-color:#8f7300!important;color:#5f4d00!important}.week-row.fd{background:rgba(246,217,138,.48)!important;border-color:#8a6700!important;color:#5a4500!important}.week-row.baixa{background:rgba(247,194,194,.48)!important;border-color:#a94f58!important;color:#7f1d1d!important}.week-row.altres_general{background:#ffedd5;border-color:#fdba74}.week-row.baixa{background:rgba(247,194,194,.48);border-color:#a94f58;color:#7f1d1d}.week-row.judici{background:#f3e8ff;border-color:#c084fc}.week-row:hover{transform:translateY(-1px);box-shadow:0 5px 16px rgba(37,99,235,.08)}.week-date{text-align:center}.week-date b{display:block;font-size:1.05rem}.week-date small{font-size:.58rem;color:var(--muted)}.week-sum{font-size:.75rem;font-weight:800}
+.annual-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}.annual-month{min-width:0;text-align:left;border:1px solid var(--line);border-radius:13px;padding:11px;background:linear-gradient(145deg,#f4f8ff,var(--card));color:var(--text);display:flex;flex-direction:column;gap:6px;cursor:pointer;transition:.15s}.annual-month:active{transform:scale(.98)}.annual-month:hover{border-color:#93c5fd;box-shadow:0 4px 12px rgba(37,99,235,.08)}.annual-month-head{font-size:.75rem;font-weight:850;color:var(--muted);display:flex;justify-content:space-between;gap:4px}.annual-month-head small{font-size:.64rem}.annual-month strong{font-size:1.1rem;color:var(--primary)}.annual-month-meta{font-size:.6rem;color:var(--muted);line-height:1.3}.forecast-stats{grid-template-columns:repeat(4,minmax(0,1fr))}.sim-head{margin-bottom:10px}.sim-list{margin-top:10px}.sim-list .row{padding:8px 0;border-bottom:1px solid var(--line)}.sim-list .row:last-child{border-bottom:0}@media(max-width:760px){.annual-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.annual-month{padding:9px}.annual-month strong{font-size:.98rem}.annual-month-meta{font-size:.56rem}}@media(max-width:420px){.annual-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.forecast-stats{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(prefers-color-scheme:dark){.annual-month{background:linear-gradient(145deg,#172554,var(--card))}}.chart{display:flex;align-items:flex-end;gap:clamp(5px,1vw,12px);height:190px;padding:14px 4px 8px;border-bottom:1px solid var(--line);background:linear-gradient(180deg,#f8fbff,transparent);border-radius:12px}.bar-wrap{height:100%;flex:1;display:flex;align-items:flex-end;justify-content:center;gap:2px}.bar{width:75%;max-width:42px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#38bdf8,#2563eb);min-height:2px;box-shadow:0 3px 8px rgba(37,99,235,.18)}.bar-label{font-size:.55rem;color:var(--muted);text-align:center;margin-top:4px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}label{display:block;font-size:.72rem;font-weight:750;color:var(--muted);margin:0 0 5px}input,select,textarea{width:100%;border:1px solid var(--line);background:#f8fafc;color:var(--text);border-radius:10px;padding:10px 11px;margin-bottom:10px}textarea{min-height:80px;resize:vertical}.check{display:flex;align-items:center;gap:8px;margin:5px 0 10px;font-size:.82rem}.check input{width:auto;margin:0}
+.modal-bg{position:fixed;inset:0;background:rgba(2,6,23,.48);z-index:100;display:none;align-items:flex-end}.modal-bg.open{display:flex}.modal{width:100%;max-width:620px;margin:auto auto 0;background:var(--card);border-radius:20px 20px 0 0;max-height:92dvh;overflow:auto;padding:17px 15px calc(18px + var(--safe))}.modal-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:13px}.modal-head h2{margin:0;font-size:1.05rem}.close{border:0;background:#eef2f7;border-radius:50%;width:32px;height:32px;font-size:1.2rem}.form-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:4px}.form-actions .primary{grid-column:1/-1}
+.empty{text-align:center;color:var(--muted);padding:24px 10px;font-size:.82rem}.hint{font-size:.7rem;color:var(--muted);margin:-4px 0 10px}.setting-row{display:flex;justify-content:space-between;align-items:center;gap:10px;border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:8px;background:#f7faff}.setting-row:last-child{border-bottom:0}.setting-row small{color:var(--muted);display:block}.note-icon-modal{max-width:620px}.note-icon-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}.note-icon-grid button{border:1px solid var(--line);background:#f8fafc;color:var(--text);border-radius:13px;min-height:70px;padding:7px 4px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font-size:1.75rem;transition:.12s}.note-icon-grid button:hover{background:#eef5ff;border-color:#93c5fd;transform:translateY(-1px)}.note-icon-grid button small{font-size:.58rem;color:var(--muted);font-weight:750;line-height:1.1}.note-icon-current{font-size:1.2rem;font-weight:900}.note-icon-none{color:var(--muted)}@media(max-width:600px){.note-icon-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}.note-icon-grid button{min-height:68px;font-size:1.65rem}.note-icon-grid button small{font-size:.54rem}}@media(prefers-color-scheme:dark){.note-icon-grid button{background:#0f192a}.note-icon-grid button:hover{background:#172554;border-color:#3b82f6}}.toast{position:fixed;left:50%;bottom:calc(88px + var(--safe));transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:200;background:#0f172a;color:#fff;padding:10px 14px;border-radius:999px;font-size:.78rem;font-weight:700;transition:.2s}.toast.show{opacity:1;transform:translate(-50%,0)}
+@media(min-width:720px){.stats{grid-template-columns:repeat(4,1fr)}.modal-bg{align-items:center}.modal{border-radius:20px;margin:auto}.fab{right:24px}}
+@media(max-width:600px){.monthly-summary>div{padding:8px}.monthly-summary strong{font-size:.9rem}.monthly-summary span{font-size:.58rem}main{padding:9px}.calendar{display:grid!important;grid-template-columns:repeat(7,minmax(0,1fr));gap:3px;min-height:0}.monthly-list{display:none}.day{min-height:70px;padding:6px 4px;border-radius:8px}.day .num{font-size:.76rem}.day .kind{font-size:.5rem;line-height:1.1;margin-top:4px;-webkit-line-clamp:2}.day .hrs{font-size:.48rem}.dow{font-size:.52rem;padding:3px 1px}#calendarModeBtn{display:inline-block}.hero h2{font-size:1.8rem}.month-head{margin-bottom:12px}.month-head h2{font-size:1.08rem}}@media(max-width:390px){.monthly-row{grid-template-columns:42px minmax(0,1fr) auto;padding:10px 9px}.monthly-date b{font-size:1.05rem}.monthly-info strong{font-size:.76rem}.monthly-info small{font-size:.6rem}.hero h2{font-size:1.65rem}}
+/* Calendari: estructura visible i estable */
+#view-calendar .calendar-card{display:block;overflow:visible}
+#view-calendar .calendar{visibility:visible;opacity:1}
+#view-calendar .calendar > .day{visibility:visible;display:flex}
+#view-calendar .monthly-list{visibility:visible}
+#view-calendar .month-head{min-height:42px}
+@media(max-width:600px){#view-calendar .calendar{display:grid!important;gap:3px;min-height:0}.#view-calendar .dow{padding:3px 1px}#view-calendar .day{display:flex;min-height:70px;padding:6px 4px}.#view-calendar .day .kind{font-size:.5rem}.#view-calendar .day .hrs{font-size:.48rem}}
+@media(prefers-color-scheme:dark){
+:root{--bg:#0b1220;--card:#111b2d;--text:#e5edf8;--muted:#94a3b8;--line:#26364e;--shadow:0 8px 25px rgba(0,0,0,.18)}.appbar,.nav{background:rgba(17,27,45,.95)}.year-pill{background:#172554;border-color:#1e40af}.stat,.day,.row,input,select,textarea{background:#0f192a}.day.weekend{background:#0e1725}.day.work{background:#172554}.day.mati{background:#3f3b0b}.day.tarda{background:#43220d}.day.nit,.day.cs_nit,.day.fn{background:#102c55}.day.vacances{background:#14532d}.day.assumptes{background:#166534}.day.hores_acum{background:#065f46}.day.dies_blaus{background:#047857}.day.festa{background:#15803d}.day.cs_dia{background:rgba(248,231,161,.48)!important;border-color:#8f7300!important;color:#5f4d00!important}.day.fd{background:rgba(246,217,138,.48)!important;border-color:#8a6700!important;color:#5a4500!important}.day.baixa{background:rgba(247,194,194,.48)!important;border-color:#a94f58!important;color:#7f1d1d!important}.day.judici{background:#2e1649}.btn.secondary{background:#1a2639;color:var(--text)}.hero{background:linear-gradient(135deg,#020617,#172554)}}
+/* Poliment visual final */
+.appbar{box-shadow:0 2px 14px rgba(37,99,235,.06)}
+.brand h1{letter-spacing:-.02em}.brand h1::before{content:"";display:inline-block;width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,#38bdf8,#2563eb);margin:0 7px 2px 0}
+.nav button{border-radius:12px;transition:background .15s,color .15s,transform .15s}.nav button.active{background:#eaf2ff}.nav button:active{transform:scale(.96)}
+.month-head h2{font-size:1.05rem;letter-spacing:-.01em}.month-head button{transition:.15s}.month-head button:hover{background:#eff6ff;border-color:#93c5fd;color:var(--primary)}
+.day{transition:transform .12s,box-shadow .12s}.day:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.1);z-index:2}.day.selected{box-shadow:0 0 0 2px var(--primary),0 5px 14px rgba(37,99,235,.12)}.day.today{border:2px solid #2563eb;box-shadow:inset 0 0 0 1px #bfdbfe,0 3px 12px rgba(37,99,235,.14)}.day.today .num{color:#1d4ed8}.day.selected.baixa{background:#fff1f2!important;border-color:#f5cdd2!important;outline:3px solid #f5cdd2!important;box-shadow:0 0 0 4px rgba(245,205,210,.16),0 5px 14px rgba(245,205,210,.12)!important}.day.selected.baixa .num{color:#991b1b}
+#view-week>.card:first-of-type{border-top:3px solid #38bdf8}#view-week>.card:last-of-type{border-top:3px solid #34d399}
+#view-stats>.card{overflow:hidden}#view-stats>.card:first-of-type{border-top:3px solid #38bdf8}#view-stats>.card:nth-of-type(2){border-top:3px solid #a78bfa}#view-stats>.card:nth-of-type(3){border-top:3px solid #f59e0b}
+#view-more>.card{overflow:hidden}#view-more>.card:nth-of-type(1){border-top:3px solid #60a5fa}#view-more>.card:nth-of-type(2){border-top:3px solid #34d399}#view-more>.card:nth-of-type(3){border-top:3px solid #f59e0b}#view-more>.card:nth-of-type(4){border-top:3px solid #a78bfa}
+#view-more .card-title{display:flex;align-items:center;gap:7px}#view-more .card-title::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.65}
+#view-stats .card-title{display:flex;align-items:center;gap:7px}#view-stats .card-title::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor;opacity:.65}
+.week-row{background:linear-gradient(100deg,#f5f9ff 0%,#fff 65%)}
+.setting-row{background:linear-gradient(100deg,#f7faff,#fff);transition:.15s}.setting-row:hover{transform:translateX(2px);border-color:#b7c9e5}
+#view-calendar>.card{overflow:hidden}.calendar{contain:layout paint}
+@media(min-width:720px){#view-week,#view-stats,#view-more{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}#view-week>.toolbar,#view-stats>.card:first-child,#view-more>.card:first-child{grid-column:1/-1}#view-week>.card,#view-stats>.card,#view-more>.card{margin-bottom:0}.week-row{padding:14px}.chart{height:230px}}
+@media(min-width:1200px){#view-week,#view-stats,#view-more{grid-template-columns:repeat(3,minmax(0,1fr))}#view-week>.toolbar,#view-stats>.card:first-child,#view-more>.card:first-child{grid-column:1/-1}.chart{height:250px}}
+body{overflow-x:hidden}.view,.section,.card{min-width:0}@media(min-width:900px){#view-week>.card,#view-stats>.card,#view-more>.card{margin-bottom:16px}#view-week>.card:nth-of-type(2){background:linear-gradient(135deg,#f4f9ff,#ffffff)}#view-stats>.card:first-child{background:linear-gradient(135deg,#f7fbff,#ffffff)}#view-more>.card:first-child{border-top:3px solid #60a5fa}}@media(min-width:1100px){.calendar{gap:8px}.day{min-height:96px}.day .kind{font-size:.76rem}.day .hrs{font-size:.7rem}}
+
+/* Correcció de contrast dels dies i pestanyes */
+.day,
+.day .num,
+.day .kind,
+.day .hrs,
+.monthly-row,
+.monthly-row strong,
+.monthly-row small,
+.week-row,
+.week-row strong,
+.week-row small {
+  color: var(--text);
+}
+.day .hrs,
+.monthly-row small,
+.week-row small {
+  color: var(--muted);
+}
+
+/* Colors suaus i llegibles per cada tipus de jornada */
+.day.work { background:#e8f1ff; border-color:#93c5fd; }
+.day.mati { background:#fff9d6; border-color:#facc15; }
+.day.tarda { background:#ffead8; border-color:#fb923c; }
+.day.nit,.day.cs_nit,.day.fn { background:#dbeafe; border-color:#60a5fa; }
+.day.vacances { background:#dcfce7; border-color:#86efac; } .day.assumptes { background:#bbf7d0; border-color:#4ade80; } .day.hores_acum { background:#a7f3d0; border-color:#34d399; } .day.dies_blaus { background:#86efac; border-color:#22c55e; } .day.festa { background:#4ade80; border-color:#16a34a; }
+.day.baixa { background:#fee2e2; border-color:#fca5a5; }
+.day.judici { background:#f3e8ff; border-color:#c084fc; }
+
+/* El número sempre queda ben visible */
+.day .num {
+  color:#0f172a;
+  font-weight:850;
+  text-shadow:none;
+}
+.day .kind {
+  color:#1e293b;
+  font-weight:750;
+}
+.day .hrs { color:#475569; }
+
+/* En mode fosc mantenim els fons diferenciats però amb text clar */
+@media(prefers-color-scheme:dark){
+  .day.work { background:#172554; border-color:#60a5fa; }
+  .day.mati { background:#3f3b0b; border-color:#eab308; }
+  .day.tarda { background:#43220d; border-color:#f97316; }
+  .day.nit,.day.cs_nit,.day.fn { background:#102c55; border-color:#60a5fa; }
+  .day.vacances { background:#14532d; border-color:#4ade80; } .day.assumptes { background:#166534; border-color:#4ade80; } .day.hores_acum { background:#065f46; border-color:#34d399; } .day.dies_blaus { background:#047857; border-color:#34d399; } .day.festa { background:#15803d; border-color:#4ade80; }
+  .day.baixa { background:#42171a; border-color:#f87171; }
+  .day.judici { background:#2e1649; border-color:#c084fc; }
+  .day .num,.day .kind { color:#f8fafc; }
+  .day .hrs { color:#cbd5e1; }
+}
+
+/* Llegenda: el text també ha de tenir contrast */
+#legend .chip {
+  color:var(--text);
+  border:1px solid var(--line);
+}
+
+.legend-chip i{width:10px;height:10px;border-radius:50%;background:var(--legend-color,#94a3b8);display:inline-block;flex:0 0 10px}.day[style*="--shift-color"]{background:color-mix(in srgb,var(--shift-color) 18%,white);border-color:var(--shift-color)}.week-row[style*="--shift-color"]{background:color-mix(in srgb,var(--shift-color) 18%,white);border-color:var(--shift-color)}.note-icon{position:absolute;top:5px;right:6px;font-size:1rem;line-height:1;z-index:3}.note-icon.red-plus,.red-plus-icon{color:#dc2626;font-weight:950}.week-row .note-icon{font-size:1rem}@media(prefers-color-scheme:dark){.day[style*="--shift-color"],.week-row[style*="--shift-color"]{background:color-mix(in srgb,var(--shift-color) 28%,#111b2d)}}
+/* Sistema visual unificat 2.1 */
+:root{
+ --bg:#f4f7fb;--card:#ffffff;--text:#172033;--muted:#64748b;--line:#d9e2ef;
+ --primary:#2563eb;--primary2:#1d4ed8;--primary-soft:#eaf2ff;
+ --shadow:0 4px 18px rgba(15,23,42,.055);--shadow-hover:0 8px 24px rgba(37,99,235,.10);
+ --r:16px;
+}
+body{background:var(--bg);color:var(--text)}
+main{padding-top:clamp(12px,1.8vw,22px)}
+.appbar{background:rgba(255,255,255,.92);box-shadow:0 1px 12px rgba(15,23,42,.06)}
+.card{border-color:var(--line);box-shadow:var(--shadow);transition:border-color .15s,box-shadow .15s}
+.card:hover{box-shadow:var(--shadow-hover)}
+.card-title{color:#526783;margin-bottom:13px}
+.nav{background:rgba(255,255,255,.96);box-shadow:0 -2px 14px rgba(15,23,42,.06);border-top-color:var(--line)}
+.nav button{color:#718096;padding:6px 4px;border-radius:12px}
+.nav button.active{color:var(--primary);background:var(--primary-soft)}
+.btn{transition:transform .12s,box-shadow .12s,background .12s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(15,23,42,.08)}
+.btn:active{transform:translateY(0)}
+.btn.secondary{background:#f5f8fc;color:#29415f;border-color:#d5e1ef}
+.toolbar{padding:0;margin-bottom:14px}
+.toolbar .btn{background:#fff}
+.search,input,select,textarea{border-color:#d4dfec;background:#fff;transition:border-color .15s,box-shadow .15s}
+.search:focus,input:focus,select:focus,textarea:focus{border-color:#7aa7f8;box-shadow:0 0 0 3px rgba(37,99,235,.10);outline:0}
+.year-pill{background:#f3f7ff;border-color:#d5e3f8}
+.year-pill button:hover{background:#e7f0ff}
+.today{min-height:58px}
+.stats .stat{background:#f8fafd;border-color:#e0e7f0}
+.month-head button{background:#fff}
+.calendar{gap:7px}
+.day{border-radius:12px;padding:9px;background:#fff;box-shadow:inset 0 0 0 0 transparent}
+.day:hover{box-shadow:0 5px 14px rgba(15,23,42,.08)}
+.day.weekend{background:#f8fafc}
+.day .num{font-size:clamp(.78rem,1vw,.92rem)}
+.day .kind{margin-top:6px}
+.monthly-row,.week-row,.row{background:#fff;border-color:#dce4ee}
+.monthly-row:hover,.week-row:hover{border-color:#9bbcf0;box-shadow:var(--shadow-hover)}
+.monthly-row.is-today{background:#f5f9ff;border-color:#60a5fa}
+.setting-row{background:#f9fbfd;border-color:#dde6f0}
+.chip{border:1px solid transparent}
+.modal{box-shadow:0 16px 45px rgba(2,6,23,.18)}
+.close{background:#f1f5f9;color:#334155}
+.empty{background:#f8fafc;border-radius:12px}
+.hint{line-height:1.45}
+#legend{gap:6px}
+#legend .chip{background:#f5f8fc}
+.hero{box-shadow:0 8px 24px rgba(15,23,42,.14)}
+@media(max-width:600px){
+ main{padding:10px}
+ .card{border-radius:14px;padding:13px}
+ .toolbar{gap:6px}
+ .toolbar .btn{padding:8px 10px}
+ .day{border-radius:10px;padding:7px}
+ .monthly-summary>div{background:#f8fafd;border-color:#dde6f0}
+}
+@media(prefers-color-scheme:dark){
+ :root{--bg:#0b1220;--card:#111b2d;--text:#e8eef7;--muted:#9aa9bd;--line:#293a52;--primary-soft:#172554;--shadow:0 6px 22px rgba(0,0,0,.18)}
+ .appbar,.nav{background:rgba(17,27,45,.96)}
+ .toolbar .btn,.month-head button,.monthly-row,.week-row,.row,.card,.setting-row{background:#111b2d}
+ .stats .stat,.empty{background:#0f192a}
+ .search,input,select,textarea{background:#0f192a;border-color:#33465f;color:var(--text)}
+ .btn.secondary{background:#1a2639;color:var(--text);border-color:#344963}
+ .year-pill{background:#172554;border-color:#31518a}
+ .nav button{color:#91a0b5}
+ .nav button.active{background:#172554;color:#8db7ff}
+ .monthly-row.is-today{background:#102447}
+}
+
+/* Contrast del calendari */
+.calendar .day{color:#172033;background:#fff;border:1px solid #d9e2ef}
+.calendar .day .num{color:#172033;font-weight:900}.calendar .day .kind{color:#334155;font-weight:800}.calendar .day .hrs{color:#526783;font-weight:700}
+.calendar .day.weekend{background:#f1f5f9}
+.calendar .day.mati{background:#e0f2fe;color:#0c4a6e;border-color:#7dd3fc}.calendar .day.mati .num,.calendar .day.mati .kind,.calendar .day.mati .hrs{color:#0c4a6e}
+.calendar .day.tarda{background:#fef3c7;color:#78350f;border-color:#fcd34d}.calendar .day.tarda .num,.calendar .day.tarda .kind,.calendar .day.tarda .hrs{color:#78350f}
+.calendar .day.nit,.calendar .day.cs_nit,.calendar .day.fn{background:#312e81;color:#fff;border-color:#6366f1}.calendar .day.nit .num,.calendar .day.nit .kind,.calendar .day.nit .hrs,.calendar .day.cs_nit .num,.calendar .day.cs_nit .kind,.calendar .day.cs_nit .hrs,.calendar .day.fn .num,.calendar .day.fn .kind,.calendar .day.fn .hrs{color:#fff}
+.calendar .day.vacances{background:#dcfce7;color:#166534;border-color:#86efac}.calendar .day.assumptes{background:#bbf7d0;color:#14532d;border-color:#4ade80}.calendar .day.hores_acum{background:#a7f3d0;color:#064e3b;border-color:#34d399}.calendar .day.dies_blaus{background:#86efac;color:#14532d;border-color:#22c55e}.calendar .day.festa{background:#4ade80;color:#14532d;border-color:#16a34a}.calendar .day.vacances .num,.calendar .day.vacances .kind,.calendar .day.vacances .hrs,.calendar .day.assumptes .num,.calendar .day.assumptes .kind,.calendar .day.assumptes .hrs,.calendar .day.hores_acum .num,.calendar .day.hores_acum .kind,.calendar .day.hores_acum .hrs,.calendar .day.dies_blaus .num,.calendar .day.dies_blaus .kind,.calendar .day.dies_blaus .hrs,.calendar .day.festa .num,.calendar .day.festa .kind,.calendar .day.festa .hrs{color:#14532d}
+.calendar .day.baixa{background:rgba(247,194,194,.48);color:#7f1d1d;border-color:#a94f58}.calendar .day.baixa .num,.calendar .day.baixa .kind,.calendar .day.baixa .hrs{color:#991b1b}
+.calendar .day.judici{background:#f3e8ff;color:#6b21a8;border-color:#d8b4fe}.calendar .day.judici .num,.calendar .day.judici .kind,.calendar .day.judici .hrs{color:#6b21a8}
+.calendar .day.selected{outline:3px solid #2563eb;outline-offset:-3px}
+@media(prefers-color-scheme:dark){
+.calendar .day{background:#111b2d;color:#e8eef7;border-color:#33465f}.calendar .day .num{color:#e8eef7}.calendar .day .kind{color:#cbd5e1}.calendar .day .hrs{color:#a9bad0}.calendar .day.weekend{background:#172235}
+.calendar .day.mati{background:#164e63;border-color:#38bdf8}.calendar .day.mati .num,.calendar .day.mati .kind,.calendar .day.mati .hrs{color:#e0f2fe}
+.calendar .day.tarda{background:#78350f;border-color:#f59e0b}.calendar .day.tarda .num,.calendar .day.tarda .kind,.calendar .day.tarda .hrs{color:#fef3c7}
+.calendar .day.nit,.calendar .day.cs_nit,.calendar .day.fn{background:#312e81;border-color:#818cf8}
+.calendar .day.vacances{background:#14532d;border-color:#4ade80}.calendar .day.assumptes{background:#166534;border-color:#4ade80}.calendar .day.hores_acum{background:#065f46;border-color:#34d399}.calendar .day.dies_blaus{background:#047857;border-color:#34d399}.calendar .day.festa{background:#15803d;border-color:#4ade80}.calendar .day.vacances .num,.calendar .day.vacances .kind,.calendar .day.vacances .hrs,.calendar .day.assumptes .num,.calendar .day.assumptes .kind,.calendar .day.assumptes .hrs,.calendar .day.hores_acum .num,.calendar .day.hores_acum .kind,.calendar .day.hores_acum .hrs,.calendar .day.dies_blaus .num,.calendar .day.dies_blaus .kind,.calendar .day.dies_blaus .hrs,.calendar .day.festa .num,.calendar .day.festa .kind,.calendar .day.festa .hrs{color:#dcfce7}
+.calendar .day.baixa{background:rgba(180,70,80,.42);border-color:#e7a0a7}.calendar .day.baixa .num,.calendar .day.baixa .kind,.calendar .day.baixa .hrs{color:#fee2e2}
+.calendar .day.judici{background:#581c87;border-color:#c084fc}.calendar .day.judici .num,.calendar .day.judici .kind,.calendar .day.judici .hrs{color:#f3e8ff}
+}
+
+/* Llegenda del calendari: sempre visible i amb contrast */
+#view-calendar .section.card{position:relative;z-index:3;overflow:visible;background:var(--card);margin-top:14px}
+#view-calendar #legend{display:flex;flex-wrap:wrap;gap:8px;min-height:34px;align-items:center}
+#view-calendar #legend .legend-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid #cbd5e1;background:#f8fafc;color:#172033;font-size:.68rem;font-weight:850;white-space:nowrap}
+#view-calendar #legend .legend-chip::before{display:none}
+#view-calendar #legend .legend-mati::before{background:#38bdf8}.#view-calendar #legend .legend-tarda::before{background:#f59e0b}.#view-calendar #legend .legend-nit::before{background:#312e81}.#view-calendar #legend .legend-vacances::before{background:#22c55e}.#view-calendar #legend .legend-assumptes::before{background:#16a34a}.#view-calendar #legend .legend-baixa::before{background:#ef4444}
+@media(prefers-color-scheme:dark){#view-calendar #legend .legend-chip{background:#182438;border-color:#3a4b63;color:#eef4ff}}
+@media(max-width:600px){#view-calendar .section.card{margin-top:10px;padding:12px}#view-calendar #legend{gap:6px}#view-calendar #legend .legend-chip{padding:6px 8px;font-size:.62rem}}
+/* Instal·lació i marca d'aigua */
+.install-banner{position:fixed;left:50%;bottom:calc(82px + var(--safe));transform:translateX(-50%);z-index:55;width:min(520px,calc(100% - 24px));display:none;align-items:center;gap:10px;padding:10px 12px;border:1px solid #93c5fd;border-radius:14px;background:rgba(239,246,255,.97);box-shadow:0 10px 28px rgba(15,23,42,.16);color:#17325c}
+.install-banner.show{display:flex}.install-banner .grow{flex:1;min-width:0}.install-banner strong{display:block;font-size:.78rem}.install-banner small{display:block;font-size:.64rem;color:#526783;margin-top:1px}.install-banner .btn{flex-shrink:0}
+.watermark{position:fixed;inset:0;z-index:1;pointer-events:none;display:flex;align-items:center;justify-content:center;font-size:clamp(2.8rem,9vw,8rem);font-weight:900;letter-spacing:.08em;color:rgba(37,99,235,.055);transform:rotate(-28deg);user-select:none;white-space:nowrap}
+@media(prefers-color-scheme:dark){.install-banner{background:rgba(15,32,58,.97);border-color:#31518a;color:#e8eef7}.install-banner small{color:#a9bad0}.watermark{color:rgba(147,197,253,.06)}}
+@media(max-width:600px){.install-banner{bottom:calc(78px + var(--safe));padding:9px}.watermark{font-size:clamp(2.4rem,12vw,5rem)}}
+
+/* Mode fosc manual + millores UX 2.1 */
+html.dark{
+  --bg:#0b1220;--card:#111b2d;--text:#e8eef7;--muted:#9aa9bd;--line:#293a52;
+  --primary-soft:#172554;--shadow:0 6px 22px rgba(0,0,0,.18);
+}
+html.dark body{background:var(--bg);color:var(--text)}
+html.dark .appbar,html.dark .nav{background:rgba(17,27,45,.96)}
+html.dark .card,html.dark .toolbar .btn,html.dark .month-head button,
+html.dark .monthly-row,html.dark .week-row,html.dark .row,html.dark .setting-row{background:var(--card)}
+html.dark .stats .stat,html.dark .empty{background:#0f192a}
+html.dark .search,html.dark input,html.dark select,html.dark textarea{background:#0f192a;border-color:#33465f;color:var(--text)}
+html.dark .btn.secondary{background:#1a2639;color:var(--text);border-color:#344963}
+html.dark .year-pill{background:#172554;border-color:#31518a}
+html.dark .nav button{color:#91a0b5}
+html.dark .nav button.active{background:#172554;color:#8db7ff}
+html.dark .watermark{color:rgba(147,197,253,.06)}
+html.dark .toast{background:#1e293b}
+.toast.success{background:#166534}
+.toast.warn{background:#9a3412}
+@keyframes pulseOk{0%{box-shadow:0 0 0 0 rgba(37,99,235,.45)}70%{box-shadow:0 0 0 14px rgba(37,99,235,0)}100%{box-shadow:0 0 0 0 rgba(37,99,235,0)}}
+.btn.pulse{animation:pulseOk .55s ease-out}
+.theme-toggle{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 12px;font-size:.72rem;font-weight:750;display:inline-flex;align-items:center;gap:6px}
+.switch-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.switch-row:last-child{border-bottom:0}
+.switch{position:relative;width:46px;height:26px;flex:0 0 46px}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;cursor:pointer;inset:0;background:#cbd5e1;border-radius:999px;transition:.2s}
+.slider:before{content:"";position:absolute;height:20px;width:20px;left:3px;bottom:3px;background:#fff;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:var(--primary)}
+.switch input:checked+.slider:before{transform:translateX(20px)}
+@media print{
+  .appbar,.nav,.fab,.install-banner,.watermark,.toast,.toolbar button,.modal-bg{display:none!important}
+  body{padding:0;background:#fff;color:#000}
+  main{max-width:100%;padding:0}
+  .view{display:none!important}
+  .view.print-active{display:block!important}
+  .card{box-shadow:none;border:1px solid #ccc;break-inside:avoid}
+}
+
+
+.stat.clickable{cursor:pointer;transition:transform .12s,box-shadow .12s}
+.stat.clickable:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(37,99,235,.12)}
+.stat.clickable:active{transform:translateY(0)}
+.detail-list{display:flex;flex-direction:column;gap:8px;max-height:60dvh;overflow:auto}
+.detail-list .row{cursor:pointer}
+.detail-summary{font-size:.8rem;color:var(--muted);margin-bottom:10px}
+
+
+/* Manual d'ús (acordió) */
+.manual details{border:1px solid var(--line);border-radius:12px;margin-bottom:8px;background:#f8fafc;overflow:hidden}
+.manual details[open]{background:var(--card)}
+.manual summary{cursor:pointer;padding:12px 14px;font-weight:800;font-size:.84rem;list-style:none;display:flex;align-items:center;justify-content:space-between;gap:10px;user-select:none}
+.manual summary::-webkit-details-marker{display:none}
+.manual summary::after{content:"›";font-size:1.2rem;color:var(--muted);transition:transform .15s}
+.manual details[open] summary::after{transform:rotate(90deg)}
+.manual .manual-body{padding:0 14px 14px;font-size:.8rem;color:var(--text);line-height:1.45}
+.manual .manual-body p{margin:0 0 8px}
+.manual .manual-body ul{margin:0 0 8px;padding-left:1.2em}
+.manual .manual-body li{margin-bottom:4px}
+.manual .manual-body strong{font-weight:800}
+.manual .tag{display:inline-block;font-size:.65rem;font-weight:800;padding:2px 7px;border-radius:999px;background:#e0e7ff;color:#3730a3;margin-right:4px}
+html.dark .manual details{background:#0f192a;border-color:var(--line)}
+html.dark .manual details[open]{background:var(--card)}
+html.dark .manual .tag{background:#172554;color:#93c5fd}
+
+
+/* Permisos i llicències */
+.nav{grid-template-columns:repeat(6,1fr)}
+.permit-card{border:1px solid var(--line);border-radius:14px;padding:14px;background:var(--card);margin-bottom:10px;box-shadow:var(--shadow)}
+.permit-card h3{margin:0 0 6px;font-size:.92rem;line-height:1.25}
+.permit-card .p-meta{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 10px}
+.permit-card .p-body{font-size:.78rem;color:var(--text);line-height:1.45}
+.permit-card .p-body p{margin:0 0 6px}
+.permit-card .p-how{font-size:.72rem;color:var(--muted);margin-top:8px;padding-top:8px;border-top:1px solid var(--line)}
+.chip.ok-soft{background:#dcfce7;color:#166534}
+.chip.bad-soft{background:#fee2e2;color:#991b1b}
+.chip.neu{background:#e2e8f0;color:#334155}
+html.dark .chip.ok-soft{background:#14532d;color:#bbf7d0}
+html.dark .chip.bad-soft{background:#7f1d1d;color:#fecaca}
+html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
+.permit-filters{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 12px}
+.permit-filters button{border:1px solid var(--line);background:var(--card);border-radius:999px;padding:6px 11px;font-size:.68rem;font-weight:750;color:var(--muted)}
+.permit-filters button.on{background:var(--primary);color:#fff;border-color:var(--primary)}
+#permitCount{font-size:.72rem;color:var(--muted);margin-bottom:8px}
+
+
+/* Pantalla de bloqueig */
+#lockScreen{position:fixed;inset:0;z-index:9999;background:linear-gradient(160deg,#0f172a 0%,#1e3a5f 100%);display:flex;align-items:center;justify-content:center;padding:24px}
+#lockScreen.hidden{display:none}
+.lock-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:20px;padding:28px 24px;width:100%;max-width:340px;text-align:center;backdrop-filter:blur(12px);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.lock-box h2{margin:0 0 6px;color:#f1f5f9;font-size:1.2rem}
+.lock-box p{margin:0 0 18px;color:#94a3b8;font-size:.82rem}
+.lock-box input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,.2);background:rgba(15,23,42,.6);color:#f8fafc;font-size:1.1rem;letter-spacing:.15em;text-align:center;margin-bottom:12px}
+.lock-box input:focus{outline:2px solid #60a5fa;border-color:transparent}
+.lock-box button{width:100%;padding:13px;border:0;border-radius:12px;background:#2563eb;color:#fff;font-weight:700;font-size:.95rem}
+.lock-box button:active{background:#1d4ed8}
+.lock-error{color:#fca5a5;font-size:.78rem;min-height:1.2em;margin:8px 0 0}
+.lock-box input.lock-mail{letter-spacing:normal;font-size:1rem;margin-bottom:10px}
+.lock-box button.lock-sec{margin-top:10px;background:transparent;border:1px solid rgba(255,255,255,.3);color:#e2e8f0}
+.lock-box button.lock-link{margin-top:8px;background:none;color:#93c5fd;font-weight:500;font-size:.8rem;padding:6px}
+.lock-wm{margin-top:18px;font-size:.7rem;color:#64748b;letter-spacing:.04em}
+
+.day.planificat,.week-row.planificat{background:#bfdbfe!important;border:1px solid #60a5fa!important;color:#0f172a!important;opacity:1!important}
+.day.planificat .num,.day.planificat .kind,.day.planificat .hrs,.week-row.planificat strong,.week-row.planificat small{color:#0f172a!important;opacity:1!important}
+
+/* Selector d'any: sense el fons més fosc a dins del pastís */
+.year-pill select,.year-pill select:focus{background:transparent!important;background-color:transparent!important;box-shadow:none!important;border:0!important;outline-offset:2px}
+.year-pill select option{background:var(--card);color:var(--text)}
+
+/* === POLIT PRO v2.9 (només capa visual; no toca la lògica) === */
+:root{--r:18px;--shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(37,99,235,.28)}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+h1,h2,h3{letter-spacing:-.02em}
+.appbar{padding:10px 16px;box-shadow:0 1px 0 rgba(15,23,42,.04)}
+.brand h1{font-size:1.08rem;font-weight:800}
+.year-pill{box-shadow:inset 0 0 0 1px rgba(37,99,235,.08)}
+.card{border-color:rgba(148,163,184,.28);transition:box-shadow .2s,transform .2s}
+.hero{background:radial-gradient(120% 140% at 0% 0%,#1e40af 0%,#0f172a 62%);box-shadow:0 12px 32px rgba(15,23,42,.28)}
+.hero h2{font-size:2.5rem;font-weight:800;letter-spacing:-.04em}
+.progress{height:10px}.progress i{background:linear-gradient(90deg,#60a5fa,#a5f3fc);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.card-title{font-size:.68rem;letter-spacing:.1em;display:flex;align-items:center;gap:8px}
+.card-title::after{content:"";flex:1;height:1px;background:currentColor;opacity:.12}
+.stat{border-radius:14px;transition:transform .15s}.stat:active{transform:scale(.97)}
+.stat b{font-size:1.3rem;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.btn{border-radius:12px;min-height:42px;transition:transform .12s,box-shadow .15s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);box-shadow:0 4px 12px rgba(37,99,235,.28)}
+.fab{background:linear-gradient(180deg,#3b82f6,#2563eb);padding:14px 20px}
+.row{transition:border-color .15s,box-shadow .15s,transform .15s}.row:hover{border-color:#93c5fd;box-shadow:0 4px 14px rgba(37,99,235,.1)}
+.chip{padding:4px 9px;font-size:.64rem}
+.nav{padding-top:8px;box-shadow:0 -6px 24px rgba(15,23,42,.06)}
+.nav button{position:relative;min-height:52px}
+.nav button.active{background:rgba(37,99,235,.1)}
+.nav button.active::before{content:"";position:absolute;top:-8px;left:30%;right:30%;height:3px;border-radius:0 0 4px 4px;background:var(--primary)}
+.day{border-radius:14px;transition:transform .12s,box-shadow .15s}.day:hover{box-shadow:0 4px 14px rgba(37,99,235,.14);transform:translateY(-1px)}
+input,select,textarea{border-radius:11px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:var(--ring);outline:0}
+.modal{border-radius:22px;box-shadow:0 24px 64px rgba(15,23,42,.35)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(100,116,139,.35);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+@media(max-width:600px){.hero h2{font-size:2.15rem}main{padding:10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* === ICONES SVG + INICI PLEGABLE v2.9.1 === */
+.ic{display:inline-block;width:1.2em;height:1.2em;vertical-align:-.22em;background:currentColor;-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat}
+.ic-home{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6'/></svg>")}.ic-calendar{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><path d='M3 10h18M8 3v4M16 3v4'/></svg>")}.ic-week{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='16' rx='2'/><path d='M3 9h18M9 9v11M15 9v11'/></svg>")}.ic-scale{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3v18M6 21h12M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7M19 7l-3 7a3 3 0 0 0 6 0l-3-7'/></svg>")}.ic-clip{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='4' width='12' height='17' rx='2'/><path d='M9 4h6v3H9zM9 12h6M9 16h4'/></svg>")}.ic-more{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h.01M12 12h.01M19 12h.01' stroke-width='3.2'/></svg>")}.ic-bell{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4'/></svg>")}.ic-clock{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg>")}
+.nav .ic{display:block;width:24px;height:24px;margin:0 auto 3px}
+.empty{text-align:center;color:var(--muted);font-size:.82rem;padding:18px 10px}
+.empty::before{content:"";display:block;width:34px;height:34px;margin:0 auto 8px;background:currentColor;opacity:.35;-webkit-mask:var(--i,none) center/contain no-repeat;mask:var(--i,none) center/contain no-repeat;--i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12.5l3 3 5-6'/%3E%3C/svg%3E")}
+
+details.card>summary{list-style:none;cursor:pointer;margin-bottom:0}details.card>summary::-webkit-details-marker{display:none}
+details.card[open]>summary{margin-bottom:12px}
+details.card>summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .2s;order:2;margin-left:auto}
+details.card[open]>summary::before{transform:rotate(45deg)}
+details.card>summary::after{order:1}
+
+/* === GRÀFIC ANUAL v2.10 === */
+.ic-chart{--i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20V10M10 20V4M16 20v-7M22 20H2'/%3E%3C/svg%3E")}
+#chart .bar{width:68%;max-width:30px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#60a5fa,#2563eb);transition:height .6s cubic-bezier(.2,.8,.2,1)}
+#chart .bar-wrap.now .bar{background:linear-gradient(180deg,#34d399,#059669)}
+#chart .bar-wrap.now .bar-label{color:var(--text);font-weight:850}
+#chart .bar-val{font-size:.58rem;font-weight:800;color:var(--muted);margin-bottom:3px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#chart .bar-wrap.now .bar-val{color:#059669}
+#chart{background:linear-gradient(var(--line),var(--line)) 0 100%/100% 1px no-repeat;padding-bottom:2px}
+
+/* === ANELL DE PROGRÉS + GRUPS DE JUDICIS v2.11 === */
+#progressPct{position:relative;isolation:isolate;width:68px;height:68px;border-radius:50%;display:grid;place-items:center;padding:0;font-size:.8rem;font-weight:850;color:#fff;font-variant-numeric:tabular-nums;background:conic-gradient(#7dd3fc calc(var(--p,0)*1%),rgba(255,255,255,.16) 0)}
+#progressPct::before{content:"";position:absolute;inset:6px;border-radius:50%;background:#12224f;z-index:-1}
+.group-head{font-size:.68rem;font-weight:850;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 2px 2px;display:flex;align-items:center;gap:8px}
+.group-head:first-child{margin-top:2px}.group-head::after{content:"";flex:1;height:1px;background:currentColor;opacity:.15}
+
+/* === PERMISOS v2.12 === */
+.search{width:100%;padding:12px 14px 12px 40px;border:1px solid var(--line);background:var(--card) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cpath d='M21 21l-4.3-4.3'/%3E%3C/svg%3E") 13px center/18px no-repeat;border-radius:14px}
+.permit-filters{flex-wrap:nowrap;overflow-x:auto;gap:8px;margin:10px -4px 12px;padding:2px 4px 6px;scrollbar-width:none;-webkit-overflow-scrolling:touch}.permit-filters::-webkit-scrollbar{display:none}
+.permit-filters button{flex:0 0 auto;border:1px solid var(--line);background:var(--card);color:var(--muted);border-radius:999px;padding:8px 14px;font-size:.78rem;font-weight:750;white-space:nowrap;transition:background .15s,color .15s,border-color .15s}
+.permit-filters button.on{background:var(--primary);border-color:var(--primary);color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.28)}
+#permitCount{font-size:.72rem;font-weight:750;color:var(--muted);margin:0 2px 10px}
+.permit-card{position:relative;border-radius:16px;padding:16px 16px 16px 20px;overflow:hidden;transition:box-shadow .2s,transform .2s}
+.permit-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#60a5fa,#2563eb)}
+.permit-card:hover{box-shadow:0 8px 24px rgba(37,99,235,.12);transform:translateY(-1px)}
+.permit-card h3,.permit-card strong{letter-spacing:-.01em}
+ .home-annual-compact .balance-detail,.home-annual-compact .hero-foot{display:none}.home-annual-compact .hero h2{font-size:1.65rem}.home-annual-compact .progress{height:5px;margin:9px 0 0}.home-annual-compact .btn.secondary{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff}
+
+/* Mode clar explícit: preval sobre les preferències fosques del sistema Android */
+html.light{color-scheme:light;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#64748b;--line:#d9e2ef;--primary:#2563eb;--primary2:#1d4ed8;--primary-soft:#eaf2ff;--shadow:0 4px 18px rgba(15,23,42,.055);}
+html.light body{background:var(--bg)!important;color:var(--text)!important}
+html.light .appbar,html.light .nav{background:rgba(255,255,255,.96)!important;color:var(--text)!important}
+html.light .card,html.light .stat,html.light .row,html.light input,html.light select,html.light textarea,html.light .day{background-color:#fff!important;color:#172033!important;border-color:#d9e2ef!important}
+html.light .year-pill{background:#eff6ff!important;color:#1e3a8a!important;border-color:#bfdbfe!important}
+html.light .day.weekend{background:#f1f5f9!important}html.light .day.work{background:#dbeafe!important;border-color:#93c5fd!important}
+html.light .day.mati{background:#fef3c7!important;border-color:#fcd34d!important}html.light .day.tarda{background:#ffedd5!important;border-color:#fdba74!important}
+html.light .day.nit,html.light .day.cs_nit,html.light .day.fn{background:#dbeafe!important;border-color:#93c5fd!important}
+html.light .day.vacances,html.light .day.festa{background:#dcfce7!important;border-color:#86efac!important}html.light .day.assumptes,html.light .day.hores_acum,html.light .day.dies_blaus{background:#d1fae5!important;border-color:#6ee7b7!important}
+html.light .day.baixa{background:#fee2e2!important;border-color:#fca5a5!important}html.light .day.judici{background:#f3e8ff!important;border-color:#c084fc!important}
+html.light .day .num,html.light .day .kind{color:#172033!important}html.light .day .hrs{color:#475569!important}
+html.light .note-icon-grid button{background:#fff!important;color:#172033!important}
+
+/* Contrast de lectura reforçat en superfícies fosques */
+html.dark .card:not(.hero),html.dark .stat,html.dark .row,html.dark .week-row,html.dark .monthly-row,html.dark .setting-row,html.dark .annual-month,html.dark .empty,html.dark .sim-item{
+  color:#f8fafc!important;
+}
+html.dark .card:not(.hero) p,html.dark .card:not(.hero) span,html.dark .card:not(.hero) small,
+html.dark .stat span,html.dark .stat small,html.dark .row small,html.dark .week-row small,
+html.dark .monthly-row small,html.dark .setting-row small,html.dark .annual-month small,
+html.dark .muted,html.dark .hint{
+  color:#cbd5e1!important;
+}
+html.dark .card-title,html.dark .eyebrow,html.dark label{
+  color:#dbeafe!important;
+}
+html.dark .hero,html.dark .hero h2,html.dark .hero p,html.dark .hero span,html.dark .hero small,
+html.dark .hero .saldo,html.dark .hero .eyebrow,html.dark .hero .hero-foot{
+  color:#fff!important;
+}
+html.dark .hero .balance-detail{color:#e2e8f0!important;opacity:1}
+html.dark .stat b,html.dark .stat strong,html.dark .row strong,html.dark .week-row strong,
+html.dark .monthly-row strong,html.dark .setting-row strong,html.dark .annual-month strong{
+  color:#fff!important;
+}
+html.dark .btn.secondary{color:#f8fafc!important}
+html.dark input,html.dark select,html.dark textarea{color:#f8fafc!important}
+html.dark input::placeholder,html.dark textarea::placeholder{color:#aebed2!important;opacity:1}
+
+/* Ajustos finals de contrast, comprovats amb captures reals */
+html.light .week-row{background:#fff!important;color:#172033!important;border-color:#d7e0eb!important}
+html.light .week-row strong,html.light .week-row .week-sum{color:#172033!important}
+html.light .week-row small,html.light .week-row .week-date small{color:#526174!important}
+html.light .week-row:not([class*=" "]){background:#fff!important}
+html.light .week-row.baixa{background:#fee2e2!important;color:#7f1d1d!important;border-color:#fca5a5!important}
+html.light .week-row.baixa strong,html.light .week-row.baixa .week-sum{color:#7f1d1d!important}
+html.light .week-row.baixa small{color:#854d4d!important}
+html.light button:disabled,html.light .btn:disabled,html.light button[aria-disabled="true"]{opacity:1!important;color:#fff!important;background:#64748b!important;border-color:#64748b!important;-webkit-text-fill-color:#fff!important}
+html.light .btn.primary:disabled{background:#64748b!important;color:#fff!important}
+html.light .btn.secondary:disabled{background:#e2e8f0!important;color:#475569!important;border-color:#cbd5e1!important;-webkit-text-fill-color:#475569!important}
+html.dark .week-row{color:#f8fafc!important}
+html.dark .week-row strong,html.dark .week-row .week-sum{color:#fff!important}
+html.dark .week-row small,html.dark .week-row .week-date small{color:#cbd5e1!important}
+html.dark .week-row:not(.work):not(.mati):not(.tarda):not(.nit):not(.cs_nit):not(.fn):not(.vacances):not(.assumptes):not(.hores_acum):not(.dies_blaus):not(.festa):not(.cs_dia):not(.baixa):not(.guardia_np){background:#172338!important;border-color:#40516a!important}
+html.dark .chip.warn{background:#713f12!important;color:#fef3c7!important}
+html.dark .chip.ok{background:#14532d!important;color:#dcfce7!important}
+html.dark .chip.bad{background:#7f1d1d!important;color:#fee2e2!important}
+html.dark .chip.info{background:#1e3a8a!important;color:#dbeafe!important}
+html.dark .chip{font-weight:850!important;text-shadow:none!important;opacity:1!important}
+html.dark button:disabled,html.dark .btn:disabled,html.dark button[aria-disabled="true"]{opacity:1!important;color:#f8fafc!important;-webkit-text-fill-color:#f8fafc!important}
+
+/* TEMES: superfícies i textos coherents, sense alterar els colors d'estat */
+html.light .week-row,
+html.light .week-row:not([style*="--record-color"]),
+html.light .row,html.light .setting-row,html.light .empty,
+html.light .modal,html.light .modal-card,html.light .panel,
+html.light .card .week-row{
+  background:#fff!important;color:#172033!important;border-color:#d7e0eb!important;
+}
+html.light .week-row strong,html.light .week-row .week-sum,
+html.light .row strong,html.light .setting-row strong,
+html.light .modal,html.light .modal strong{color:#172033!important}
+html.light .week-row small,html.light .row small,
+html.light .setting-row small,html.light .hint,
+html.light .muted{color:#526174!important}
+html.light .week-row.baixa{background:#fee2e2!important;border-color:#fca5a5!important;color:#7f1d1d!important}
+html.light .week-row.baixa strong,html.light .week-row.baixa .week-sum{color:#7f1d1d!important}
+html.light .week-row.baixa small{color:#854d4d!important}
+html.light .week-row.mati{background:#fef3c7!important;border-color:#fcd34d!important;color:#713f12!important}
+html.light .week-row.tarda{background:#ffedd5!important;border-color:#fdba74!important;color:#7c2d12!important}
+html.light .week-row.nit,html.light .week-row.cs_nit,html.light .week-row.fn{background:#dbeafe!important;border-color:#93c5fd!important;color:#1e3a8a!important}
+html.light .week-row.vacances,html.light .week-row.assumptes,html.light .week-row.hores_acum,html.light .week-row.dies_blaus,html.light .week-row.festa{background:#dcfce7!important;border-color:#86efac!important;color:#14532d!important}
+html.light .week-row.judici{background:#f3e8ff!important;border-color:#c084fc!important;color:#581c87!important}
+html.light .week-row[style*="--record-color"]{color:#172033!important}
+html.light .week-row[style*="--record-color"] strong,html.light .week-row[style*="--record-color"] .week-sum{color:#172033!important}
+html.light .btn:disabled,html.light button:disabled,html.light [aria-disabled="true"]{opacity:1!important;background:#64748b!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#64748b!important}
+html.light .btn.secondary:disabled{background:#e2e8f0!important;color:#475569!important;-webkit-text-fill-color:#475569!important;border-color:#cbd5e1!important}
+
+/* En mode fosc, els valors del resum conserven els seus colors semàntics */
+html.dark .stats .stat.green b{color:#4ade80!important}
+html.dark .stats .stat.red b{color:#fb7185!important}
+html.dark .stats .stat.blue b{color:#60a5fa!important}
+html.dark .stats .stat.purple b{color:#c084fc!important}
+html.dark .stats .stat.pink b{color:#f472b6!important}
+html.dark .stats .stat.orange b{color:#fb923c!important}
+html.dark .stats .stat.cyan b{color:#22d3ee!important}
+html.dark .stats .stat span{color:#cbd5e1!important}
+html.dark .stats .stat{background:#111b2d!important;border-color:#40516a!important}
+html.dark .chip.warn{background:#713f12!important;color:#fef3c7!important}
+html.dark .chip.ok{background:#14532d!important;color:#dcfce7!important}
+html.dark .chip.bad{background:#7f1d1d!important;color:#fee2e2!important}
+html.dark .chip.info{background:#1e3a8a!important;color:#dbeafe!important}
+html.dark .chip{opacity:1!important;font-weight:850!important}
+
+/* === FIX CONTRAST DIA/FOSC v2.12.8: el tema triat (html.light/html.dark) mana sobre el mode del mòbil === */
+html.light .btn:not(.primary):not(.danger),html.light .month-head button,html.light .monthly-row,html.light .legend-chip{background:#f5f8fc!important;color:#17325c!important;border:1px solid #d5e1ef!important;-webkit-text-fill-color:#17325c!important}
+html.light .btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb)!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border:0!important}
+html.light .btn.danger{background:#fee2e2!important;color:#991b1b!important;-webkit-text-fill-color:#991b1b!important}
+html.light .install-banner{background:#fff!important;color:#172033!important;border-color:#bfdbfe!important}html.light .install-banner small{color:#526174!important}
+html.light .annual-month{background:linear-gradient(145deg,#eff6ff,#fff)!important;color:#172033!important}
+html.light .toggle-row,html.light label,html.light .card-title{color:inherit}
+html.dark .btn:not(.primary):not(.danger),html.dark .month-head button,html.dark .monthly-row{background:#1a2639!important;color:#e8eef7!important;border:1px solid #344963!important;-webkit-text-fill-color:#e8eef7!important}
+html.dark .btn.primary{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html.dark .btn.danger{background:#3b1519!important;color:#fecaca!important;-webkit-text-fill-color:#fecaca!important}
+html.dark .card,html.dark .row,html.dark .setting-row{color:#e8eef7}html.dark .hint,html.dark small{color:#9aa9bd}
+
+/* === FONS v2.12.8: Dia una mica més fosc, Fosc una mica més clar, perquè destaquin les targetes === */
+html.light{--bg:#e2e9f3}
+html.light body{background:#e2e9f3!important}
+html.dark{--bg:#1a2640}
+html.dark body{background:#1a2640!important}
+html.dark .card,html.dark .row,html.dark .setting-row,html.dark .stat,html.dark .day{box-shadow:0 2px 10px rgba(0,0,0,.28)}
+html.light .card,html.light .row,html.light .stat{box-shadow:0 2px 10px rgba(15,23,42,.08)}
+</style>
+</head>
+<body>
+
+<div id="lockScreen" role="dialog" aria-modal="true" aria-labelledby="lockTitle">
+  <div class="lock-box">
+    <h2 id="lockTitle">Codex GH</h2>
+    <p id="lockSub">Inicia sessió o crea el teu compte</p>
+    <form id="lockForm" onsubmit="return tryUnlock(event)">
+      <input type="email" id="lockEmail" class="lock-mail" autocomplete="username" placeholder="Correu electrònic" aria-label="Correu electrònic">
+      <input type="password" id="lockInput" autocomplete="current-password" placeholder="Contrasenya" maxlength="64" aria-label="Contrasenya">
+      <button type="submit">Entrar</button>
+      <button type="button" id="lockRegister" class="lock-sec" onclick="RHSync.register()">Crear compte nou</button>
+      <button type="button" id="lockReset" class="lock-link" onclick="RHSync.reset()">Has oblidat la contrasenya?</button>
+      <div class="lock-error" id="lockError"></div>
+    </form>
+  </div>
+</div>
+<header class="appbar"><div class="appbar-row">
+<div class="brand"><h1 id="app-title">Codex GH</h1><small id="app-subtitle">Personal</small></div>
+<div class="year-pill"><button onclick="changeYear(-1)" aria-label="Any anterior">‹</button><select id="yearSelect" onchange="selectYear(this.value)"></select><button onclick="changeYear(1)" aria-label="Any següent">›</button></div>
+</div></header>
+
+<div class="watermark" id="watermark" aria-hidden="true"></div><div id="installBanner" class="install-banner" role="status"><div class="grow"><strong>Instal·la Codex GH</strong><small>Accedeix més ràpidament des de la pantalla d’inici.</small></div><button class="btn primary small" onclick="installApp()">Instal·lar</button><button class="btn secondary small" onclick="dismissInstall()" aria-label="Tancar">×</button></div><div id="backupBanner" class="install-banner" role="status"><div class="grow"><strong>Fes una còpia de seguretat</strong><small id="backupBannerText"></small></div><button class="btn primary small" onclick="backupNow()">Exportar</button><button class="btn secondary small" onclick="dismissBackupReminder()" aria-label="Ara no">×</button></div><main>
+<section id="view-home" class="view active">
+  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div></div>
+  <div class="section card" id="todayCard"></div>
+  <div class="section card hero home-annual-compact">
+    <div class="hero-top"><div><div class="eyebrow">Còmput anual</div><h2 id="saldo">+0:00</h2><div class="saldo" id="saldoText">Calculant…</div><div class="balance-detail" id="balanceDetail" aria-hidden="true">Calculant previsió…</div></div><div class="chip" id="progressPct">0%</div></div>
+    <div class="progress"><i id="progressBar" style="width:0%"></i></div>
+    <div class="hero-foot"><span id="workedLabel">0 h fetes</span><span id="targetLabel">de 0 h</span></div>
+    <button class="btn secondary" onclick="showView('stats')" style="width:100%;margin-top:12px"><i class="ic ic-chart"></i> Anàlisi anual i previsió</button>
+  </div>
+  <details class="section card" open><summary class="card-title">Pròxim</summary><div id="upcoming"></div></details>
+  <details class="section card" open><summary class="card-title">Cobraments</summary><div id="alerts"></div></details>
+  <p class="hint" id="homeVersion" style="text-align:center;margin:10px 0 90px"></p>
+</section>
+
+<section id="view-calendar" class="view">
+  <div class="toolbar"><button class="btn secondary small" id="calendarModeBtn" onclick="toggleCalendarMode()">Resum mensual</button><div class="grow"></div><button class="btn secondary small" id="calendarMultiToggle" onclick="toggleMulti()">Selecció múltiple</button><button class="btn primary small" id="multiApply" style="display:none" onclick="openBulk()">Aplicar</button></div>
+  <div class="card calendar-card"><div class="month-head"><button onclick="changeMonth(-1)">‹</button><h2 id="monthTitle"></h2><button onclick="changeMonth(1)">›</button></div><div class="calendar" id="calendar"></div><div class="monthly-list" id="monthlyList" style="display:none"></div></div>
+  <div class="section card"><div class="card-title">Llegenda</div><div class="actions" id="legend"></div></div>
+</section>
+
+<section id="view-week" class="view">
+  <div class="toolbar"><button class="btn secondary small" onclick="changeWeek(-7)">‹</button><div class="grow" id="weekTitle" style="font-weight:800;text-align:center"></div><button class="btn secondary small" onclick="changeWeek(7)">›</button><button class="btn secondary small" id="weekMultiToggle" onclick="toggleMulti()">Selecció múltiple</button><button class="btn primary small" id="weekMultiApply" style="display:none" onclick="openBulk()">Aplicar</button></div>
+  <div class="card"><div class="week" id="weekList"></div></div>
+  <div class="card"><div class="card-title">Total setmana</div><div class="stats" id="weekStats"></div></div>
+</section>
+
+<section id="view-trials" class="view">
+  <div class="toolbar"><input class="search" id="trialSearch" placeholder="Cerca per jutjat, procediment, agent…" oninput="renderTrials()"><button class="btn secondary small" id="trialDateClear" style="display:none" onclick="clearTrialDateFilter()">× Dia</button></div>
+  <div class="card"><div class="actions"><button class="btn primary" onclick="openTrial()">＋ Nou judici</button><span class="chip" id="trialPending"></span><span class="chip warn" id="trialSuspended"></span><span class="chip warn" id="trialPay"></span></div></div>
+  <div class="list" id="trialsList"></div>
+</section>
+
+<section id="view-stats" class="view">
+  <div class="card"><div class="card-title" id="annualTitle">Calendari anual</div><div class="annual-grid" id="annualCalendar"></div><p class="hint" style="margin:10px 0 0">Període de còmput: febrer – gener. Toca un mes per obrir-ne el calendari detallat.</p></div>
+  <div class="card"><div class="card-title">Còmput mensual · hores efectives</div><div class="chart" id="chart"></div></div>
+  <div class="card"><div class="card-title">Distribució</div><div class="stats" id="statsDetail"></div></div>
+  <div class="card"><div class="card-title">Previsió de tancament</div><div id="forecast"></div></div>
+  <div class="card"><div class="card-title">Simulador de torns futurs</div><div id="shiftSimulator"></div></div>
+</section>
+
+<section id="view-more" class="view">
+  <div class="card" id="accountCard" style="display:none"><div class="card-title">Compte i sincronització</div>
+    <div class="row"><div class="grow"><strong id="syncEmail">—</strong><small id="syncStatus">—</small></div></div>
+    <div class="row" id="verifyRow" style="display:none"><div class="grow"><strong>Correu sense verificar</strong><small>Obre l'enllaç que t'hem enviat per correu.</small></div><button class="btn secondary small" onclick="RHSync.resendVerify()">Reenviar</button></div>
+    <div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="RHSync.syncNow()">Sincronitzar ara</button><button class="btn danger" onclick="RHSync.logout()">Tancar sessió</button></div>
+    <div class="actions" style="margin-top:8px"><button class="btn secondary small" onclick="RHSync.deleteAccount()">Eliminar compte i dades</button></div>
+    <p class="hint" style="margin-top:10px">Les dades queden lligades al teu compte: en iniciar sessió en un altre dispositiu apareixen les mateixes. Una altra persona amb el seu propi compte té les seves dades separades.</p>
+  </div>
+  <div class="card"><div class="card-title">Perfils i quadrants de torn</div><p class="hint">Defineix la rotació base del teu escamot. El pla és orientatiu i separat dels registres reals: no suma hores ni crea jornades.</p><div id="shiftProfilesPanel"></div></div>
+  <div class="card"><div class="card-title">Configuració</div>
+    <div class="form-grid">
+      <div><label>Hores anuals</label><input type="number" id="cfgHours" step=".5"></div>
+      <div><label>Vacances (h)</label><input type="number" id="cfgVac" step=".5"></div>
+      <div><label>Assumptes (h)</label><input type="number" id="cfgPers" step=".5"></div>
+      <div><label>Dies blaus (h)</label><input type="number" id="cfgBlue" step=".5"></div>
+      <div><label>GNP (h)</label><input type="number" id="cfgGnp" step=".5"></div>
+      <div><label>Guàrdies nit (h)</label><input type="number" id="cfgGnit" step=".5"></div>
+      <div><label>Acumulades inicials (h)</label><input type="number" id="cfgAccum" step=".5"></div>
+    </div>
+    <label>Títol</label><input id="cfgTitle"><label>Subtítol</label><input id="cfgSubtitle"><label>TIP / Identificador (marca d'aigua)</label><input id="cfgTip" placeholder="Ex: TIP 18675 (opcional)">
+    <div class="switch-row" style="grid-column:1/-1;margin-top:8px">
+      <div><strong>Mode fosc</strong><small style="display:block;color:var(--muted)">Auto (sistema) / Clar / Fosc</small></div>
+      <select id="cfgDark" style="width:auto;min-width:110px;margin:0">
+        <option value="auto">Auto</option>
+        <option value="light">Clar</option>
+        <option value="dark">Fosc</option>
+      </select>
+    </div>
+    <div class="switch-row" style="grid-column:1/-1">
+      <div><strong>Recordatori diari</strong><small style="display:block;color:var(--muted)">Notificació si no has registrat avui (navegadors compatibles)</small></div>
+      <label class="switch"><input type="checkbox" id="cfgNotify"><span class="slider"></span></label>
+    </div>
+    <button class="btn primary" onclick="saveConfig()" style="grid-column:1/-1">Desar configuració</button>
+  </div>
+  <div class="card"><div class="card-title">Torns</div><div id="shiftConfig"></div><button class="btn secondary small" onclick="addShift()">＋ Afegir torn</button></div>
+  <div class="card"><div class="card-title">Dades i còpies de seguretat</div>
+    <div class="actions"><button class="btn secondary" onclick="exportJSON()">Exportar JSON</button><button class="btn secondary" onclick="importJSON()">Importar JSON</button><button class="btn secondary" onclick="exportCSV()">Exportar CSV</button><button class="btn secondary" onclick="exportPDF()">Exportar PDF / Imprimir</button></div>
+    <p class="hint" style="margin-top:10px">La importació reconeix el format de la versió anterior. Abans de substituir dades es crea una còpia local de seguretat.</p>
+    <button class="btn danger" onclick="resetAll()">Esborrar dades</button>
+  </div>
+
+  <div class="card"><div class="card-title">Manual d'ús</div>
+    <p class="hint" style="margin-top:-4px;margin-bottom:12px">Guia per apartats. Toca un títol per desplegar-lo.</p>
+    <div class="manual">
+<details><summary>1. Què és aquesta app</summary><div class="manual-body"><p><strong>Codex GH</strong> és una eina personal per controlar la jornada, hores, permisos, nits, acumulades i judicis.</p><p>L'app treballa amb el còmput anual de <strong>1580 hores efectives</strong> i permet conservar l'històric de diferents anys.</p><p>Les dades es poden guardar localment i, si el compte Firebase està configurat, <strong>sincronitzar-les entre dispositius</strong>.</p></div></details>
+<details><summary>2. Pantalla d'inici</summary><div class="manual-body"><ul><li><strong>Avui:</strong> mostra el registre del dia actual i permet editar-lo.</li><li><strong>Pròxim:</strong> mostra només judicis futurs i dies futurs amb icona. El dia actual no hi entra.</li><li><strong>Accions pendents:</strong> mostra només <strong>judicis celebrats i encara no cobrats</strong> i <strong>dies marcats amb cobrament especial que encara no s'han cobrat</strong>.</li><li>Un <strong>punt vermell 🔴</strong> al costat d’un judici indica que té observacions guardades. El punt també es mostra a les llistes de judicis; el text de les observacions no apareix als resums.</li><li>Les hores extres, per si soles, <strong>no</strong> generen una acció pendent.</li><li>Els resums es poden tocar per consultar el detall.</li></ul></div></details>
+<details><summary>3. Com registrar un dia</summary><div class="manual-body"><p>1. Toca un dia al calendari/setmana o prem <strong>＋ Registrar</strong>.<br>2. Tria el tipus de registre.<br>3. Si és treball, tria el torn i indica entrada/sortida. Les hores es calculen automàticament.<br>4. Pots seleccionar una <strong>icona</strong> i escriure una <strong>nota</strong>.<br>5. Desa.</p><p>La informació escrita a <strong>Notes</strong> és la que apareix als resums quan correspon; no es mostra cap text genèric d'"observació" si no has escrit res.</p><p>Amb la <strong>selecció múltiple</strong> pots aplicar un mateix registre a diversos dies.</p></div></details>
+<details><summary>4. Cobrament especial d'un dia</summary><div class="manual-body"><p>En registrar una jornada de treball pots marcar <strong>«Aquest dia té cobrament especial»</strong>.</p><p>Quan ho marques apareix <strong>«Cobrament especial cobrat»</strong>.</p><ul><li>Marcat especial + no cobrat → apareix a <strong>Accions pendents</strong>.</li><li>Marcat especial + cobrat → deixa d'aparèixer a pendents.</li><li>Si no marques cobrament especial, el dia <strong>no</strong> apareix a pendents encara que tingui més hores de les previstes.</li></ul></div></details>
+<details><summary>5. Judicis</summary><div class="manual-body"><p>A <strong>Judicis</strong> pots registrar data, hora, jutjat, sala, procediment i agents, i marcar si el judici s'ha celebrat, si s'ha cobrat, si queda suspès o si cal canviar el torn.</p><p>El formulari també inclou el camp <strong>Observacions del judici</strong>. Escriu-hi qualsevol anotació que vulguis conservar per a aquell judici. Les observacions es guarden en editar o desar el judici i es poden consultar tornant a obrir-ne el formulari.</p><p>Quan un judici té observacions, apareix un <strong>punt vermell 🔴</strong> al costat de la seva informació a la pantalla d’inici, a Accions pendents i a la llista completa de judicis. El punt només indica que hi ha observacions: <strong>el text no es mostra als resums</strong>.</p><p>El resum utilitza aquest format:</p><p><strong>⚖️ Dj 5 Novembre 18.30h 🔴</strong><br><span class="hint">Ins. 18, sala 221, dil. 1234/2024, TIP 2342</span></p><ul><li><strong>Judici futur:</strong> apareix a Pròxim.</li><li><strong>Judici celebrat però no cobrat:</strong> apareix a Accions pendents.</li><li><strong>Judici cobrat:</strong> ja no apareix a Accions pendents.</li><li><strong>Judici suspès:</strong> queda identificat com a suspès.</li></ul></div></details>
+<details><summary>6. Còmput general (1580 h)</summary><div class="manual-body"><p>Al còmput general entren treball, assumptes personals, Dies Blaus i baixa. El torn «Festa» resta hores.</p><p>Vacances, GNP, ús d'acumulades i hores extres tenen els seus propis comptadors i no s'afegeixen directament al còmput general.</p></div></details>
+<details><summary>7. Torn de matí</summary><div class="manual-body"><p>El marc és de <strong>7,5 h</strong>, però la jornada habitual 07:00–15:00 computa <strong>8 h</strong> al general i genera <strong>0,5 h</strong> d'acumulades respecte al marc.</p></div></details>
+<details><summary>8. Nits (22:00–06:00)</summary><div class="manual-body"><p>Al comptador de nits només es compten les hores entre <strong>22:00 i 06:00</strong>. La resta del torn va al còmput general.</p></div></details>
+<details><summary>9. Vacances, AP, Dies Blaus, GNP i extres</summary><div class="manual-body"><ul><li><strong>Vacances:</strong> resten del bo de vacances.</li><li><strong>Assumptes personals:</strong> resten del bo d'AP i del còmput general.</li><li><strong>Dies Blaus:</strong> resten del bo i del còmput general.</li><li><strong>GNP:</strong> només del bo GNP.</li><li><strong>Hores acumulades:</strong> ús contra el saldo d'acumulades.</li><li><strong>Hores extres:</strong> només al comptador d'extres.</li></ul></div></details>
+<details><summary>10. Calendari, setmana i resum mensual</summary><div class="manual-body"><ul><li><strong>Calendari:</strong> vista mensual amb colors i icones.</li><li><strong>Resum mensual:</strong> llista ordenada dels dies i les hores.</li><li><strong>Setmana:</strong> mostra els dies de la setmana i el balanç d'hores.</li></ul></div></details>
+<details><summary>11. Acumulades</summary><div class="manual-body"><p><strong>Saldo d'acumulades = inicials + hores generades − hores utilitzades.</strong> Toca la targeta d'acumulades per veure els moviments.</p></div></details>
+<details><summary>12. Permisos</summary><div class="manual-body"><p>La pestanya <strong>Permisos</strong> permet buscar i filtrar llicències, permisos i reduccions. La informació és orientativa i no substitueix la normativa oficial ni ATRI.</p></div></details>
+<details><summary>13. Dades, còpies i sincronització</summary><div class="manual-body"><ul><li><strong>Exportar JSON:</strong> crea una còpia completa.</li><li><strong>Importar JSON:</strong> recupera una còpia; es fa una còpia local abans de substituir dades.</li><li><strong>CSV/PDF:</strong> permet consultar o arxivar la informació.</li><li>Si hi ha compte configurat, la sincronització manté les dades entre dispositius <strong>dia a dia</strong>: si edites dies diferents en dos dispositius, es fusionen; si edites el mateix dia, guanya l'última modificació.</li><li>L'app guarda una còpia local diària (7 dies) i t'avisa si fa més d'un mes que no exportes un JSON.</li></ul><p><strong>No esborres les dades del navegador sense haver exportat una còpia.</strong></p></div></details>
+<details><summary>14. Mode fosc, recordatoris i instal·lació</summary><div class="manual-body"><ul><li><strong>Mode fosc:</strong> Auto, Clar o Fosc.</li><li><strong>Recordatori diari:</strong> pot avisar si encara no has registrat la jornada.</li><li><strong>PWA:</strong> pots instal·lar l'app al dispositiu per utilitzar-la com una aplicació.</li></ul></div></details>
+    </div>
+  </div>
+
+  <div class="card"><div class="card-title">PWA</div><div id="pwaStatus" class="hint">Preparant…</div><button class="btn secondary" onclick="installApp()" id="installBtn" style="display:none">Instal·lar aplicació</button>
+    <p class="hint" style="margin-top:12px"><span id="appVersion"></span> · <a href="privacitat.html" style="color:var(--primary);font-weight:700">Política de privadesa</a> · necessària si publiques a Google Play</p>
+  </div>
+</section>
+</main>
+
+<button class="fab" onclick="openDay(todayKey())">＋ Registrar</button>
+
+<section id="view-permisos" class="view">
+  <div class="card">
+    <div class="card-title">Llicències i permisos</div>
+    <p class="hint" style="margin-top:-4px">Resum orientatiu segons criteris CME (nov. 2025). No substitueix la normativa oficial ni ATRI.</p>
+    <input class="search" id="permitSearch" placeholder="Cerca: judici, mort, assumptes, lactància, trasllat…" oninput="renderPermisos()" autocomplete="off">
+    <div class="permit-filters" id="permitFilters">
+      <button type="button" class="on" data-f="tots" onclick="setPermitFilter('tots')">Tots</button>
+      <button type="button" data-f="retribuit" onclick="setPermitFilter('retribuit')">Retribuïts</button>
+      <button type="button" data-f="no_retribuit" onclick="setPermitFilter('no_retribuit')">No retribuïts</button>
+      <button type="button" data-f="lllicencia" onclick="setPermitFilter('lllicencia')">Llicències</button>
+      <button type="button" data-f="permis" onclick="setPermitFilter('permis')">Permisos</button>
+      <button type="button" data-f="frequents" onclick="setPermitFilter('frequents')">Més freqüents</button>
+      <button type="button" data-f="reduccio" onclick="setPermitFilter('reduccio')">Reduccions</button>
+    </div>
+    <div id="permitCount"></div>
+    <div id="permitList"></div>
+  </div>
+</section>
+
+<nav class="nav">
+<button data-view="home" class="active" onclick="showView('home')"><i class="ic ic-home"></i>Inici</button>
+<button data-view="calendar" onclick="showView('calendar')"><i class="ic ic-calendar"></i>Calendari</button>
+<button data-view="week" onclick="showView('week')"><i class="ic ic-week"></i>Setmana</button>
+<button data-view="trials" onclick="clearTrialDateFilter();document.getElementById('trialSearch').value='';showView('trials')"><i class="ic ic-scale"></i>Judicis</button>
+<button data-view="permisos" onclick="showView('permisos')"><i class="ic ic-clip"></i>Permisos</button>
+<button data-view="more" onclick="showView('more')"><i class="ic ic-more"></i>Més</button>
+</nav>
+
+<div class="modal-bg" id="dayModal"><div class="modal">
+<div class="modal-head"><h2 id="dayModalTitle">Registrar jornada</h2><button class="close" onclick="closeModal('dayModal')">×</button></div>
+<label>Tipus</label><select id="dayType" onchange="updateDayForm()"><option value="">— Sense registre —</option><option value="treball">Treball</option><option value="vacances">Vacances</option><option value="assumptes">Assumptes personals</option><option value="dies_blaus">Dies Blaus</option><option value="baixa">Baixa</option><option value="guardia_np">Guàrdia No Presencial</option><option value="hores_acum">Hores acumulades</option><option value="hores_extres">Hores extres</option><option value="altres_general">Altres</option></select>
+<div id="workFields">
+<label>Torn</label><select id="dayShift" onchange="shiftChanged()"></select>
+<div class="form-grid"><div><label>Entrada</label><input type="time" id="dayStart"></div><div><label>Sortida</label><input type="time" id="dayEnd"></div></div>
+<label>Hores computables / reals</label><input type="number" id="dayHours" min="0" max="24" step=".25" readonly title="Calculades automàticament a partir de l'entrada i la sortida"><div class="hint" id="dayCalcHint"></div>
+</div>
+<div id="conceptFields" style="display:none"><label>Hores del concepte</label><input type="number" id="conceptHours" min="0" max="24" step=".25"></div>
+<label>Observació / icona</label><input type="hidden" id="dayNoteIcon"><button type="button" class="btn secondary" id="noteIconBtn" onclick="openNoteIconPicker()" style="width:100%;text-align:left;margin-bottom:10px">➕ Tria una icona</button><label>Notes</label><textarea id="dayNotes" placeholder="Observacions…"></textarea>
+<div class="form-actions"><button class="btn primary" onclick="saveDay()">Desar</button><button class="btn secondary" onclick="closeModal('dayModal')">Cancel·lar</button><button class="btn danger" id="deleteDayBtn" onclick="deleteDay()" style="display:none">Esborrar registre</button></div>
+</div></div>
+
+<div class="modal-bg" id="noteIconPicker"><div class="modal note-icon-modal">
+<div class="modal-head"><h2>Tria una icona</h2><button class="close" onclick="closeModal('noteIconPicker')">×</button></div>
+<p class="hint">Toca la icona que millor descrigui la situació.</p>
+<div class="note-icon-grid">
+<button type="button" onclick="selectNoteIcon('')">✕<small>Cap</small></button>
+<button type="button" onclick="selectNoteIcon('🩺')">🩺<small>Metge</small></button>
+<button type="button" onclick="selectNoteIcon('🧑‍⚕️')">🧑‍⚕️<small>Fisio</small></button>
+<button type="button" onclick="selectNoteIcon('🏥')">🏥<small>CAP</small></button>
+<button type="button" onclick="selectNoteIcon('🏫')">🏫<small>Escola</small></button>
+<button type="button" onclick="selectNoteIcon('🏖️')">🏖️<small>Platja</small></button>
+<button type="button" onclick="selectNoteIcon('🏔️')">🏔️<small>Muntanya</small></button>
+<button type="button" onclick="selectNoteIcon('🏥')">🏥<small>Hospital</small></button>
+<button type="button" onclick="selectNoteIcon('⛽️')">⛽️<small>Gasolinera</small></button>
+<button type="button" onclick="selectNoteIcon('✈️')">✈️<small>Viatge</small></button>
+<button type="button" onclick="selectNoteIcon('☃️')">☃️<small>Neu</small></button>
+<button type="button" onclick="selectNoteIcon('🎉')">🎉<small>Celebració</small></button>
+<button type="button" onclick="selectNoteIcon('☎️')">☎️<small>Trucada</small></button>
+<button type="button" onclick="selectNoteIcon('👓')">👓<small>Oculista</small></button>
+<button type="button" onclick="selectNoteIcon('🔧')">🔧<small>Taller</small></button>
+<button type="button" onclick="selectNoteIcon('💊')">💊<small>Farmàcia</small></button>
+<button type="button" onclick="selectNoteIcon('🦷')">🦷<small>Dentista</small></button>
+<button type="button" onclick="selectNoteIcon('🏠')">🏠<small>Casa</small></button>
+<button type="button" onclick="selectNoteIcon('🚗')">🚗<small>Vehicle</small></button>
+<button type="button" onclick="selectNoteIcon('🚆')">🚆<small>Tren</small></button>
+<button type="button" onclick="selectNoteIcon('🚌')">🚌<small>Bus</small></button>
+<button type="button" onclick="selectNoteIcon('🛒')">🛒<small>Compres</small></button>
+<button type="button" onclick="selectNoteIcon('🏦')">🏦<small>Banc</small></button>
+<button type="button" onclick="selectNoteIcon('💶')">💶<small>Diners</small></button>
+<button type="button" onclick="selectNoteIcon('📚')">📚<small>Estudis</small></button>
+<button type="button" onclick="selectNoteIcon('🎓')">🎓<small>Formació</small></button>
+<button type="button" onclick="selectNoteIcon('⚖️')">⚖️<small>Judici</small></button>
+<button type="button" onclick="selectNoteIcon('👶')">👶<small>Nens</small></button>
+<button type="button" onclick="selectNoteIcon('🐶')">🐶<small>Mascota</small></button>
+<button type="button" onclick="selectNoteIcon('🍽️')">🍽️<small>Menjar</small></button>
+<button type="button" onclick="selectNoteIcon('🏋️')">🏋️<small>Gimnàs</small></button>
+<button type="button" onclick="selectNoteIcon('🎂')">🎂<small>Aniversari</small></button>
+<button type="button" onclick="selectNoteIcon('🎁')">🎁<small>Regal</small></button>
+<button type="button" onclick="selectNoteIcon('💻')">💻<small>Ordinador</small></button>
+<button type="button" onclick="selectNoteIcon('📅')">📅<small>Cita</small></button>
+<button type="button" onclick="selectNoteIcon('🚓')">🚓<small>Patrulla</small></button>
+<button type="button" onclick="selectNoteIcon('🚨')">🚨<small>Urgència</small></button>
+<button type="button" onclick="selectNoteIcon('👮')">👮<small>Agent</small></button>
+<button type="button" onclick="selectNoteIcon('🛡️')">🛡️<small>Seguretat</small></button>
+<button type="button" onclick="selectNoteIcon('📝')">📝<small>Atestat</small></button>
+<button type="button" onclick="selectNoteIcon('📋')">📋<small>Informe</small></button>
+<button type="button" onclick="selectNoteIcon('🗂️')">🗂️<small>Arxiu</small></button>
+<button type="button" onclick="selectNoteIcon('🔒')">🔒<small>Custòdia</small></button>
+<button type="button" onclick="selectNoteIcon('🎯')">🎯<small>Tir</small></button>
+<button type="button" onclick="selectNoteIcon('🏟️')">🏟️<small>Dispositiu</small></button>
+<button type="button" onclick="selectNoteIcon('🚧')">🚧<small>Control</small></button>
+<button type="button" onclick="selectNoteIcon('🚦')">🚦<small>Trànsit</small></button>
+<button type="button" onclick="selectNoteIcon('🏍️')">🏍️<small>Moto</small></button>
+<button type="button" onclick="selectNoteIcon('🚑')">🚑<small>Ambulància</small></button>
+<button type="button" onclick="selectNoteIcon('🚒')">🚒<small>Bombers</small></button>
+<button type="button" onclick="selectNoteIcon('🛂')">🛂<small>Frontera</small></button>
+<button type="button" onclick="selectNoteIcon('📱')">📱<small>Mòbil</small></button>
+<button type="button" onclick="selectNoteIcon('📞')">📞<small>Telèfon</small></button>
+<button type="button" onclick="selectNoteIcon('🤒')">🤒<small>Malalt</small></button>
+<button type="button" onclick="selectNoteIcon('🤕')">🤕<small>Lesió</small></button>
+<button type="button" onclick="selectNoteIcon('🩹')">🩹<small>Cura</small></button>
+<button type="button" onclick="selectNoteIcon('🧪')">🧪<small>Anàlisi</small></button>
+<button type="button" onclick="selectNoteIcon('💉')">💉<small>Vacuna</small></button>
+<button type="button" onclick="selectNoteIcon('🧠')">🧠<small>Psicòleg</small></button>
+<button type="button" onclick="selectNoteIcon('🤰')">🤰<small>Embaràs</small></button>
+<button type="button" onclick="selectNoteIcon('🍼')">🍼<small>Nadó</small></button>
+<button type="button" onclick="selectNoteIcon('👨‍👩‍👧')">👨‍👩‍👧<small>Família</small></button>
+<button type="button" onclick="selectNoteIcon('🎒')">🎒<small>Colònies</small></button>
+<button type="button" onclick="selectNoteIcon('👵')">👵<small>Avis</small></button>
+<button type="button" onclick="selectNoteIcon('💍')">💍<small>Casament</small></button>
+<button type="button" onclick="selectNoteIcon('🕯️')">🕯️<small>Funeral</small></button>
+<button type="button" onclick="selectNoteIcon('⚽')">⚽<small>Futbol</small></button>
+<button type="button" onclick="selectNoteIcon('🏃')">🏃<small>Córrer</small></button>
+<button type="button" onclick="selectNoteIcon('🚴')">🚴<small>Bici</small></button>
+<button type="button" onclick="selectNoteIcon('🏊')">🏊<small>Piscina</small></button>
+<button type="button" onclick="selectNoteIcon('⛷️')">⛷️<small>Esquí</small></button>
+<button type="button" onclick="selectNoteIcon('🎣')">🎣<small>Pesca</small></button>
+<button type="button" onclick="selectNoteIcon('🏕️')">🏕️<small>Acampada</small></button>
+<button type="button" onclick="selectNoteIcon('🍻')">🍻<small>Sopar</small></button>
+<button type="button" onclick="selectNoteIcon('☕')">☕<small>Cafè</small></button>
+<button type="button" onclick="selectNoteIcon('🎬')">🎬<small>Cinema</small></button>
+<button type="button" onclick="selectNoteIcon('🎵')">🎵<small>Concert</small></button>
+<button type="button" onclick="selectNoteIcon('🎮')">🎮<small>Jocs</small></button>
+<button type="button" onclick="selectNoteIcon('🛫')">🛫<small>Vol</small></button>
+<button type="button" onclick="selectNoteIcon('🛳️')">🛳️<small>Creuer</small></button>
+<button type="button" onclick="selectNoteIcon('🏨')">🏨<small>Hotel</small></button>
+<button type="button" onclick="selectNoteIcon('🧳')">🧳<small>Maleta</small></button>
+<button type="button" onclick="selectNoteIcon('🗺️')">🗺️<small>Excursió</small></button>
+<button type="button" onclick="selectNoteIcon('🧹')">🧹<small>Neteja</small></button>
+<button type="button" onclick="selectNoteIcon('🔑')">🔑<small>Claus</small></button>
+<button type="button" onclick="selectNoteIcon('🛠️')">🛠️<small>Obres</small></button>
+<button type="button" onclick="selectNoteIcon('🧾')">🧾<small>Factura</small></button>
+<button type="button" onclick="selectNoteIcon('📄')">📄<small>Paperassa</small></button>
+<button type="button" onclick="selectNoteIcon('🗳️')">🗳️<small>Votació</small></button>
+<button type="button" onclick="selectNoteIcon('✉️')">✉️<small>Correu</small></button>
+<button type="button" onclick="selectNoteIcon('📦')">📦<small>Paquet</small></button>
+<button type="button" onclick="selectNoteIcon('⏰')">⏰<small>Alarma</small></button>
+<button type="button" onclick="selectNoteIcon('🌙')">🌙<small>Nit</small></button>
+<button type="button" onclick="selectNoteIcon('☀️')">☀️<small>Dia</small></button>
+<button type="button" onclick="selectNoteIcon('🌧️')">🌧️<small>Pluja</small></button>
+<button type="button" onclick="selectNoteIcon('⭐')">⭐<small>Important</small></button>
+<button type="button" onclick="selectNoteIcon('❗')">❗<small>Urgent</small></button>
+<button type="button" onclick="selectNoteIcon('⚠️')">⚠️<small>Atenció</small></button>
+<button type="button" onclick="selectNoteIcon('✅')">✅<small>Fet</small></button>
+<button type="button" onclick="selectNoteIcon('❤️')">❤️<small>Especial</small></button>
+<button type="button" onclick="selectNoteIcon('📌')">📌<small>Altres</small></button><button type="button" onclick="selectNoteIcon('red_plus')" aria-label="Afegir icona vermella"><span class="red-plus-icon">➕</span><small>Plus vermell</small></button>
+</div>
+</div></div>
+
+<div class="modal-bg" id="bulkModal"><div class="modal">
+<div class="modal-head"><h2>Aplicar als dies seleccionats</h2><button class="close" onclick="closeModal('bulkModal')">×</button></div>
+<p class="hint" id="bulkCount"></p><label>Acció</label><select id="bulkType" onchange="updateBulk()"><option value="treball">Treball</option><option value="vacances">Vacances</option><option value="assumptes">Assumptes personals</option><option value="dies_blaus">Dies Blaus</option><option value="guardia_np">Guàrdia No Presencial</option><option value="hores_acum">Hores acumulades</option><option value="hores_extres">Hores extres</option><option value="baixa">Baixa</option><option value="esborrar">Esborrar</option></select>
+<div id="bulkWork"><label>Torn</label><select id="bulkShift"></select></div><div id="bulkHours"><label>Hores</label><input type="number" id="bulkHoursInput" value="7.5" step=".25"></div>
+<div class="form-actions"><button class="btn primary" onclick="applyBulk()">Aplicar</button><button class="btn secondary" onclick="closeModal('bulkModal')">Cancel·lar</button></div>
+</div></div>
+
+<div class="modal-bg" id="trialModal"><div class="modal">
+<div class="modal-head"><h2 id="trialTitle">Nou judici</h2><button class="close" onclick="closeModal('trialModal')">×</button></div>
+<div class="form-grid"><div><label>Data</label><input type="date" id="jDate"></div><div><label>Hora</label><input type="time" id="jTime"></div></div>
+<label>Jutjat</label><input id="jCourt" placeholder="Ex. Jutjat Penal 3 Barcelona"><div class="form-grid"><div><label>Sala</label><input id="jRoom"></div><div><label>Procediment</label><input id="jProc"></div></div>
+<label>Agents citats</label><input id="jAgents"><label for="jObservations">Observacions del judici</label><textarea id="jObservations" rows="4" placeholder="Anota aquí les observacions d’aquest judici..." style="width:100%;min-height:112px;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--field,rgba(15,23,42,.35));color:var(--text);font:inherit;resize:vertical;margin:6px 0 14px"></textarea><div class="check"><input type="checkbox" id="jShift"><label for="jShift">Canviar torn</label></div><div class="check"><input type="checkbox" id="jSuspended"><label for="jSuspended">Suspès</label></div><div class="check"><input type="checkbox" id="jHeld"><label for="jHeld">Celebrat</label></div><div class="check"><input type="checkbox" id="jPaid"><label for="jPaid">Cobrat</label></div>
+<div class="form-actions"><button class="btn primary" onclick="saveTrial()">Desar judici</button><button class="btn secondary" onclick="closeModal('trialModal')">Cancel·lar</button><button class="btn danger" id="deleteTrialBtn" onclick="deleteTrial()">Esborrar</button></div>
+</div></div>
+
+
+<div class="modal-bg" id="detailModal"><div class="modal">
+<div class="modal-head"><h2 id="detailTitle">Detall</h2><button class="close" onclick="closeModal('detailModal')">×</button></div>
+<div class="detail-summary" id="detailSummary"></div>
+<div class="detail-list" id="detailList"></div>
+<div class="form-actions" style="margin-top:12px"><button class="btn secondary" onclick="closeModal('detailModal')" style="grid-column:1/-1">Tancar</button></div>
+</div></div>
+
+<div class="toast" id="toast"></div>
+<input type="file" id="fileInput" accept="application/json" hidden>
+
+
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="ui.js?v=2.4.7"></script>
+<script src="merge.js?v=2.4.7"></script>
+<script src="home.js?v=2.4.10"></script>
+<script src="app.js?v=2.12.8"></script>
+<script src="shift-profiles.js?v=2.8.0"></script>
+<script src="sync.js?v=2.4.7"></script>
+</body>
+</html>
