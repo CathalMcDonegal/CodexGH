@@ -6,12 +6,13 @@
  if(!state.planOverrides||typeof state.planOverrides!=="object")state.planOverrides={};
  if(!state.planExtras||typeof state.planExtras!=="object")state.planExtras={};
  if(typeof state.activeShiftProfileId!=="string")state.activeShiftProfileId="";
- const labels={mati:"Matí",tarda:"Tarda",nit:"Nit",festa:"Festa",cs_dia:"Cap de setmana dia",cs_nit:"Cap de setmana nit",fd:"Festiu dia",fn:"Festiu nit",treball:"Treball (sense torn assignat)"};
+ const labels={mati:"Matí",tarda:"Tarda",nit:"Nit",festa:"Festa",cs_dia:"Cap de setmana dia",cs_nit:"Cap de setmana nit (TN)",fd:"Festiu dia",fn:"Festiu nit",treball:"Treball (torn per confirmar)"};
+ const OFFICIAL={q5:{anchor:"2026-01-12",unit:"day",cycles:{E1:"N,N,N,N,N,TN,TN,F,F,F,F,F,F,F,M,M,M,M,M,D,D,F,F,F,F,F,F,F,T,T,T,T,T,F,F",E2:"T,T,T,T,T,F,F,N,N,N,N,N,TN,TN,F,F,F,F,F,F,F,M,M,M,M,M,D,D,F,F,F,F,F",E3:"F,F,F,F,F,F,F,T,T,T,T,T,F,F,N,N,N,N,N,TN,TN,F,F,F,F,F,F,F,M,M,M,M,M,D,D",E4:"M,M,M,M,M,D,D,F,F,F,F,F,F,F,T,T,T,T,T,F,F,N,N,N,N,N,TN,TN,F,F,F,F,F,F,F",E5:"F,F,F,F,F,F,F,M,M,M,M,M,D,D,F,F,F,F,F,F,F,T,T,T,T,T,F,F,N,N,N,N,N,TN,TN"}},q3:{anchor:"2026-01-26",unit:"day",cycles:{A:"TR,TR,TR,TR,TR,F,F,TR,TR,TR,TR,TR,TR,TR,F,F,F,F,F,F,F",B:"TR,TR,TR,TR,TR,TR,TR,F,F,F,F,F,F,F,TR,TR,TR,TR,TR,F,F",C:"F,F,F,F,F,F,F,TR,TR,TR,TR,TR,F,F,TR,TR,TR,TR,TR,TR,TR"}}};
  const options=()=>state.torns.map(s=>({id:s.id,label:s.nom}));
  function parsePattern(raw){
   return String(raw||"").split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean).map(x=>{
    const v=x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-   const aliases={m:"mati",matí:"mati",mati:"mati",t:"tarda",tarda:"tarda",n:"nit",nit:"nit",d:"cs_dia",dia:"cs_dia",f:"festa",festa:"festa",descans:"festa",tr:"treball",treball:"treball","cap de setmana dia":"cs_dia","cap de setmana nit":"cs_nit","nit cap de setmana":"cs_nit"};
+   const aliases={m:"mati",matí:"mati",mati:"mati",t:"tarda",tarda:"tarda",n:"nit",nit:"nit",tn:"cs_nit","t/n":"cs_nit",d:"cs_dia",dia:"cs_dia",f:"festa",festa:"festa",descans:"festa",tr:"treball",treball:"treball","cap de setmana dia":"cs_dia","cap de setmana nit":"cs_nit","nit cap de setmana":"cs_nit"};
    return aliases[v]||state.torns.find(s=>s.id===x||s.nom.toLowerCase()===v)?.id||"";
   }).filter(Boolean);
  }
@@ -33,9 +34,9 @@
    const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&!extras.length)return;
    el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
    const kind=el.querySelector(".kind"),hrs=el.querySelector(".hrs");
-   if(kind)kind.textContent=s?("Pla: "+(s.abbr||s.nom)):"Servei addicional";
+   if(kind)kind.textContent=s?("Pla: "+(s.abbr||s.nom)):(id==="treball"?"Pla: Treball (torn pendent)":"Servei addicional");
    if(hrs)hrs.textContent="previst";
-   el.title=(s?"Torn teòric: "+s.nom:"Servei addicional planificat")+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
+   el.title=(s?"Torn teòric: "+s.nom:(id==="treball"?"Jornada de treball prevista; torn pendent de confirmació":"Servei addicional planificat"))+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
   });
  }
  function decorateWeek(){
@@ -45,7 +46,7 @@
    const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&!extras.length)return;
    el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
    const strong=el.querySelector("strong"),small=el.querySelector("small"),sum=el.querySelector(".week-sum");
-   if(strong)strong.textContent=s?"Previst: "+s.nom:"Servei addicional";
+   if(strong)strong.textContent=s?"Previst: "+s.nom:(id==="treball"?"Previst: Treball (torn pendent)":"Servei addicional");
    if(small)small.textContent=(s?((s.inici||"")+" → "+(s.fi||"")):"")+" · "+(extras.length?"Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"Horari teòric");
    if(sum)sum.textContent="Pla";
   });
@@ -81,17 +82,18 @@
   const kind=document.getElementById("profileKind")?.value||"q5",pat=document.getElementById("profilePattern"),unit=document.getElementById("profileUnit"),hint=document.getElementById("profileHint"),phase=document.getElementById("profilePhase"),esc=document.getElementById("profileEscamot");
   if(!pat||!unit||!hint||!phase)return;
   const escamots={q5:["E1","E2","E3","E4","E5"],q3:["A","B","C"],"7x7":["A","B"],investigacio:[],custom:[]};
-  if(esc){const list=escamots[kind]||[];esc.innerHTML='<option value="">Selecciona escamot</option>'+list.map(x=>'<option value="'+x+'">'+x+'</option>').join("");esc.disabled=!list.length;}
-  const defaults={q5:{pattern:"",unit:"day",hint:"Q5: hi ha cinc calendaris diferents (E1–E5). No s’aplica una seqüència genèrica: cal carregar el patró diari verificat de l’escamot i la seva data d’ancoratge."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació / especial flexible: alternança setmanal de matins i tardes. Els serveis de cap de setmana i nits s’afegeixen com a serveis puntuals."},q3:{pattern:"",unit:"day",hint:"Q3: hi ha tres calendaris diferents (A–C). El document USPAC 2026 identifica treball/festa; cal confirmar el torn i l’ancoratge de cada escamot abans d’extrapolar."},"7x7":{pattern:"",unit:"day",hint:"7x7: cal seleccionar l’escamot i carregar la seqüència diària del document vigent. No hi ha cap plantilla 2026 actualitzada confirmada en les fonts consultades."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
+  if(esc){const list=escamots[kind]||[];esc.innerHTML='<option value="">Selecciona escamot</option>'+list.map(x=>'<option value="'+x+'">'+x+'</option>').join("");esc.disabled=!list.length;esc.onchange=()=>{const t=OFFICIAL[kind],seq=t?.cycles?.[esc.value];if(seq){pat.value=seq;unit.value=t.unit;document.getElementById("profileAnchor").value=t.anchor;phase.innerHTML='<option value="0">1 · Inici del cicle oficial</option>';}};}
+  const defaults={q5:{pattern:"",unit:"day",hint:"Q5 2026: plantilles diàries oficials diferenciades E1–E5. Cicle de 35 dies, ancorat al 12/01/2026 i continuat entre anys. TN es representa com a nit de cap de setmana; D com a dia de 12 h."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació / especial flexible: alternança setmanal de matins i tardes. Els serveis de cap de setmana i nits s’afegeixen com a serveis puntuals."},q3:{pattern:"",unit:"day",hint:"Q3 2026: plantilles oficials A–C amb cicle de 21 dies, ancorat al 26/01/2026. El PDF diferencia Treball (TR) i Festa (F), però el torn concret s’ha de confirmar mensualment; l’app no inventa M/T/N."},"7x7":{pattern:"",unit:"day",hint:"7x7: cal seleccionar l’escamot i carregar la seqüència diària del document vigent. No hi ha cap plantilla 2026 actualitzada confirmada en les fonts consultades."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
   const d=defaults[kind];pat.value=d.pattern;unit.value=d.unit;hint.textContent=d.hint;
   const parts=parsePattern(pat.value);phase.innerHTML=parts.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("");
   pat.oninput=()=>{const p=parsePattern(pat.value);phase.innerHTML=p.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("")};
  };
  window.createShiftProfile=function(){
   const kind=document.getElementById("profileKind").value,raw=document.getElementById("profilePattern").value,pattern=parsePattern(raw),anchor=document.getElementById("profileAnchor").value,unit=document.getElementById("profileUnit").value,phase=Number(document.getElementById("profilePhase").value)||0;
-  if(!anchor||!pattern.length){toast("Indica una data de referència i una seqüència vàlida");return}
+  if(!anchor||!pattern.length){toast("Selecciona l’escamot i carrega una seqüència oficial vàlida");return}
+  if(["q5","q3"].includes(kind)&&!escamot){toast("Selecciona primer l’escamot");return}
   const escamot=document.getElementById("profileEscamot")?.value||"",name=document.getElementById("profileName").value.trim()||([ "q5","q3","7x7" ].includes(kind)?kind.toUpperCase()+" · Escamot "+(escamot||"pendent"):({investigacio:"Investigació / especial flexible",custom:"Torn personalitzat"}[kind]));
-  const labelsKind={q5:"Q5",q3:"Q3","7x7":"7x7",investigacio:"Investigació / especial flexible",custom:"Personalitzat"};
+  const labelsKind={q5:"Q5 · cicle oficial 2026",q3:"Q3 · cicle oficial 2026","7x7":"7x7",investigacio:"Investigació / especial flexible",custom:"Personalitzat"};
   const p={id:"sp_"+Date.now(),name,kind,escamot,kindLabel:labelsKind[kind],unit,anchorDate:anchor,phase,pattern};
   state.shiftProfiles.push(p);state.activeShiftProfileId=p.id;save();renderAll();toast("Perfil creat i activat");
  };
