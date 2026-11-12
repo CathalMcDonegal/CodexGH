@@ -12,7 +12,7 @@
 <script src="firebase-config.js?v=2.4.6"></script>
 <link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Codex GH 2.12.1</title>
+<title>Codex GH 2.12.5</title>
 <style>
 :root{--bg:#eef5ff;--card:#fff;--text:#10203a;--muted:#5b6b82;--line:#cbd9ee;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;--cyan:#0891b2;--pink:#db2777;--shadow:0 6px 22px rgba(15,23,42,.06);--safe:env(safe-area-inset-bottom,0px);--r:16px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);min-height:100dvh;padding-bottom:calc(82px + var(--safe));line-height:1.4}
@@ -468,6 +468,49 @@ html.dark .chip.bad{background:#7f1d1d!important;color:#fee2e2!important}
 html.dark .chip.info{background:#1e3a8a!important;color:#dbeafe!important}
 html.dark .chip{font-weight:850!important;text-shadow:none!important;opacity:1!important}
 html.dark button:disabled,html.dark .btn:disabled,html.dark button[aria-disabled="true"]{opacity:1!important;color:#f8fafc!important;-webkit-text-fill-color:#f8fafc!important}
+
+/* TEMES: superfícies i textos coherents, sense alterar els colors d'estat */
+html.light .week-row,
+html.light .week-row:not([style*="--record-color"]),
+html.light .row,html.light .setting-row,html.light .empty,
+html.light .modal,html.light .modal-card,html.light .panel,
+html.light .card .week-row{
+  background:#fff!important;color:#172033!important;border-color:#d7e0eb!important;
+}
+html.light .week-row strong,html.light .week-row .week-sum,
+html.light .row strong,html.light .setting-row strong,
+html.light .modal,html.light .modal strong{color:#172033!important}
+html.light .week-row small,html.light .row small,
+html.light .setting-row small,html.light .hint,
+html.light .muted{color:#526174!important}
+html.light .week-row.baixa{background:#fee2e2!important;border-color:#fca5a5!important;color:#7f1d1d!important}
+html.light .week-row.baixa strong,html.light .week-row.baixa .week-sum{color:#7f1d1d!important}
+html.light .week-row.baixa small{color:#854d4d!important}
+html.light .week-row.mati{background:#fef3c7!important;border-color:#fcd34d!important;color:#713f12!important}
+html.light .week-row.tarda{background:#ffedd5!important;border-color:#fdba74!important;color:#7c2d12!important}
+html.light .week-row.nit,html.light .week-row.cs_nit,html.light .week-row.fn{background:#dbeafe!important;border-color:#93c5fd!important;color:#1e3a8a!important}
+html.light .week-row.vacances,html.light .week-row.assumptes,html.light .week-row.hores_acum,html.light .week-row.dies_blaus,html.light .week-row.festa{background:#dcfce7!important;border-color:#86efac!important;color:#14532d!important}
+html.light .week-row.judici{background:#f3e8ff!important;border-color:#c084fc!important;color:#581c87!important}
+html.light .week-row[style*="--record-color"]{color:#172033!important}
+html.light .week-row[style*="--record-color"] strong,html.light .week-row[style*="--record-color"] .week-sum{color:#172033!important}
+html.light .btn:disabled,html.light button:disabled,html.light [aria-disabled="true"]{opacity:1!important;background:#64748b!important;color:#fff!important;-webkit-text-fill-color:#fff!important;border-color:#64748b!important}
+html.light .btn.secondary:disabled{background:#e2e8f0!important;color:#475569!important;-webkit-text-fill-color:#475569!important;border-color:#cbd5e1!important}
+
+/* En mode fosc, els valors del resum conserven els seus colors semàntics */
+html.dark .stats .stat.green b{color:#4ade80!important}
+html.dark .stats .stat.red b{color:#fb7185!important}
+html.dark .stats .stat.blue b{color:#60a5fa!important}
+html.dark .stats .stat.purple b{color:#c084fc!important}
+html.dark .stats .stat.pink b{color:#f472b6!important}
+html.dark .stats .stat.orange b{color:#fb923c!important}
+html.dark .stats .stat.cyan b{color:#22d3ee!important}
+html.dark .stats .stat span{color:#cbd5e1!important}
+html.dark .stats .stat{background:#111b2d!important;border-color:#40516a!important}
+html.dark .chip.warn{background:#713f12!important;color:#fef3c7!important}
+html.dark .chip.ok{background:#14532d!important;color:#dcfce7!important}
+html.dark .chip.bad{background:#7f1d1d!important;color:#fee2e2!important}
+html.dark .chip.info{background:#1e3a8a!important;color:#dbeafe!important}
+html.dark .chip{opacity:1!important;font-weight:850!important}
 </style>
 </head>
 <body>
@@ -783,7 +826,7 @@ html.dark button:disabled,html.dark .btn:disabled,html.dark button[aria-disabled
 <script src="ui.js?v=2.4.7"></script>
 <script src="merge.js?v=2.4.7"></script>
 <script src="home.js?v=2.4.10"></script>
-<script src="app.js?v=2.12.1"></script>
+<script src="app.js?v=2.12.5"></script>
 <script src="shift-profiles.js?v=2.8.0"></script>
 <script src="sync.js?v=2.4.7"></script>
 </body>
