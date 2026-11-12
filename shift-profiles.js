@@ -39,7 +39,7 @@
  function ensurePlanStyle(){
   if(document.getElementById("plannedTextStyle"))return;
   const st=document.createElement("style");st.id="plannedTextStyle";
-  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:600;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:600;background:transparent!important;border:0!important;box-shadow:none!important}.planned-shift{background:inherit!important}";
+  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:600;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:600;background:transparent!important;border:0!important;box-shadow:none!important}.monthly-info .week-planned-label{color:#7892b5!important}";
   document.head.appendChild(st);
  }
  function decorateCalendar(){
@@ -51,7 +51,6 @@
    const kind=el.querySelector(".kind"),hrs=el.querySelector(".hrs");
    kind?.querySelectorAll(".planned-label").forEach(n=>n.remove());
    if(!s&&id!=="treball"&&!extras.length)return;
-   el.classList.add("planned-shift");
    if(kind){
     if(!state.registres[k])kind.textContent="";
     const tag=document.createElement("span");tag.className="planned-label";tag.textContent=plannedText(id,s);kind.appendChild(tag);
