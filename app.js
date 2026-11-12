@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.4.9";
+const APP_VERSION="2.4.10";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -271,8 +271,9 @@ function expectedToDate(){
 }
 function saldoText(v){
   const c=calc();
-  if(c.worked < 1 && c.progress < 2) return "Comença a registrar per veure el teu ritme";
-  return v>=0?`Vas ${fmtHours(v)} respecte al ritme necessari`:`Vas ${fmtHours(v)} respecte al ritme necessari`;
+  if(c.worked < 1 && c.progress < 2) return "Encara no hi ha hores registrades en aquest període";
+  if(Math.abs(v)<0.01) return "Vas exactament al ritme previst";
+  return v>0?`Vas ${plainHours(v)} h per sobre del ritme previst`:`Et falten ${plainHours(Math.abs(v))} h per recuperar el ritme previst`;
 }
 function renderAll(){renderHeader();renderHome();renderCalendar();renderWeek();renderTrials();renderStats();renderMore();window.HomeActions&&HomeActions.render()}
 function renderHeader(){
@@ -283,7 +284,7 @@ function renderHeader(){
  if(wm){wm.textContent="";wm.style.display="none";}
 }
 function renderHome(){
- const c=calc();document.getElementById("saldo").textContent=fmtHours(c.saldo);document.getElementById("saldoText").textContent=saldoText(c.saldo);document.getElementById("progressPct").textContent=Math.round(c.progress)+"%";document.getElementById("progressBar").style.width=c.progress+"%";document.getElementById("workedLabel").textContent=plainHours(c.worked)+" h fetes";document.getElementById("targetLabel").textContent="de "+plainHours(state.horesAnuals)+" h";
+ const c=calc();document.getElementById("saldo").textContent=fmtHours(c.saldo);document.getElementById("saldoText").textContent=saldoText(c.saldo);const balanceDetail=document.getElementById("balanceDetail");if(balanceDetail)balanceDetail.textContent=`Previstes fins avui: ${plainHours(c.expected)} h · Pendents de l’objectiu: ${plainHours(Math.max(0,c.remaining))} h`;document.getElementById("progressPct").textContent=Math.round(c.progress)+"%";document.getElementById("progressBar").style.width=c.progress+"%";document.getElementById("workedLabel").textContent=plainHours(c.worked)+" h fetes";document.getElementById("targetLabel").textContent="de "+plainHours(state.horesAnuals)+" h";
  const d=parseKey(todayKey()),rAll=state.registres[todayKey()],r=(rAll&&rAll.tipus!=="planificat")?rAll:null,box=document.getElementById("todayCard"); // «planificat» = només icona/notes, sense jornada
  if(r){const s=r.tipus==="treball"?getShift(r.torn):null;box.innerHTML=`<div class="card-title">Avui · ${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}</div><div class="today"><div class="today-date"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()].slice(0,3)}</span></div><div class="today-main"><b>${escapeHtml(r.tipus==="treball"?(s?.nom||"Treball"):TYPE_NAMES[r.tipus]||r.tipus)}</b><small>${r.tipus==="treball"?`${r.entrada||s?.inici||""} → ${r.sortida||s?.fi||""} · ${plainHours(r.hores||0)} h`:(plainHours(r.horesConcepte||0)+" h")}</small></div><button class="btn secondary small" onclick="openDay('${todayKey()}')">Editar</button></div>`}
  else box.innerHTML=`<div class="card-title">Avui · ${DOW[d.getDay()]} ${d.getDate()} ${MONTHS[d.getMonth()]}</div><div class="today"><div class="today-date"><b>${d.getDate()}</b><span>${MONTHS[d.getMonth()].slice(0,3)}</span></div><div class="today-main"><b>Encara sense registre</b><small>${holiday(d)?"Avui és festiu · ":""}Prepara la jornada en segons.</small></div><button class="btn primary small" onclick="openDay('${todayKey()}')">Registrar</button></div>`;
