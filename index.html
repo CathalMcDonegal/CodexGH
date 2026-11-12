@@ -406,6 +406,20 @@ details.card>summary::after{order:1}
 .permit-card:hover{box-shadow:0 8px 24px rgba(37,99,235,.12);transform:translateY(-1px)}
 .permit-card h3,.permit-card strong{letter-spacing:-.01em}
  .home-annual-compact .balance-detail,.home-annual-compact .hero-foot{display:none}.home-annual-compact .hero h2{font-size:1.65rem}.home-annual-compact .progress{height:5px;margin:9px 0 0}.home-annual-compact .btn.secondary{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff}
+
+/* Mode clar explícit: preval sobre les preferències fosques del sistema Android */
+html.light{color-scheme:light;--bg:#f4f7fb;--card:#fff;--text:#172033;--muted:#64748b;--line:#d9e2ef;--primary:#2563eb;--primary2:#1d4ed8;--primary-soft:#eaf2ff;--shadow:0 4px 18px rgba(15,23,42,.055);}
+html.light body{background:var(--bg)!important;color:var(--text)!important}
+html.light .appbar,html.light .nav{background:rgba(255,255,255,.96)!important;color:var(--text)!important}
+html.light .card,html.light .stat,html.light .row,html.light input,html.light select,html.light textarea,html.light .day{background-color:#fff!important;color:#172033!important;border-color:#d9e2ef!important}
+html.light .year-pill{background:#eff6ff!important;color:#1e3a8a!important;border-color:#bfdbfe!important}
+html.light .day.weekend{background:#f1f5f9!important}html.light .day.work{background:#dbeafe!important;border-color:#93c5fd!important}
+html.light .day.mati{background:#fef3c7!important;border-color:#fcd34d!important}html.light .day.tarda{background:#ffedd5!important;border-color:#fdba74!important}
+html.light .day.nit,html.light .day.cs_nit,html.light .day.fn{background:#dbeafe!important;border-color:#93c5fd!important}
+html.light .day.vacances,html.light .day.festa{background:#dcfce7!important;border-color:#86efac!important}html.light .day.assumptes,html.light .day.hores_acum,html.light .day.dies_blaus{background:#d1fae5!important;border-color:#6ee7b7!important}
+html.light .day.baixa{background:#fee2e2!important;border-color:#fca5a5!important}html.light .day.judici{background:#f3e8ff!important;border-color:#c084fc!important}
+html.light .day .num,html.light .day .kind{color:#172033!important}html.light .day .hrs{color:#475569!important}
+html.light .note-icon-grid button{background:#fff!important;color:#172033!important}
 </style>
 </head>
 <body>
