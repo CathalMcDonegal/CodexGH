@@ -34,12 +34,17 @@
  }
  function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
  function plannedText(id,s){
-  return s?"Torn previst: "+(s.abbr||s.nom):(id==="treball"?"Treball previst (torn pendent)":"Servei previst");
+  if(id==="mati")return "M";
+  if(id==="tarda")return "T";
+  return s?(s.abbr||s.nom):(id==="treball"?"Treball previst (torn pendent)":"Servei previst");
+ }
+ function plannedCodeClass(id){
+  return id==="mati"?" planned-code-m":id==="tarda"?" planned-code-t":"";
  }
  function ensurePlanStyle(){
   if(document.getElementById("plannedTextStyle"))return;
   const st=document.createElement("style");st.id="plannedTextStyle";
-  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:600;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:600;background:transparent!important;border:0!important;box-shadow:none!important}.monthly-info .week-planned-label{color:#7892b5!important}";
+  st.textContent=".planned-label{display:inline-block;color:#7892b5!important;font-size:.88em;font-weight:700;margin-left:4px;background:transparent!important;border:0!important;box-shadow:none!important}.week-planned-label{display:block;color:#7892b5!important;font-size:.88em;font-weight:700;background:transparent!important;border:0!important;box-shadow:none!important}.planned-code-m{color:#2786d8!important}.planned-code-t{color:#d58a32!important}.monthly-info .week-planned-label{color:#7892b5!important}.monthly-info .planned-code-m{color:#2786d8!important}.monthly-info .planned-code-t{color:#d58a32!important}";
   document.head.appendChild(st);
  }
  function decorateCalendar(){
@@ -53,7 +58,7 @@
    if(!s&&id!=="treball"&&!extras.length)return;
    if(kind){
     if(!state.registres[k])kind.textContent="";
-    const tag=document.createElement("span");tag.className="planned-label";tag.textContent=plannedText(id,s);kind.appendChild(tag);
+    const tag=document.createElement("span");tag.className="planned-label"+plannedCodeClass(id);tag.textContent=plannedText(id,s);kind.appendChild(tag);
    }
    if(!state.registres[k]&&hrs)hrs.textContent="previst";
    el.title=(s?"Torn previst: "+s.nom:(id==="treball"?"Jornada prevista; torn pendent de confirmació":"Servei addicional planificat"))+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
@@ -62,7 +67,7 @@
    const k=(el.getAttribute("onclick")||"").match(/openDay\('([^']+)'\)/)?.[1];if(!k)return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id);if(!s&&id!=="treball")return;
    const info=el.querySelector(".monthly-info");if(!info||info.querySelector(".week-planned-label"))return;
-   const tag=document.createElement("small");tag.className="week-planned-label";tag.textContent=plannedText(id,s);info.appendChild(tag);
+   const tag=document.createElement("small");tag.className="week-planned-label"+plannedCodeClass(id);tag.textContent=plannedText(id,s);info.appendChild(tag);
   });
  }
  function decorateWeek(){
@@ -76,7 +81,7 @@
    if(!s&&id!=="treball"&&!extras.length)return;
    el.classList.add("planned-shift");
    if(!state.registres[k]){
-    if(strong)strong.textContent=plannedText(id,s);
+    if(strong){strong.textContent=plannedText(id,s);strong.classList.add(...plannedCodeClass(id).trim().split(/\\s+/).filter(Boolean));}
     if(small)small.textContent=(s?((s.inici||"")+" → "+(s.fi||"")):"")+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):" · Horari teòric");
     if(sum)sum.textContent="Pla";
    }else if(small){
