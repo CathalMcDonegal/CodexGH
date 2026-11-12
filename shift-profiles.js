@@ -10,7 +10,7 @@
  function parsePattern(raw){
   return String(raw||"").split(/[,;\n]+/).map(x=>x.trim()).filter(Boolean).map(x=>{
    const v=x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-   const aliases={m:"mati",matí:"mati",mati:"mati",t:"tarda",tarda:"tarda",n:"nit",nit:"nit",f:"festa",festa:"festa","cap de setmana dia":"cs_dia","dia":"cs_dia","cap de setmana nit":"cs_nit","nit cap de setmana":"cs_nit"};
+   const aliases={m:"mati",matí:"mati",mati:"mati",t:"tarda",tarda:"tarda",n:"nit",nit:"nit",d:"cs_dia",dia:"cs_dia",f:"festa",festa:"festa",descans:"festa","cap de setmana dia":"cs_dia","cap de setmana nit":"cs_nit","nit cap de setmana":"cs_nit"};
    return aliases[v]||state.torns.find(s=>s.id===x||s.nom.toLowerCase()===v)?.id||"";
   }).filter(Boolean);
  }
@@ -76,7 +76,7 @@
  window.profileKindChanged=function(){
   const kind=document.getElementById("profileKind")?.value||"q5",pat=document.getElementById("profilePattern"),unit=document.getElementById("profileUnit"),hint=document.getElementById("profileHint"),phase=document.getElementById("profilePhase");
   if(!pat||!unit||!hint||!phase)return;
-  const defaults={q5:{pattern:"Matí,Festa,Tarda,Nit,Festa",unit:"week",hint:"Q5: cada element representa una setmana. La rotació continua entre anys."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació / especial flexible: alternança setmanal de matins i tardes. Els serveis de cap de setmana i nits s’afegeixen com a serveis puntuals."},q3:{pattern:"",unit:"week",hint:"Introdueix la seqüència exacta del Q3 segons el quadrant de referència; no n’assumim una de genèrica."},"7x7":{pattern:"",unit:"day",hint:"Introdueix el cicle exacte del 7x7 segons el quadrant de referència. Pots triar rotació per dies o setmanes."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
+  const defaults={q5:{pattern:"Matí,Festa,Tarda,Nit,Festa",unit:"week",hint:"Q5: cada element representa una setmana. La rotació continua entre anys."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació / especial flexible: alternança setmanal de matins i tardes. Els serveis de cap de setmana i nits s’afegeixen com a serveis puntuals."},q3:{pattern:"",unit:"week",hint:"Introdueix la seqüència exacta del Q3 segons el quadrant de referència. Codis ràpids: M matí, T tarda, N nit, D dia de 12 h i F festa; no n’assumim una de genèrica."},"7x7":{pattern:"",unit:"day",hint:"Introdueix el cicle exacte del 7x7 segons el quadrant de referència. Codis ràpids: M matí, T tarda, N nit, D dia de 12 h i F festa. Pots triar rotació per dies o setmanes."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
   const d=defaults[kind];pat.value=d.pattern;unit.value=d.unit;hint.textContent=d.hint;
   const parts=parsePattern(pat.value);phase.innerHTML=parts.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("");
   pat.oninput=()=>{const p=parsePattern(pat.value);phase.innerHTML=p.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("")};
