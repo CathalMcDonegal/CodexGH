@@ -12,7 +12,7 @@
 <script src="firebase-config.js?v=2.4.6"></script>
 <link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Codex GH 2.8.0</title>
+<title>Codex GH 2.10.0</title>
 <style>
 :root{--bg:#eef5ff;--card:#fff;--text:#10203a;--muted:#5b6b82;--line:#cbd9ee;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;--cyan:#0891b2;--pink:#db2777;--shadow:0 6px 22px rgba(15,23,42,.06);--safe:env(safe-area-inset-bottom,0px);--r:16px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);min-height:100dvh;padding-bottom:calc(82px + var(--safe));line-height:1.4}
@@ -333,6 +333,61 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
 /* Selector d'any: sense el fons més fosc a dins del pastís */
 .year-pill select,.year-pill select:focus{background:transparent!important;background-color:transparent!important;box-shadow:none!important;border:0!important;outline-offset:2px}
 .year-pill select option{background:var(--card);color:var(--text)}
+
+/* === POLIT PRO v2.9 (només capa visual; no toca la lògica) === */
+:root{--r:18px;--shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.06);--ring:0 0 0 3px rgba(37,99,235,.28)}
+body{font-family:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased;letter-spacing:-.005em}
+h1,h2,h3{letter-spacing:-.02em}
+.appbar{padding:10px 16px;box-shadow:0 1px 0 rgba(15,23,42,.04)}
+.brand h1{font-size:1.08rem;font-weight:800}
+.year-pill{box-shadow:inset 0 0 0 1px rgba(37,99,235,.08)}
+.card{border-color:rgba(148,163,184,.28);transition:box-shadow .2s,transform .2s}
+.hero{background:radial-gradient(120% 140% at 0% 0%,#1e40af 0%,#0f172a 62%);box-shadow:0 12px 32px rgba(15,23,42,.28)}
+.hero h2{font-size:2.5rem;font-weight:800;letter-spacing:-.04em}
+.progress{height:10px}.progress i{background:linear-gradient(90deg,#60a5fa,#a5f3fc);transition:width .7s cubic-bezier(.2,.8,.2,1)}
+.card-title{font-size:.68rem;letter-spacing:.1em;display:flex;align-items:center;gap:8px}
+.card-title::after{content:"";flex:1;height:1px;background:currentColor;opacity:.12}
+.stat{border-radius:14px;transition:transform .15s}.stat:active{transform:scale(.97)}
+.stat b{font-size:1.3rem;font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.btn{border-radius:12px;min-height:42px;transition:transform .12s,box-shadow .15s,background .15s}
+.btn:active{transform:scale(.97)}
+.btn.primary{background:linear-gradient(180deg,#3b82f6,#2563eb);box-shadow:0 4px 12px rgba(37,99,235,.28)}
+.fab{background:linear-gradient(180deg,#3b82f6,#2563eb);padding:14px 20px}
+.row{transition:border-color .15s,box-shadow .15s,transform .15s}.row:hover{border-color:#93c5fd;box-shadow:0 4px 14px rgba(37,99,235,.1)}
+.chip{padding:4px 9px;font-size:.64rem}
+.nav{padding-top:8px;box-shadow:0 -6px 24px rgba(15,23,42,.06)}
+.nav button{position:relative;min-height:52px}
+.nav button.active{background:rgba(37,99,235,.1)}
+.nav button.active::before{content:"";position:absolute;top:-8px;left:30%;right:30%;height:3px;border-radius:0 0 4px 4px;background:var(--primary)}
+.day{border-radius:14px;transition:transform .12s,box-shadow .15s}.day:hover{box-shadow:0 4px 14px rgba(37,99,235,.14);transform:translateY(-1px)}
+input,select,textarea{border-radius:11px;transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:var(--ring);outline:0}
+.modal{border-radius:22px;box-shadow:0 24px 64px rgba(15,23,42,.35)}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:rgba(100,116,139,.35);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+@media(max-width:600px){.hero h2{font-size:2.15rem}main{padding:10px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* === ICONES SVG + INICI PLEGABLE v2.9.1 === */
+.ic{display:inline-block;width:1.2em;height:1.2em;vertical-align:-.22em;background:currentColor;-webkit-mask:var(--i) center/contain no-repeat;mask:var(--i) center/contain no-repeat}
+.ic-home{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M3 11l9-8 9 8M5 10v10h14V10M10 20v-6h4v6'/></svg>")}.ic-calendar{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='5' width='18' height='16' rx='2'/><path d='M3 10h18M8 3v4M16 3v4'/></svg>")}.ic-week{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='3' y='4' width='18' height='16' rx='2'/><path d='M3 9h18M9 9v11M15 9v11'/></svg>")}.ic-scale{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M12 3v18M6 21h12M5 7h14M5 7l-3 7a3 3 0 0 0 6 0L5 7M19 7l-3 7a3 3 0 0 0 6 0l-3-7'/></svg>")}.ic-clip{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><rect x='6' y='4' width='12' height='17' rx='2'/><path d='M9 4h6v3H9zM9 12h6M9 16h4'/></svg>")}.ic-more{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M5 12h.01M12 12h.01M19 12h.01' stroke-width='3.2'/></svg>")}.ic-bell{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><path d='M6 16v-5a6 6 0 0 1 12 0v5l2 2H4l2-2zM10 21h4'/></svg>")}.ic-clock{--i:url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'><circle cx='12' cy='12' r='9'/><path d='M12 7v5l3 2'/></svg>")}
+.nav .ic{display:block;width:24px;height:24px;margin:0 auto 3px}
+.empty{text-align:center;color:var(--muted);font-size:.82rem;padding:18px 10px}
+.empty::before{content:"";display:block;width:34px;height:34px;margin:0 auto 8px;background:currentColor;opacity:.35;-webkit-mask:var(--i,none) center/contain no-repeat;mask:var(--i,none) center/contain no-repeat;--i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12.5l3 3 5-6'/%3E%3C/svg%3E")}
+#quickStats.collapsed .stat:nth-child(n+5){display:none}
+details.card>summary{list-style:none;cursor:pointer;margin-bottom:0}details.card>summary::-webkit-details-marker{display:none}
+details.card[open]>summary{margin-bottom:12px}
+details.card>summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .2s;order:2;margin-left:auto}
+details.card[open]>summary::before{transform:rotate(45deg)}
+details.card>summary::after{order:1}
+
+/* === GRÀFIC ANUAL v2.10 === */
+.ic-chart{--i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.9' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 20V10M10 20V4M16 20v-7M22 20H2'/%3E%3C/svg%3E")}
+#chart .bar{width:68%;max-width:30px;border-radius:8px 8px 3px 3px;background:linear-gradient(180deg,#60a5fa,#2563eb);transition:height .6s cubic-bezier(.2,.8,.2,1)}
+#chart .bar-wrap.now .bar{background:linear-gradient(180deg,#34d399,#059669)}
+#chart .bar-wrap.now .bar-label{color:var(--text);font-weight:850}
+#chart .bar-val{font-size:.58rem;font-weight:800;color:var(--muted);margin-bottom:3px;font-variant-numeric:tabular-nums;white-space:nowrap}
+#chart .bar-wrap.now .bar-val{color:#059669}
+#chart{background:linear-gradient(var(--line),var(--line)) 0 100%/100% 1px no-repeat;padding-bottom:2px}
 </style>
 </head>
 <body>
@@ -364,9 +419,9 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
     <div class="hero-foot"><span id="workedLabel">0 h fetes</span><span id="targetLabel">de 0 h</span></div>
   </div>
   <div class="section card" id="todayCard"></div>
-  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div><button class="btn secondary" onclick="showView('stats')" style="width:100%;margin-top:10px">📊 Anàlisi anual i previsió</button></div>
-  <div class="section card"><div class="card-title">Pròxim</div><div id="upcoming"></div></div>
-  <div class="section card"><div class="card-title">Radar personal</div><div id="alerts"></div></div>
+  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats collapsed" id="quickStats"></div><button class="btn secondary small" id="statsMore" onclick="toggleStats()" style="width:100%;margin-top:10px">Mostra'n més</button><button class="btn secondary" onclick="showView('stats')" style="width:100%;margin-top:10px"><i class="ic ic-chart"></i> Anàlisi anual i previsió</button></div>
+  <details class="section card" open><summary class="card-title">Pròxim</summary><div id="upcoming"></div></details>
+  <details class="section card" open><summary class="card-title">Radar personal</summary><div id="alerts"></div></details>
   <p class="hint" id="homeVersion" style="text-align:center;margin:10px 0 90px"></p>
 </section>
 
@@ -484,12 +539,12 @@ html.dark .chip.neu{background:#1e293b;color:#cbd5e1}
 </section>
 
 <nav class="nav">
-<button data-view="home" class="active" onclick="showView('home')"><span class="ico">⌂</span>Inici</button>
-<button data-view="calendar" onclick="showView('calendar')"><span class="ico">🗓️</span>Calendari</button>
-<button data-view="week" onclick="showView('week')"><span class="ico">📆</span>Setmana</button>
-<button data-view="trials" onclick="clearTrialDateFilter();document.getElementById('trialSearch').value='';showView('trials')"><span class="ico">⚖</span>Judicis</button>
-<button data-view="permisos" onclick="showView('permisos')"><span class="ico">📋</span>Permisos</button>
-<button data-view="more" onclick="showView('more')"><span class="ico">⋯</span>Més</button>
+<button data-view="home" class="active" onclick="showView('home')"><i class="ic ic-home"></i>Inici</button>
+<button data-view="calendar" onclick="showView('calendar')"><i class="ic ic-calendar"></i>Calendari</button>
+<button data-view="week" onclick="showView('week')"><i class="ic ic-week"></i>Setmana</button>
+<button data-view="trials" onclick="clearTrialDateFilter();document.getElementById('trialSearch').value='';showView('trials')"><i class="ic ic-scale"></i>Judicis</button>
+<button data-view="permisos" onclick="showView('permisos')"><i class="ic ic-clip"></i>Permisos</button>
+<button data-view="more" onclick="showView('more')"><i class="ic ic-more"></i>Més</button>
 </nav>
 
 <div class="modal-bg" id="dayModal"><div class="modal">

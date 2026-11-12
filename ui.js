@@ -44,3 +44,4 @@ window.uiForm=function(title,fields,opt){
     });
 };
 })();
+window.toggleStats=function(){const q=document.getElementById('quickStats'),b=document.getElementById('statsMore');if(!q)return;const c=q.classList.toggle('collapsed');if(b)b.textContent=c?"Mostra'n més":"Mostra'n menys"};
