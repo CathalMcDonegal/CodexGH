@@ -31,9 +31,9 @@
    const k=(el.getAttribute("onclick")||"").match(/clickDay\('([^']+)'\)/)?.[1];
    if(!k||state.registres[k])return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&!extras.length)return;
-   el.classList.add("planned-shift");el.style.setProperty("--record-color",s.color||"#93c5fd");
+   el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
    const kind=el.querySelector(".kind"),hrs=el.querySelector(".hrs");
-   if(kind)kind.textContent="Pla: "+(s.abbr||s.nom);
+   if(kind)kind.textContent=s?("Pla: "+(s.abbr||s.nom)):"Servei addicional";
    if(hrs)hrs.textContent="previst";
    el.title=(s?"Torn teòric: "+s.nom:"Servei addicional planificat")+(extras.length?" · Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"")+" · No és un registre real";
   });
@@ -43,7 +43,7 @@
    const k=(el.getAttribute("onclick")||"").match(/clickWeekDay\('([^']+)'\)/)?.[1];
    if(!k||state.registres[k])return;
    const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&!extras.length)return;
-   el.classList.add("planned-shift");el.style.setProperty("--record-color",s.color||"#93c5fd");
+   el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
    const strong=el.querySelector("strong"),small=el.querySelector("small"),sum=el.querySelector(".week-sum");
    if(strong)strong.textContent=s?"Previst: "+s.nom:"Servei addicional";
    if(small)small.textContent=(s?((s.inici||"")+" → "+(s.fi||"")):"")+" · "+(extras.length?"Addicionals: "+extras.map(x=>state.torns.find(t=>t.id===x)?.nom||x).join(", "):"Horari teòric");
@@ -66,7 +66,7 @@
    return '<div class="row"><div class="grow"><strong>'+esc(date)+' · '+esc(s?.nom||id)+'</strong><small>Servei puntual / canvi de planificació</small></div><button class="btn danger small" onclick="removePlanOverride(\''+esc(date)+'\')">Treure</button></div>';
   }).join("");
   host.innerHTML=
-   '<div class="form-grid"><div><label for="profileKind">Tipus de quadrant</label><select id="profileKind" onchange="profileKindChanged()"><option value="q5">Q5</option><option value="q3">Q3</option><option value="7x7">7x7</option><option value="investigacio">Investigació / especial flexible</option><option value="custom">Altres / personalitzat</option></select></div><div><label for="profileName">Nom del perfil / escamot</label><input id="profileName" placeholder="Ex. Q5 · Escamot B"></div><div><label for="profileAnchor">Dilluns de referència</label><input id="profileAnchor" type="date" value="'+defaultDate+'"></div><div><label for="profileUnit">Rotació</label><select id="profileUnit"><option value="week">Per setmanes</option><option value="day">Per dies</option></select></div><div><label for="profilePhase">Fase que correspon a la setmana/dia de referència</label><select id="profilePhase"></select></div></div>'+
+   '<div class="form-grid"><div><label for="profileKind">Tipus de quadrant</label><select id="profileKind" onchange="profileKindChanged()"><option value="q5">Q5</option><option value="q3">Q3</option><option value="7x7">7x7</option><option value="investigacio">Investigació / especial flexible</option><option value="custom">Altres / personalitzat</option></select></div><div><label for="profileEscamot">Escamot</label><select id="profileEscamot"><option value="">Selecciona escamot</option></select></div><div><label for="profileName">Nom del perfil (opcional)</label><input id="profileName" placeholder="Nom personalitzat"></div><div><label for="profileAnchor">Dilluns de referència</label><input id="profileAnchor" type="date" value="'+defaultDate+'"></div><div><label for="profileUnit">Rotació</label><select id="profileUnit"><option value="week">Per setmanes</option><option value="day">Per dies</option></select></div><div><label for="profilePhase">Fase que correspon a la setmana/dia de referència</label><select id="profilePhase"></select></div></div>'+
    '<label for="profilePattern">Seqüència del cicle (separada per comes)</label><input id="profilePattern" value="" placeholder="Introdueix el cicle verificat del teu escamot"><p class="hint" id="profileHint">Q5: cada element representa una setmana. La rotació continua entre anys; no es reinicia al febrer.</p>'+
    '<button class="btn primary" type="button" onclick="createShiftProfile()" style="width:100%;margin:8px 0 12px">＋ Crear perfil de quadrant</button>'+
    (rows||'<div class="empty">Encara no hi ha cap perfil de torn. Crea’n un per generar la planificació.</div>')+
@@ -78,8 +78,10 @@
   profileKindChanged();
  }
  window.profileKindChanged=function(){
-  const kind=document.getElementById("profileKind")?.value||"q5",pat=document.getElementById("profilePattern"),unit=document.getElementById("profileUnit"),hint=document.getElementById("profileHint"),phase=document.getElementById("profilePhase");
+  const kind=document.getElementById("profileKind")?.value||"q5",pat=document.getElementById("profilePattern"),unit=document.getElementById("profileUnit"),hint=document.getElementById("profileHint"),phase=document.getElementById("profilePhase"),esc=document.getElementById("profileEscamot");
   if(!pat||!unit||!hint||!phase)return;
+  const escamots={q5:["E1","E2","E3","E4","E5"],q3:["A","B","C"],"7x7":["A","B"],investigacio:[],custom:[]};
+  if(esc){const list=escamots[kind]||[];esc.innerHTML='<option value="">Selecciona escamot</option>'+list.map(x=>'<option value="'+x+'">'+x+'</option>').join("");esc.disabled=!list.length;}
   const defaults={q5:{pattern:"",unit:"day",hint:"Q5: hi ha cinc calendaris diferents (E1–E5). No s’aplica una seqüència genèrica: cal carregar el patró diari verificat de l’escamot i la seva data d’ancoratge."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació / especial flexible: alternança setmanal de matins i tardes. Els serveis de cap de setmana i nits s’afegeixen com a serveis puntuals."},q3:{pattern:"",unit:"day",hint:"Q3: hi ha tres calendaris diferents (A–C). El document USPAC 2026 identifica treball/festa; cal confirmar el torn i l’ancoratge de cada escamot abans d’extrapolar."},"7x7":{pattern:"",unit:"day",hint:"7x7: cal seleccionar l’escamot i carregar la seqüència diària del document vigent. No hi ha cap plantilla 2026 actualitzada confirmada en les fonts consultades."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
   const d=defaults[kind];pat.value=d.pattern;unit.value=d.unit;hint.textContent=d.hint;
   const parts=parsePattern(pat.value);phase.innerHTML=parts.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("");
@@ -88,9 +90,9 @@
  window.createShiftProfile=function(){
   const kind=document.getElementById("profileKind").value,raw=document.getElementById("profilePattern").value,pattern=parsePattern(raw),anchor=document.getElementById("profileAnchor").value,unit=document.getElementById("profileUnit").value,phase=Number(document.getElementById("profilePhase").value)||0;
   if(!anchor||!pattern.length){toast("Indica una data de referència i una seqüència vàlida");return}
-  const name=document.getElementById("profileName").value.trim()||({q5:"Q5",q3:"Q3","7x7":"7x7",investigacio:"Investigació / especial flexible",custom:"Torn personalitzat"}[kind]);
+  const escamot=document.getElementById("profileEscamot")?.value||"",name=document.getElementById("profileName").value.trim()||([ "q5","q3","7x7" ].includes(kind)?kind.toUpperCase()+" · Escamot "+(escamot||"pendent"):({investigacio:"Investigació / especial flexible",custom:"Torn personalitzat"}[kind]));
   const labelsKind={q5:"Q5",q3:"Q3","7x7":"7x7",investigacio:"Investigació / especial flexible",custom:"Personalitzat"};
-  const p={id:"sp_"+Date.now(),name,kind,kindLabel:labelsKind[kind],unit,anchorDate:anchor,phase,pattern};
+  const p={id:"sp_"+Date.now(),name,kind,escamot,kindLabel:labelsKind[kind],unit,anchorDate:anchor,phase,pattern};
   state.shiftProfiles.push(p);state.activeShiftProfileId=p.id;save();renderAll();toast("Perfil creat i activat");
  };
  window.activateShiftProfile=function(id){if(!state.shiftProfiles.some(p=>p.id===id))return;state.activeShiftProfileId=id;save();renderAll();toast("Perfil de quadrant activat")};
