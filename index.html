@@ -12,7 +12,7 @@
 <script src="firebase-config.js?v=2.4.6"></script>
 <link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Codex GH 2.12.0</title>
+<title>Codex GH 2.12.1</title>
 <style>
 :root{--bg:#eef5ff;--card:#fff;--text:#10203a;--muted:#5b6b82;--line:#cbd9ee;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;--cyan:#0891b2;--pink:#db2777;--shadow:0 6px 22px rgba(15,23,42,.06);--safe:env(safe-area-inset-bottom,0px);--r:16px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);min-height:100dvh;padding-bottom:calc(82px + var(--safe));line-height:1.4}
@@ -373,7 +373,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--primary);box-shadow:v
 .nav .ic{display:block;width:24px;height:24px;margin:0 auto 3px}
 .empty{text-align:center;color:var(--muted);font-size:.82rem;padding:18px 10px}
 .empty::before{content:"";display:block;width:34px;height:34px;margin:0 auto 8px;background:currentColor;opacity:.35;-webkit-mask:var(--i,none) center/contain no-repeat;mask:var(--i,none) center/contain no-repeat;--i:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Cpath d='M8 12.5l3 3 5-6'/%3E%3C/svg%3E")}
-#quickStats.collapsed .stat:nth-child(n+5){display:none}
+
 details.card>summary{list-style:none;cursor:pointer;margin-bottom:0}details.card>summary::-webkit-details-marker{display:none}
 details.card[open]>summary{margin-bottom:12px}
 details.card>summary::before{content:"";width:8px;height:8px;border-right:2px solid currentColor;border-bottom:2px solid currentColor;transform:rotate(-45deg);transition:transform .2s;order:2;margin-left:auto}
@@ -405,6 +405,7 @@ details.card>summary::after{order:1}
 .permit-card::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,#60a5fa,#2563eb)}
 .permit-card:hover{box-shadow:0 8px 24px rgba(37,99,235,.12);transform:translateY(-1px)}
 .permit-card h3,.permit-card strong{letter-spacing:-.01em}
+ .home-annual-compact .balance-detail,.home-annual-compact .hero-foot{display:none}.home-annual-compact .hero h2{font-size:1.65rem}.home-annual-compact .progress{height:5px;margin:9px 0 0}.home-annual-compact .btn.secondary{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.28);color:#fff}
 </style>
 </head>
 <body>
@@ -430,15 +431,16 @@ details.card>summary::after{order:1}
 
 <div class="watermark" id="watermark" aria-hidden="true"></div><div id="installBanner" class="install-banner" role="status"><div class="grow"><strong>Instal·la Codex GH</strong><small>Accedeix més ràpidament des de la pantalla d’inici.</small></div><button class="btn primary small" onclick="installApp()">Instal·lar</button><button class="btn secondary small" onclick="dismissInstall()" aria-label="Tancar">×</button></div><div id="backupBanner" class="install-banner" role="status"><div class="grow"><strong>Fes una còpia de seguretat</strong><small id="backupBannerText"></small></div><button class="btn primary small" onclick="backupNow()">Exportar</button><button class="btn secondary small" onclick="dismissBackupReminder()" aria-label="Ara no">×</button></div><main>
 <section id="view-home" class="view active">
-  <div class="section card hero">
-    <div class="hero-top"><div><div class="eyebrow">Còmput anual</div><h2 id="saldo">+0:00</h2><div class="saldo" id="saldoText">Calculant…</div><div class="balance-detail" id="balanceDetail">Calculant previsió…</div></div><div class="chip" id="progressPct">0%</div></div>
+  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div></div>
+  <div class="section card" id="todayCard"></div>
+  <div class="section card hero home-annual-compact">
+    <div class="hero-top"><div><div class="eyebrow">Còmput anual</div><h2 id="saldo">+0:00</h2><div class="saldo" id="saldoText">Calculant…</div><div class="balance-detail" id="balanceDetail" aria-hidden="true">Calculant previsió…</div></div><div class="chip" id="progressPct">0%</div></div>
     <div class="progress"><i id="progressBar" style="width:0%"></i></div>
     <div class="hero-foot"><span id="workedLabel">0 h fetes</span><span id="targetLabel">de 0 h</span></div>
+    <button class="btn secondary" onclick="showView('stats')" style="width:100%;margin-top:12px"><i class="ic ic-chart"></i> Anàlisi anual i previsió</button>
   </div>
-  <div class="section card" id="todayCard"></div>
-  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats collapsed" id="quickStats"></div><button class="btn secondary small" id="statsMore" onclick="toggleStats()" style="width:100%;margin-top:10px">Mostra'n més</button><button class="btn secondary" onclick="showView('stats')" style="width:100%;margin-top:10px"><i class="ic ic-chart"></i> Anàlisi anual i previsió</button></div>
   <details class="section card" open><summary class="card-title">Pròxim</summary><div id="upcoming"></div></details>
-  <details class="section card" open><summary class="card-title">Radar personal</summary><div id="alerts"></div></details>
+  <details class="section card" open><summary class="card-title">Cobraments</summary><div id="alerts"></div></details>
   <p class="hint" id="homeVersion" style="text-align:center;margin:10px 0 90px"></p>
 </section>
 
@@ -464,7 +466,8 @@ details.card>summary::after{order:1}
   <div class="card"><div class="card-title" id="annualTitle">Calendari anual</div><div class="annual-grid" id="annualCalendar"></div><p class="hint" style="margin:10px 0 0">Període de còmput: febrer – gener. Toca un mes per obrir-ne el calendari detallat.</p></div>
   <div class="card"><div class="card-title">Còmput mensual · hores efectives</div><div class="chart" id="chart"></div></div>
   <div class="card"><div class="card-title">Distribució</div><div class="stats" id="statsDetail"></div></div>
-  <div class="card"><div class="card-title">Previsió de tancament</div><div id="forecast"></div></div>\n  <div class="card"><div class="card-title">Simulador de torns futurs</div><div id="shiftSimulator"></div></div>
+  <div class="card"><div class="card-title">Previsió de tancament</div><div id="forecast"></div></div>
+  <div class="card"><div class="card-title">Simulador de torns futurs</div><div id="shiftSimulator"></div></div>
 </section>
 
 <section id="view-more" class="view">
@@ -718,7 +721,7 @@ details.card>summary::after{order:1}
 <script src="ui.js?v=2.4.7"></script>
 <script src="merge.js?v=2.4.7"></script>
 <script src="home.js?v=2.4.10"></script>
-<script src="app.js?v=2.8.0"></script>
+<script src="app.js?v=2.12.1"></script>
 <script src="shift-profiles.js?v=2.8.0"></script>
 <script src="sync.js?v=2.4.7"></script>
 </body>
