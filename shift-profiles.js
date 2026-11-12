@@ -1,4 +1,4 @@
-/* Codex GH 2.5.0 — Perfils i planificació de torns
+/* Codex GH 2.7.5 — Perfils i planificació de torns
    La planificació és independent de state.registres i no entra al còmput d'hores. */
 (function(){
  "use strict";
@@ -43,7 +43,7 @@
   document.querySelectorAll("#weekList .week-row").forEach(el=>{
    const k=(el.getAttribute("onclick")||"").match(/clickWeekDay\('([^']+)'\)/)?.[1];
    if(!k||state.registres[k])return;
-   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&!extras.length)return;
+   const id=planForDate(k),s=state.torns.find(x=>x.id===id),extras=state.planExtras?.[k]||[];if(!s&&id!=="treball"&&!extras.length)return;
    el.classList.add("planned-shift");el.style.setProperty("--record-color",s?.color||"#93c5fd");
    const strong=el.querySelector("strong"),small=el.querySelector("small"),sum=el.querySelector(".week-sum");
    if(strong)strong.textContent=s?"Previst: "+s.nom:(id==="treball"?"Previst: Treball (torn pendent)":"Servei addicional");
@@ -82,9 +82,9 @@
   const kind=document.getElementById("profileKind")?.value||"q5",pat=document.getElementById("profilePattern"),unit=document.getElementById("profileUnit"),hint=document.getElementById("profileHint"),phase=document.getElementById("profilePhase"),escSelect=document.getElementById("profileEscamot");
   if(!pat||!unit||!hint||!phase)return;
   const escamots={q5:["E1","E2","E3","E4","E5"],q3:["A","B","C"],"7x7":["A","B"],investigacio:[],custom:[]};
-  if(escSelect){const list=escamots[kind]||[];escSelect.innerHTML='<option value="">Selecciona escamot</option>'+list.map(x=>'<option value="'+x+'">'+x+'</option>').join("");escSelect.disabled=!list.length;escSelect.onchange=()=>{const t=OFFICIAL[kind],seq=t?.cycles?.[esc.value];if(seq){pat.value=seq;unit.value=t.unit;document.getElementById("profileAnchor").value=t.anchor;phase.innerHTML='<option value="0">1 · Inici del cicle oficial</option>';}};}
-  const defaults={q5:{pattern:"",unit:"day",hint:"Q5 2026: plantilles diàries oficials diferenciades E1–E5. Cicle de 35 dies, ancorat al 12/01/2026 i continuat entre anys. TN es representa com a nit de cap de setmana; D com a dia de 12 h."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació / especial flexible: alternança setmanal de matins i tardes. Els serveis de cap de setmana i nits s’afegeixen com a serveis puntuals."},q3:{pattern:"",unit:"day",hint:"Q3 2026: plantilles oficials A–C amb cicle de 21 dies, ancorat al 26/01/2026. El PDF diferencia Treball (TR) i Festa (F), però el torn concret s’ha de confirmar mensualment; l’app no inventa M/T/N."},"7x7":{pattern:"",unit:"day",hint:"7x7: cal seleccionar l’escamot i carregar la seqüència diària del document vigent. No hi ha cap plantilla 2026 actualitzada confirmada en les fonts consultades."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
-  const d=defaults[kind];pat.value=d.pattern;unit.value=d.unit;hint.textContent=d.hint;
+  if(escSelect){const list=escamots[kind]||[];escSelect.innerHTML='<option value="">Selecciona escamot</option>'+list.map(x=>'<option value="'+x+'">'+x+'</option>').join("");escSelect.disabled=!list.length;escSelect.onchange=()=>{const t=OFFICIAL[kind],seq=t?.cycles?.[escSelect.value];if(seq){pat.value=seq;unit.value=t.unit;document.getElementById("profileAnchor").value=t.anchor;phase.innerHTML='<option value="0">1 · Inici del cicle oficial</option>';}};}
+  const defaults={q5:{pattern:"",unit:"day",hint:"Q5 2026: plantilles diàries oficials diferenciades E1–E5. Cicle de 35 dies, ancorat al 12/01/2026 i continuat entre anys. TN es representa com a nit de cap de setmana; D com a dia de 12 h."},investigacio:{pattern:"Matí,Tarda",unit:"week",hint:"Investigació: rotació setmanal de dilluns a divendres. Setmana de matí, setmana de tarda, i repeteix. Referència inicial configurada al dilluns 09/11/2026 (setmana de MATÍ). Els caps de setmana, festius i serveis nocturns s’afegeixen a banda."},q3:{pattern:"",unit:"day",hint:"Q3 2026: plantilles oficials A–C amb cicle de 21 dies, ancorat al 26/01/2026. El PDF diferencia Treball (TR) i Festa (F), però el torn concret s’ha de confirmar mensualment; l’app no inventa M/T/N."},"7x7":{pattern:"",unit:"day",hint:"7x7: cal seleccionar l’escamot i carregar la seqüència diària del document vigent. No hi ha cap plantilla 2026 actualitzada confirmada en les fonts consultades."},custom:{pattern:"",unit:"week",hint:"Defineix el cicle propi i la seva durada."}};
+  const d=defaults[kind];pat.value=d.pattern;unit.value=d.unit;hint.textContent=d.hint;if(kind==="investigacio"){const a=document.getElementById("profileAnchor");if(a)a.value="2026-11-09";}
   const parts=parsePattern(pat.value);phase.innerHTML=parts.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("");
   pat.oninput=()=>{const p=parsePattern(pat.value);phase.innerHTML=p.map((id,i)=>'<option value="'+i+'">'+(i+1)+' · '+esc(labels[id]||state.torns.find(s=>s.id===id)?.nom||id)+'</option>').join("")};
  };
