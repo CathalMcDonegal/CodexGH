@@ -771,6 +771,31 @@ html.light #view-calendar #legend .legend-chip *{
   -webkit-text-fill-color:#26364b!important;
 }
 
+
+/* FIX DEFINITIU LLEGENDA: conservar el color propi de cada indicador també en mode fosc */
+html.dark #view-calendar #legend .legend-chip{
+  background:#26364b!important;
+  color:#d5deea!important;
+  -webkit-text-fill-color:#d5deea!important;
+  border-color:#465a73!important;
+}
+html.dark #view-calendar #legend .legend-chip i{
+  display:inline-block!important;
+  width:10px!important;
+  min-width:10px!important;
+  height:10px!important;
+  border-radius:50%!important;
+  background:var(--legend-color,#94a3b8)!important;
+  background-color:var(--legend-color,#94a3b8)!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  opacity:1!important;
+}
+html.dark #view-calendar #legend .legend-chip *:not(i){
+  background:transparent!important;
+  color:#d5deea!important;
+  -webkit-text-fill-color:#d5deea!important;
+}
+
 </style>
 </head>
 <body>
