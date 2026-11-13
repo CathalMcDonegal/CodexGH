@@ -542,6 +542,49 @@ html.light .day[style*="--record-color"] .num,html.light .day[style*="--record-c
 html.light .day[style*="--record-color"] .hrs{color:#4a5b73!important;-webkit-text-fill-color:#4a5b73!important}
 html.dark .chip:not(.ok):not(.warn):not(.bad):not(.info):not(.ok-soft):not(.bad-soft){background:#26364f!important;color:#e2ebf7!important;border-color:#3d5273!important}
 html.light .chip:not(.ok):not(.warn):not(.bad):not(.info):not(.ok-soft):not(.bad-soft){background:#e8eef8!important;color:#2b3a52!important}
+
+/* Baixa: un únic codi cromàtic compartit entre calendari i setmana */
+.day.baixa,
+.calendar .day.baixa,
+.week-row.baixa{
+  background:#f6dfe1!important;
+  border-color:#d88991!important;
+  color:#762b35!important;
+}
+.day.baixa .num,.day.baixa .kind,.day.baixa .hrs,
+.calendar .day.baixa .num,.calendar .day.baixa .kind,.calendar .day.baixa .hrs,
+.week-row.baixa .week-date,.week-row.baixa .week-date b,
+.week-row.baixa .week-date small,.week-row.baixa .week-sum,
+.week-row.baixa strong,.week-row.baixa span,.week-row.baixa small{
+  color:#762b35!important;
+}
+.day.selected.baixa,.calendar .day.selected.baixa{
+  background:#f6dfe1!important;
+  border-color:#d88991!important;
+  outline:3px solid #d88991!important;
+  box-shadow:0 0 0 4px rgba(216,137,145,.18)!important;
+}
+@media(prefers-color-scheme:dark){
+  .day.baixa,.calendar .day.baixa,.week-row.baixa{
+    background:#512a32!important;
+    border-color:#c77984!important;
+    color:#ffe4e7!important;
+  }
+  .day.baixa .num,.day.baixa .kind,.day.baixa .hrs,
+  .calendar .day.baixa .num,.calendar .day.baixa .kind,.calendar .day.baixa .hrs,
+  .week-row.baixa .week-date,.week-row.baixa .week-date b,
+  .week-row.baixa .week-date small,.week-row.baixa .week-sum,
+  .week-row.baixa strong,.week-row.baixa span,.week-row.baixa small{
+    color:#ffe4e7!important;
+  }
+  .day.selected.baixa,.calendar .day.selected.baixa{
+    background:#512a32!important;
+    border-color:#e3a0a8!important;
+    outline:3px solid #e3a0a8!important;
+    box-shadow:0 0 0 4px rgba(227,160,168,.2)!important;
+  }
+}
+
 </style>
 </head>
 <body>
