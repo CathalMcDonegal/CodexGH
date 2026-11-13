@@ -607,6 +607,23 @@ html.dark .week-row,html.dark .week-row strong,html.dark .week-row small{
   text-shadow:none !important;
 }
 
+
+/* Ajust definitiu del FONS GENERAL: només el fons exterior de cada tema */
+html:not(.dark){
+  --bg:#d7e0ec !important;
+  background:#d7e0ec !important;
+}
+html:not(.dark) body{
+  background:#d7e0ec !important;
+}
+html.dark{
+  --bg:#26364d !important;
+  background:#26364d !important;
+}
+html.dark body{
+  background:#26364d !important;
+}
+
 </style>
 </head>
 <body>
