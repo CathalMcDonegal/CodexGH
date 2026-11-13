@@ -624,6 +624,38 @@ html.dark body{
   background:#26364d !important;
 }
 
+
+/* Correcció de contrast del calendari en mode fosc.
+   Alta especificitat per prevaldre sobre els colors antics de cada tipus de dia. */
+html.dark #view-calendar .calendar .day,
+html.dark #view-calendar .calendar .day .num,
+html.dark #view-calendar .calendar .day .kind,
+html.dark #view-calendar .calendar .day .hrs,
+html.dark #view-calendar .calendar .day strong,
+html.dark #view-calendar .calendar .day small{
+  color:#ffffff !important;
+  opacity:1 !important;
+  text-shadow:none !important;
+}
+html.dark #view-calendar .calendar .day.baixa .num,
+html.dark #view-calendar .calendar .day.baixa .kind,
+html.dark #view-calendar .calendar .day.baixa .hrs,
+html.dark #view-calendar .calendar .day.mati .num,
+html.dark #view-calendar .calendar .day.mati .kind,
+html.dark #view-calendar .calendar .day.mati .hrs,
+html.dark #view-calendar .calendar .day.tarda .num,
+html.dark #view-calendar .calendar .day.tarda .kind,
+html.dark #view-calendar .calendar .day.tarda .hrs,
+html.dark #view-calendar .calendar .day.vacances .num,
+html.dark #view-calendar .calendar .day.vacances .kind,
+html.dark #view-calendar .calendar .day.vacances .hrs,
+html.dark #view-calendar .calendar .day.festa .num,
+html.dark #view-calendar .calendar .day.festa .kind,
+html.dark #view-calendar .calendar .day.festa .hrs{
+  color:#ffffff !important;
+  opacity:1 !important;
+}
+
 </style>
 </head>
 <body>
