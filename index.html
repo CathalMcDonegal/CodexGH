@@ -750,6 +750,27 @@ html.light #lockScreen .lock-box button.lock-link{color:#bfdbfe!important;backgr
 /* fosc: botó perill i tancar modal més llegibles */
 html.dark .btn.danger{background:#7f1d1d!important;color:#fee2e2!important;-webkit-text-fill-color:#fee2e2!important;border:1px solid #b91c1c!important}
 html.dark .modal .close,html.dark .modal-head .close{background:#1e2b42!important;color:#f1f5f9!important;-webkit-text-fill-color:#f1f5f9!important;border:1px solid #33465f!important}
+
+/* Llegenda del calendari: text menys blanc i fons propi en mode fosc */
+html.dark #view-calendar #legend .legend-chip,
+html.dark #view-calendar #legend .legend-chip *,
+html.dark #legend .chip{
+  background-color:#26364b!important;
+  color:#c2ccda!important;
+  -webkit-text-fill-color:#c2ccda!important;
+  border-color:#46566d!important;
+  opacity:1!important;
+}
+html.dark #view-calendar #legend .legend-chip{
+  background:#26364b!important;
+  font-weight:750!important;
+}
+html.light #view-calendar #legend .legend-chip,
+html.light #view-calendar #legend .legend-chip *{
+  color:#26364b!important;
+  -webkit-text-fill-color:#26364b!important;
+}
+
 </style>
 </head>
 <body>
