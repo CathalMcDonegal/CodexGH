@@ -664,6 +664,92 @@ html.dark #view-trials .chip.warn,html.dark #upcoming .chip.warn,html.dark #aler
 html.dark #view-trials .chip.bad,html.dark #upcoming .chip.bad,html.dark #alerts .chip.bad{background:#3d2b30!important;color:#e5c3c8!important}
 html.dark #view-trials .chip.info,html.dark #upcoming .chip.info,html.dark #alerts .chip.info{background:#293548!important;color:#c5d1e1!important}
 
+
+/* ===== TEMES v3 · contrast final (clar + fosc) =====
+   Bloc autoritatiu: va l'últim i guanya als pegats anteriors. */
+
+/* --- Compartit: botons primaris amb contrast AA --- */
+html.light .btn.primary:not(:disabled),html.dark .btn.primary:not(:disabled),html .fab{background:linear-gradient(135deg,#1d4ed8,#1e40af)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+
+/* --- Pantalla de bloqueig (sempre fosca, independent del tema) --- */
+#lockScreen .lock-box p,#lockScreen #lockSub{color:#cbd5e1!important}
+#lockScreen .lock-error{color:#fecaca!important}
+#lockScreen .lock-wm{color:#94a3b8!important}
+#lockScreen .lock-box h2{color:#f8fafc!important}
+#lockScreen .lock-box input{color:#f8fafc!important;-webkit-text-fill-color:#f8fafc!important}
+#lockScreen .lock-box input::placeholder{color:#a8b6c9!important;opacity:1}
+#lockScreen .lock-box button.lock-link{color:#bfdbfe!important}
+#lockScreen .lock-box button:not(.lock-sec):not(.lock-link){background:#1d4ed8!important;color:#fff!important}
+
+/* --- MODE CLAR --- */
+html.light{--muted:#516074}
+/* targeta "Còmput anual": fons fosc fix, text clar */
+html.light .card.hero,html.light .hero{background:linear-gradient(135deg,#0f172a,#1e3a8a)!important;border-color:transparent!important}
+html.light .hero,html.light .hero h2,html.light .hero p,html.light .hero span,html.light .hero small,html.light .hero div,
+html.light .hero .saldo,html.light .hero .eyebrow,html.light .hero .hero-foot,html.light .hero .muted{color:#fff!important;-webkit-text-fill-color:#fff!important}
+html.light .hero .balance-detail,html.light .hero .eyebrow{color:#e2e8f0!important;-webkit-text-fill-color:#e2e8f0!important;opacity:1}
+html.light .hero .btn.secondary{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.35)!important;color:#fff!important;-webkit-text-fill-color:#fff!important}
+/* textos secundaris i barra inferior */
+html.light .nav button{color:#516074!important}
+html.light .nav button.active{color:#1d4ed8!important;background:#e0ecff!important}
+html.light .bar-label,html.light .annual-month-head,html.light .annual-month-head small,html.light .annual-month-meta,
+html.light .setting-row small,html.light .permit-filters button,html.light .hint,html.light .muted{color:#516074!important}
+html.light .permit-filters button.on{color:#fff!important;background:#1d4ed8!important}
+html.light .annual-month{background:linear-gradient(145deg,#f4f8ff,#fff)!important;color:#172033!important}
+html.light .annual-month strong{color:#1d4ed8!important}
+html.light .bar-val{color:#172033!important}
+
+/* --- MODE FOSC --- */
+html.dark{--muted:#a9b8cc}
+html.dark .annual-month{background:linear-gradient(145deg,#172554,#111b2d)!important;border-color:#31518a!important;color:#f1f5f9!important}
+html.dark .annual-month strong{color:#bfdbfe!important}
+html.dark .annual-month-head,html.dark .annual-month-head small,html.dark .annual-month-meta{color:#cbd5e1!important}
+html.dark .annual-month:hover{border-color:#60a5fa!important}
+html.dark .chart{background:linear-gradient(180deg,#14213a,transparent)!important}
+html.dark .bar-label,html.dark .bar-val{color:#cbd5e1!important}
+html.dark .note-icon-grid button{background:#16233a!important;color:#f1f5f9!important;border-color:#33465f!important}
+html.dark .note-icon-grid button:hover{background:#1e3a8a!important;border-color:#60a5fa!important}
+html.dark .note-icon-grid button small,html.dark .note-icon-none{color:#cbd5e1!important}
+html.dark .nav button{color:#b4c2d6!important}
+html.dark .nav button.active{color:#bfdbfe!important;background:#1e3a8a!important}
+html.dark a,html.dark .hint a{color:#93c5fd!important}
+html.dark .permit-filters button{color:#cbd5e1!important;background:#16233a!important;border-color:#33465f!important}
+html.dark .permit-filters button.on{color:#fff!important;background:#1d4ed8!important;border-color:#1d4ed8!important}
+html.dark .setting-row{background:#14213a!important}
+html.dark .setting-row small,html.dark .legend-chip,html.dark .legend-chip *{color:#e2e8f0!important}
+/* tiles de dia sense --record-color (torns antics): fons fosc + text clar */
+html.dark .day:not([style*="--record-color"]):not(.baixa):not(.today){background:#16233a;border-color:#33465f}
+html.dark .day:not([style*="--record-color"]):not(.baixa):not(.planificat):not(.today) .num,
+html.dark .day:not([style*="--record-color"]):not(.baixa):not(.planificat):not(.today) .kind{color:#f1f5f9!important;-webkit-text-fill-color:#f1f5f9!important}
+html.dark .day:not([style*="--record-color"]):not(.baixa):not(.planificat):not(.today) .hrs{color:#cbd5e1!important;-webkit-text-fill-color:#cbd5e1!important}
+html.dark .day .note-icon:not(.red-plus){text-shadow:0 0 3px rgba(0,0,0,.7)}
+html.dark .toast{background:#e2e8f0!important;color:#0f172a!important}
+
+/* hero: percentatge circular llegible en clar */
+html.light .hero #progressPct,html.dark .hero #progressPct{color:#fff!important;-webkit-text-fill-color:#fff!important}
+/* fosc: caps de setmana/festius amb text clar i torns groc (FD, CS dia) adaptats */
+html.dark .day.fd,html.dark .week-row.fd{background:rgba(250,204,21,.20)!important;border-color:#ca8a04!important}
+html.dark .day.cs_dia,html.dark .week-row.cs_dia{background:rgba(253,224,71,.18)!important;border-color:#d4a90a!important}
+html.dark .day.fd .num,html.dark .day.fd .kind,html.dark .day.cs_dia .num,html.dark .day.cs_dia .kind,
+html.dark .week-row.fd strong,html.dark .week-row.fd .week-sum,html.dark .week-row.cs_dia strong,html.dark .week-row.cs_dia .week-sum{color:#fef9c3!important;-webkit-text-fill-color:#fef9c3!important}
+html.dark .day.fd .hrs,html.dark .day.cs_dia .hrs,html.dark .week-row.fd small,html.dark .week-row.cs_dia small{color:#fde68a!important;-webkit-text-fill-color:#fde68a!important}
+/* fosc: avui */
+html.dark .day.today{background:#17284f!important;border-color:#60a5fa!important}
+html.dark .day.today .num{color:#bfdbfe!important}
+html.dark .day.today .kind{color:#f1f5f9!important}
+html.dark .day.today .hrs{color:#cbd5e1!important}
+/* fosc: "planificat" manté el seu fons blau clar amb text fosc */
+html.dark .day.planificat .hrs{color:#0f172a!important;-webkit-text-fill-color:#0f172a!important}
+/* fosc: primari desactivat, clarament apagat però llegible */
+html.dark .btn.primary:disabled{background:#475569!important;color:#f1f5f9!important;-webkit-text-fill-color:#f1f5f9!important;border-color:#475569!important;box-shadow:none!important}
+/* pantalla de bloqueig: camps sempre foscos (el mode clar els posava blancs) */
+html.light #lockScreen .lock-box input,html.dark #lockScreen .lock-box input{background:rgba(15,23,42,.65)!important;background-color:rgba(15,23,42,.65)!important;border:1px solid rgba(255,255,255,.28)!important;color:#f8fafc!important;-webkit-text-fill-color:#f8fafc!important}
+html.light #lockScreen .lock-box input::placeholder,html.dark #lockScreen .lock-box input::placeholder{color:#a8b6c9!important;-webkit-text-fill-color:#a8b6c9!important;opacity:1}
+html.light #lockScreen .lock-box button.lock-sec{color:#e2e8f0!important;background:transparent!important;border:1px solid rgba(255,255,255,.35)!important}
+html.light #lockScreen .lock-box button.lock-link{color:#bfdbfe!important;background:none!important}
+/* fosc: botó perill i tancar modal més llegibles */
+html.dark .btn.danger{background:#7f1d1d!important;color:#fee2e2!important;-webkit-text-fill-color:#fee2e2!important;border:1px solid #b91c1c!important}
+html.dark .modal .close,html.dark .modal-head .close{background:#1e2b42!important;color:#f1f5f9!important;-webkit-text-fill-color:#f1f5f9!important;border:1px solid #33465f!important}
 </style>
 </head>
 <body>
