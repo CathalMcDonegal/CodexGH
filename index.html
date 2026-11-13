@@ -656,6 +656,28 @@ html.dark #view-calendar .calendar .day.festa .hrs{
   opacity:1 !important;
 }
 
+
+/* FIX REAL: els dies portaven la classe .muted (opacity:.35),
+   que feia transparents també els textos blancs del mode fosc. */
+html.dark #view-calendar .calendar > .day,
+html.dark #view-calendar .calendar > .day.muted,
+html.dark #view-calendar .calendar > .day.baixa,
+html.dark #view-calendar .calendar > .day.festa,
+html.dark #view-calendar .calendar > .day.vacances,
+html.dark #view-calendar .calendar > .day.mati,
+html.dark #view-calendar .calendar > .day.tarda,
+html.dark #view-calendar .calendar > .day.nit{
+  opacity:1 !important;
+  filter:none !important;
+}
+html.dark #view-calendar .calendar > .day .num,
+html.dark #view-calendar .calendar > .day .kind,
+html.dark #view-calendar .calendar > .day .hrs{
+  opacity:1 !important;
+  color:#ffffff !important;
+  -webkit-text-fill-color:#ffffff !important;
+}
+
 </style>
 </head>
 <body>
