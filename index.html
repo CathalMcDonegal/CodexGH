@@ -563,6 +563,50 @@ html.dark .hero small{
   color:#f8fafc !important;
 }
 
+
+/* PALETA UNIFICADA: els dies planificats no canvien de color entre temes */
+:root{
+  --bg:#e7edf5;
+}
+html.dark{
+  --bg:#17243a;
+}
+/* Manté el fons general diferenciat i més equilibrat en mode fosc */
+html.dark body{background:#17243a !important}
+body{background:#e7edf5}
+
+/* Colors de calendari idèntics als del mode clar, també en mode fosc */
+.day.work{background:#e8f1ff !important;border-color:#93c5fd !important}
+.day.mati{background:#fff9d6 !important;border-color:#facc15 !important}
+.day.tarda{background:#ffead8 !important;border-color:#fb923c !important}
+.day.nit,.day.cs_nit,.day.fn{background:#dbeafe !important;border-color:#60a5fa !important}
+.day.vacances{background:#dcfce7 !important;border-color:#86efac !important}
+.day.assumptes{background:#bbf7d0 !important;border-color:#4ade80 !important}
+.day.hores_acum{background:#a7f3d0 !important;border-color:#34d399 !important}
+.day.dies_blaus{background:#86efac !important;border-color:#22c55e !important}
+.day.festa{background:#4ade80 !important;border-color:#16a34a !important}
+.day.baixa{background:#fee2e2 !important;border-color:#fca5a5 !important}
+.day.judici{background:#f3e8ff !important;border-color:#c084fc !important}
+
+/* Els torns amb color personalitzat conserven sempre la mateixa barreja clara */
+.day[style*="--shift-color"],
+.week-row[style*="--shift-color"]{
+  background:color-mix(in srgb,var(--shift-color) 18%,#ffffff) !important;
+  border-color:var(--shift-color) !important;
+}
+
+/* Només canvia el color de la lletra segons el tema */
+.day,.day .num,.day .kind,.day .hrs,
+.week-row,.week-row strong,.week-row small{
+  color:#111827 !important;
+  text-shadow:none !important;
+}
+html.dark .day,html.dark .day .num,html.dark .day .kind,html.dark .day .hrs,
+html.dark .week-row,html.dark .week-row strong,html.dark .week-row small{
+  color:#ffffff !important;
+  text-shadow:none !important;
+}
+
 </style>
 </head>
 <body>
