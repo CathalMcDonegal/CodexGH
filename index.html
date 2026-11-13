@@ -585,6 +585,45 @@ html.light .chip:not(.ok):not(.warn):not(.bad):not(.info):not(.ok-soft):not(.bad
   }
 }
 
+
+/* Judicis i cobraments: paleta més suau, sense colors estridents */
+#view-trials .list .row,
+#upcoming .row,
+#alerts .row{
+  background:#f7f8fb!important;
+  border-color:#dce2eb!important;
+  box-shadow:none!important;
+}
+#view-trials .chip.ok,#upcoming .chip.ok,#alerts .chip.ok{
+  background:#e4eee8!important;border-color:#b9d0c1!important;color:#365b45!important;
+}
+#view-trials .chip.warn,#upcoming .chip.warn,#alerts .chip.warn{
+  background:#f4eee0!important;border-color:#dfd0aa!important;color:#756039!important;
+}
+#view-trials .chip.bad,#upcoming .chip.bad,#alerts .chip.bad{
+  background:#f3e7e7!important;border-color:#dfc0c0!important;color:#815050!important;
+}
+#view-trials .chip.info,#upcoming .chip.info,#alerts .chip.info{
+  background:#e8edf4!important;border-color:#cbd5e1!important;color:#4b5d73!important;
+}
+@media(prefers-color-scheme:dark){
+  #view-trials .list .row,#upcoming .row,#alerts .row{
+    background:#1a2637!important;border-color:#354458!important;
+  }
+  #view-trials .chip.ok,#upcoming .chip.ok,#alerts .chip.ok{
+    background:#263b32!important;border-color:#496b58!important;color:#c3dccb!important;
+  }
+  #view-trials .chip.warn,#upcoming .chip.warn,#alerts .chip.warn{
+    background:#3b3426!important;border-color:#6c5b3b!important;color:#e5d4aa!important;
+  }
+  #view-trials .chip.bad,#upcoming .chip.bad,#alerts .chip.bad{
+    background:#3d2b30!important;border-color:#704951!important;color:#e5c3c8!important;
+  }
+  #view-trials .chip.info,#upcoming .chip.info,#alerts .chip.info{
+    background:#293548!important;border-color:#46566e!important;color:#c5d1e1!important;
+  }
+}
+
 </style>
 </head>
 <body>
