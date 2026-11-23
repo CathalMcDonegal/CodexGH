@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.13.2";
+const APP_VERSION="2.13.3";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -803,7 +803,7 @@ function exportPDF(){
     <div class="stat"><b>${Math.round(c.progress)}%</b><span>Progrés</span></div>
     <div class="stat"><b>${plainHours(state.vacancesTotals-c.vac)} h</b><span>Vacances restants</span></div>
     <div class="stat"><b>${plainHours(state.assumptesTotals-c.pers)} h</b><span>Assumptes restants</span></div>
-    <div class="stat"><b>${plainHours(c.gnit)} h</b><span>Nits</span></div>
+    <div class="stat"><b>${plainHours(c.gnit)} h</b><span>Guàrdies nit/dia</span></div>
     <div class="stat"><b>${plainHours(c.extra)} h</b><span>Extres</span></div>
   </div>
   <h2>Registres (${Object.keys(state.registres).length})</h2>
