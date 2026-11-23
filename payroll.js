@@ -120,7 +120,7 @@ if(typeof originalOpenDetail==='function')window.openDetail=function(kind){if(ki
 function addPayFields(){
  const work=document.getElementById('workFields');if(!work||document.getElementById('specialPayFields'))return;
  const wrap=document.createElement('div');wrap.id='specialPayFields';wrap.style.cssText='margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px';
- wrap.innerHTML='<div id="specialPaySummary" class="hint" style="margin:0 0 8px">El cobrament especial es calcularà automàticament segons la data i les hores treballades.</div><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="daySpecialPaid" style="width:auto;margin:0"> Cobrament especial ja cobrat</label><label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="dayExtraPaid" style="width:auto;margin:0"> Aquest servei s'ha cobrat com a hores extraordinàries</label>';
+ wrap.innerHTML='<div id="specialPaySummary" class="hint" style="margin:0 0 8px">El cobrament especial es calcularà automàticament segons la data i les hores treballades.</div><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="daySpecialPaid" style="width:auto;margin:0"> Cobrament especial ja cobrat</label><label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="dayExtraPaid" style="width:auto;margin:0"> Aquest servei s\'ha cobrat com a hores extraordinàries</label>';
  work.appendChild(wrap);
  ['dayStart','dayEnd','dayHours','dayType'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshPayPreview));
 }
