@@ -225,7 +225,7 @@ function setActiveYear(y){
   y=Number(y);if(!y||y===state.anyInici)return;
   ensureHistory();state.historic[String(state.anyInici)]=snapshot();const d=state.historic[String(y)];
   state.anyInici=y;
-  if(d){state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=d.gnitTotals??0;state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[]}
+  if(d){state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=Number(d.gnitTotals)>0?Number(d.gnitTotals):175.5;state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[]}
   else {state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=0;state.acumTotals=0;state.festius=clone(DEFAULT_HOLIDAYS);state.registres={};state.judicis=[]}
   currentMonth=new Date(y,1,1);weekAnchor=startOfWeek(new Date(y,1,1));selected.clear();save();renderAll();toast(`Any ${y} actiu`)
 }
@@ -505,7 +505,7 @@ function saveConfig(){
  state.assumptesTotals=Number(document.getElementById("cfgPers").value)||0;
  state.blausTotals=Number(document.getElementById("cfgBlue").value)||0;
  state.gnpTotals=Number(document.getElementById("cfgGnp").value)||0;
- state.gnitTotals=Number(document.getElementById("cfgGnit").value)||0;
+ state.gnitTotals=Number(document.getElementById("cfgGnit").value)||175.5;
  state.acumTotals=Number(document.getElementById("cfgAccum").value)||0;
  state.titol=document.getElementById("cfgTitle").value.trim()||"Codex GH";
  state.subtitol=document.getElementById("cfgSubtitle").value.trim();
