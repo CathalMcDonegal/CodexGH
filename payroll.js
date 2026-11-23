@@ -115,8 +115,25 @@ function openGuardiaDetail(){
  list.innerHTML=rows.join('')||'<div class="empty">Encara no hi ha guàrdies planificades ni realitzades.</div>';
  window.openModal('detailModal');
 }
+function fmtPrecise(h){const sec=Math.round(Math.abs(h)*3600),hh=Math.floor(sec/3600),mm=Math.floor(sec%3600/60),ss=sec%60;return (h<0?'-':'')+(hh?hh+' h ':'')+(mm?mm+' min ':'')+ss+' s'}
+function openAccumDetail(){
+ const s=st(),c=window.calc(),list=document.getElementById('detailList'),summary=document.getElementById('detailSummary'),title=document.getElementById('detailTitle');if(!s||!list||!summary||!title)return;
+ title.textContent='Hores acumulades';
+ summary.innerHTML='<strong>Saldo actual: '+fmt(c.accum)+' h</strong><small>Inicials: '+fmt(Number(s.acumTotals)||0)+' h · Generades amb coeficient · Utilitzades: '+fmt(Number(c.accUsed)||0)+' h</small>';
+ const rows=[];
+ for(const [k,r] of Object.entries(s.registres||{}).sort((a,b)=>a[0].localeCompare(b[0]))){
+  if(r?.tipus==='hores_acum'){const h=Number(r.horesConcepte)||7.5;rows.push({date:k,html:'<div class="detail-row"><div><strong>'+k+' · Ús d’acumulades</strong></div><b>−'+fmt(h)+' h</b></div>'});continue}
+  if(r?.tipus!=='treball'||r.torn==='festa')continue;
+  const sh=s.torns.find(x=>x.id===r.torn);if(!sh)continue;
+  const raw=Math.max(0,window.recordHours(r,sh)-window.shiftBase(sh));if(raw<=0)continue;
+  const weighted=weightedOvertimeForRecord(k,r,sh),coef=weighted/raw;
+  rows.push({date:k,html:'<div class="detail-row"><div><strong>'+k+' · '+String(sh.nom).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))+'</strong><small>Perllongament real: '+fmtPrecise(raw)+' · Coeficient ×'+coef.toFixed(2).replace('.',',')+'</small></div><b>+'+fmtPrecise(weighted)+'</b></div>'});
+ }
+ list.innerHTML=rows.map(x=>x.html).join('')||'<div class="empty">Encara no hi ha moviments d’acumulades.</div>';
+ window.openModal('detailModal');
+}
 const originalOpenDetail=window.openDetail;
-if(typeof originalOpenDetail==='function')window.openDetail=function(kind){if(kind==='nits'||kind==='guardies')return openGuardiaDetail();return originalOpenDetail(kind)};
+if(typeof originalOpenDetail==='function')window.openDetail=function(kind){if(kind==='nits'||kind==='guardies')return openGuardiaDetail();if(kind==='accum')return openAccumDetail();return originalOpenDetail(kind)};
 function addPayFields(){
  const work=document.getElementById('workFields');if(!work||document.getElementById('specialPayFields'))return;
  const wrap=document.createElement('div');wrap.id='specialPayFields';wrap.style.cssText='margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px';
