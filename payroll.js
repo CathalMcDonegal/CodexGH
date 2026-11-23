@@ -76,7 +76,7 @@ function guardAccounting(){
  }
  const from=new Date(Number(s.anyInici)||new Date().getFullYear(),1,1),to=new Date((Number(s.anyInici)||new Date().getFullYear())+1,0,31);
  for(let d=new Date(from);d<=to;d=addDays(d,1)){
-  const k=key(d);if(s.registres?.[k]?.tipus==='treball')continue;
+  const k=key(d),existing=s.registres?.[k];if(existing?.tipus&&existing.tipus!=='planificat')continue;
   const ids=[profileShiftForDate(k),...(s.planExtras?.[k]||[])].filter(Boolean);
   for(const id of ids){const h=plannedGuardForShift(k,id);if(h>0){planned+=h;items.push({date:k,hours:h,kind:'planned',name:s.torns.find(x=>x.id===id)?.nom||id})}}
  }
