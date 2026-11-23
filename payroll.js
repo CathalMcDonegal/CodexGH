@@ -151,8 +151,28 @@ function initHomeActions(){
  addPayFields();
  if(window.HomeActions){window.HomeActions.fillSpecial=fillSpecial;window.HomeActions.readSpecial=readSpecial}
 }
+function decoratePlannedPayments(){
+ const s=st();if(!s)return;
+ const decorate=(el,k)=>{
+  if(!k)return;
+  el.querySelectorAll('.pay-plan-chip').forEach(n=>n.remove());
+  if(s.registres?.[k]?.tipus==='treball')return;
+  const ids=[profileShiftForDate(k),...(s.planExtras?.[k]||[])].filter(Boolean),parts=[];
+  for(const id of ids){const sh=s.torns.find(x=>x.id===id);if(!sh)continue;const p=specialPayForRecord(k,{tipus:'treball',entrada:sh.inici,sortida:sh.fi});if(p.eligible)parts.push(p)}
+  if(!parts.length)return;
+  const amount=parts.reduce((n,p)=>n+p.amount,0),rates=[...new Set(parts.flatMap(p=>p.windows.map(w=>w.rate)))].sort((a,b)=>a-b);
+  const tag=document.createElement('span');tag.className='pay-plan-chip';tag.textContent='💶 '+rates.join('/')+' €/h · '+amount.toFixed(2).replace('.',',')+' €';
+  tag.title='Pagament especial estimat segons el torn planificat. Import definitiu segons les hores efectivament treballades.';
+  tag.style.cssText='display:inline-block;margin:3px 0;padding:2px 6px;border-radius:7px;background:rgba(245,158,11,.14);color:var(--text);font-size:.72rem;font-weight:800';
+  const host=el.querySelector('.kind')||el.querySelector('small')||el;
+  host.appendChild(tag);
+ };
+ document.querySelectorAll('#calendar .day').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/clickDay\\('([^']+)'\\)/)?.[1];decorate(el,k)});
+ document.querySelectorAll('#weekList .week-row').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/clickWeekDay\\('([^']+)'\\)/)?.[1];decorate(el,k)});
+ document.querySelectorAll('#monthlyList .monthly-row').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/openDay\\('([^']+)'\\)/)?.[1];decorate(el,k)});
+}
 const oldRenderAll=window.renderAll;
-if(typeof oldRenderAll==='function')window.renderAll=function(){oldRenderAll();const c=window.calc();const target=document.querySelector('#quickStats .stat.pink');if(target){const b=target.querySelector('b'),sp=target.querySelector('span');if(b)b.textContent=fmt(c.gnit)+' h';if(sp)sp.textContent='Guàrdies nit/dia'}};
+if(typeof oldRenderAll==='function')window.renderAll=function(){oldRenderAll();const c=window.calc();const target=document.querySelector('#quickStats .stat.pink');if(target){const b=target.querySelector('b'),sp=target.querySelector('span');if(b)b.textContent=fmt(c.gnit)+' h';if(sp)sp.textContent='Guàrdies nit/dia'}decoratePlannedPayments()};
 initHomeActions();
 window.addEventListener('load',()=>{initHomeActions();window.renderAll?.()});
 })();
