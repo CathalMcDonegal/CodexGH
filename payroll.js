@@ -59,7 +59,7 @@ function plannedGuardForShift(k,id){
  const s=st(),shift=s?.torns?.find(x=>x.id===id);if(!shift||id==='festa')return 0;
  const night=['nit','cs_nit','fn'].includes(id)||(shift.nom||'').toLowerCase().includes('nit');
  if(night){const f=window.nightHoursInRange||(()=>0);return f(shift.inici||'22:00',shift.fi||'06:00')||8}
- const d=dateOf(k);if(isWeekendDate(d)||isHolidayDate(k))return 12;
+ const d=dateOf(k);if(isWeekendDate(d)||isHolidayDate(k))return window.recordHours({torn:id,entrada:shift.inici,sortida:shift.fi,hores:shift.hores},shift);
  return 0;
 }
 function guardAccounting(){
