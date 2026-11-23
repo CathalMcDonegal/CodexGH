@@ -39,8 +39,8 @@ function renderPending(){
  specialPayments.forEach(({k,r})=>{
   const o=observation(r),pay=Number(r.pagamentEspecialImport)||0,h=Number(r.pagamentEspecialHores)||0;
   const detail=[o,h?String(h.toFixed(2)).replace('.',',')+' h':'',pay?String(pay.toFixed(2)).replace('.',',')+' €':''].filter(Boolean).join(' · ');
-  out.push('<div class="row" onclick="openDay(\\''+esc(k)+'\\')" style="cursor:pointer"><div class="grow"><strong>💶 '+esc(dayLabel(k))+'</strong>'+(detail?'<small>'+esc(detail)+'</small>':'')+'</div><span class="chip warn">Per cobrar</span></div>');
- });
+  out.push("<div class=\"row\" onclick=\"openDay('"+esc(k)+"')\" style=\"cursor:pointer\"><div class=\"grow\"><strong>💶 "+esc(dayLabel(k))+"</strong>"+(detail?"<small>"+esc(detail)+"</small>":"")+"</div><span class=\"chip warn\">Per cobrar</span></div>");
+ });;
  box.innerHTML=summary+(out.length?out.join(''):'<div class="empty">Tot al dia. No tens accions pendents.</div>');
 }
 
