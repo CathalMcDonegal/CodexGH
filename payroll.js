@@ -1,7 +1,7 @@
 /* Codex GH · Guàrdies nit/dia, perllongaments ponderats i pagaments especials */
 (function(){
 'use strict';
-const st=()=>window.state||null;
+const st=()=>typeof state!=='undefined'?state:null;
 const pad=n=>String(n).padStart(2,'0');
 const key=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
 const dateOf=k=>new Date(k+'T00:00:00');
@@ -13,7 +13,7 @@ function easter(y){const a=y%19,b=Math.floor(y/100),c=y%100,d=Math.floor(b/4),e=
 function windowsForYear(y){
  const out=[],add=(startDate,startTime,endDate,endTime,rate,label)=>out.push({a:new Date(startDate+'T'+startTime+':00').getTime(),b:new Date(endDate+'T'+endTime+':00').getTime(),rate,label});
  const one=(mmdd,from,to,rate,label)=>{const d=y+'-'+mmdd;add(d,from,d,to,rate,label)};
- const span=(mmdd,from,emmd,to,rate,label)=>add(y+'-'+mmdd,from,y+'-'+emmd,to,rate,label);
+ const span=(mmdd,from,emmd,to,rate,label)=>{const ey=emmd<=mmdd?y+1:y;add(y+'-'+mmdd,from,ey+'-'+emmd,to,rate,label)};
  const good=key(addDays(easter(y),-2)),mon=key(addDays(easter(y),1));
  span(good.slice(5), '06:00',key(addDays(dateOf(good),1)).slice(5),'06:30',14,'Divendres Sant');
  one(mon.slice(5),'06:00','22:30',14,'Dilluns de Pasqua');
@@ -122,7 +122,7 @@ function addPayFields(){
  ['dayStart','dayEnd','dayHours'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshPayPreview));
 }
 function currentPay(){
- const k=window.editingDay||'',r={tipus:document.getElementById('dayType')?.value||'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
+ const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:document.getElementById('dayType')?.value||'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
  return specialPayForRecord(k,r);
 }
 function refreshPayPreview(){
@@ -140,7 +140,7 @@ function fillSpecial(k){
  refreshPayPreview();
 }
 function readSpecial(){
- const k=window.editingDay||'',r={tipus:'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
+ const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
  const p=specialPayForRecord(k,r);
  return {pagamentEspecial:p.eligible,pagamentEspecialCobrat:p.eligible&&!!document.getElementById('daySpecialPaid')?.checked,pagamentEspecialHores:p.hours,pagamentEspecialImport:p.amount,horesExtresCobrades:!!r.horesExtresCobrades};
 }
