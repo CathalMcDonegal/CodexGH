@@ -36,8 +36,11 @@ function specialPayForRecord(dateKey,r){
  const start=dateOf(dateKey).getTime()+aMin*60000;let end=dateOf(dateKey).getTime()+bMin*60000;if(end<=start)end+=86400000;
  let windows=[];const y=dateOf(dateKey).getFullYear();
  for(let yy=y-1;yy<=y+1;yy++)windows.push(...windowsForYear(yy));
- let total=0,amount=0,parts=[];
- for(const w of windows){const overlap=Math.max(0,Math.min(end,w.b)-Math.max(start,w.a));if(overlap>0){const h=overlap/3600000;total+=h;amount+=h*w.rate;parts.push({hours:h,rate:w.rate,label:w.label})}}
+ const byMinute=new Map();
+ for(const w of windows){const lo=Math.max(start,w.a),hi=Math.min(end,w.b);for(let t=Math.ceil(lo/60000);t<Math.floor(hi/60000);t++){const old=byMinute.get(t);if(!old||w.rate>old.rate)byMinute.set(t,{rate:w.rate,label:w.label})}}
+ let total=byMinute.size/60,amount=0,partsMap=new Map();
+ for(const v of byMinute.values()){amount+=v.rate/60;const k=v.rate+'|'+v.label;partsMap.set(k,(partsMap.get(k)||0)+1/60)}
+ const parts=[...partsMap.entries()].map(([k,h])=>({rate:Number(k.split('|')[0]),label:k.slice(k.indexOf('|')+1),hours:h}));
  const eligible=total>=3-1e-9&&!r.horesExtresCobrades;
  return {eligible,hours:eligible?total:0,amount:eligible?Math.round(amount*100)/100:0,windows:parts,incompatible:!!r.horesExtresCobrades,workedHours:total};
 }
@@ -119,7 +122,7 @@ function addPayFields(){
  const wrap=document.createElement('div');wrap.id='specialPayFields';wrap.style.cssText='margin-top:10px;padding:10px;border:1px solid var(--line);border-radius:12px';
  wrap.innerHTML='<div id="specialPaySummary" class="hint" style="margin:0 0 8px">El cobrament especial es calcularà automàticament segons la data i les hores treballades.</div><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="daySpecialPaid" style="width:auto;margin:0"> Cobrament especial ja cobrat</label><label style="display:flex;align-items:center;gap:8px;margin-top:8px"><input type="checkbox" id="dayExtraPaid" style="width:auto;margin:0"> Aquest servei s'ha cobrat com a hores extraordinàries</label>';
  work.appendChild(wrap);
- ['dayStart','dayEnd','dayHours'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshPayPreview));
+ ['dayStart','dayEnd','dayHours','dayType'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshPayPreview));
 }
 function currentPay(){
  const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:document.getElementById('dayType')?.value||'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
