@@ -167,9 +167,9 @@ function decoratePlannedPayments(){
   const host=el.querySelector('.kind')||el.querySelector('small')||el;
   host.appendChild(tag);
  };
- document.querySelectorAll('#calendar .day').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/clickDay\\('([^']+)'\\)/)?.[1];decorate(el,k)});
- document.querySelectorAll('#weekList .week-row').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/clickWeekDay\\('([^']+)'\\)/)?.[1];decorate(el,k)});
- document.querySelectorAll('#monthlyList .monthly-row').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/openDay\\('([^']+)'\\)/)?.[1];decorate(el,k)});
+ document.querySelectorAll('#calendar .day').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/clickDay\('([^']+)'\)/)?.[1];decorate(el,k)});
+ document.querySelectorAll('#weekList .week-row').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/clickWeekDay\('([^']+)'\)/)?.[1];decorate(el,k)});
+ document.querySelectorAll('#monthlyList .monthly-row').forEach(el=>{const k=(el.getAttribute('onclick')||'').match(/openDay\('([^']+)'\)/)?.[1];decorate(el,k)});
 }
 const oldRenderAll=window.renderAll;
 if(typeof oldRenderAll==='function')window.renderAll=function(){oldRenderAll();const c=window.calc();const target=document.querySelector('#quickStats .stat.pink');if(target){const b=target.querySelector('b'),sp=target.querySelector('span');if(b)b.textContent=fmt(c.gnit)+' h';if(sp)sp.textContent='Guàrdies nit/dia'}decoratePlannedPayments()};
