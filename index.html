@@ -876,7 +876,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
       <div><label>Assumptes (h)</label><input type="number" id="cfgPers" step=".5"></div>
       <div><label>Dies blaus (h)</label><input type="number" id="cfgBlue" step=".5"></div>
       <div><label>GNP (h)</label><input type="number" id="cfgGnp" step=".5"></div>
-      <div><label>Guàrdies nit (h)</label><input type="number" id="cfgGnit" step=".5"></div>
+      <div><label>Guàrdies nit/dia (h)</label><input type="number" id="cfgGnit" step=".5"></div>
       <div><label>Acumulades inicials (h)</label><input type="number" id="cfgAccum" step=".5"></div>
     </div>
     <label>Títol</label><input id="cfgTitle"><label>Subtítol</label><input id="cfgSubtitle"><label>TIP / Identificador (marca d'aigua)</label><input id="cfgTip" placeholder="Ex: TIP 18675 (opcional)">
@@ -911,7 +911,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <details><summary>5. Judicis</summary><div class="manual-body"><p>A <strong>Judicis</strong> pots registrar data, hora, jutjat, sala, procediment i agents, i marcar si el judici s'ha celebrat, si s'ha cobrat, si queda suspès o si cal canviar el torn.</p><p>El formulari també inclou el camp <strong>Observacions del judici</strong>. Escriu-hi qualsevol anotació que vulguis conservar per a aquell judici. Les observacions es guarden en editar o desar el judici i es poden consultar tornant a obrir-ne el formulari.</p><p>Quan un judici té observacions, apareix un <strong>punt vermell 🔴</strong> al costat de la seva informació a la pantalla d’inici, a Accions pendents i a la llista completa de judicis. El punt només indica que hi ha observacions: <strong>el text no es mostra als resums</strong>.</p><p>El resum utilitza aquest format:</p><p><strong>⚖️ Dj 5 Novembre 18.30h 🔴</strong><br><span class="hint">Ins. 18, sala 221, dil. 1234/2024, TIP 2342</span></p><ul><li><strong>Judici futur:</strong> apareix a Pròxim.</li><li><strong>Judici celebrat però no cobrat:</strong> apareix a Accions pendents.</li><li><strong>Judici cobrat:</strong> ja no apareix a Accions pendents.</li><li><strong>Judici suspès:</strong> queda identificat com a suspès.</li></ul></div></details>
 <details><summary>6. Còmput general (1580 h)</summary><div class="manual-body"><p>Al còmput general entren treball, assumptes personals, Dies Blaus i baixa. El torn «Festa» resta hores.</p><p>Vacances, GNP, ús d'acumulades i hores extres tenen els seus propis comptadors i no s'afegeixen directament al còmput general.</p></div></details>
 <details><summary>7. Torn de matí</summary><div class="manual-body"><p>El marc és de <strong>7,5 h</strong>, però la jornada habitual 07:00–15:00 computa <strong>8 h</strong> al general i genera <strong>0,5 h</strong> d'acumulades respecte al marc.</p></div></details>
-<details><summary>8. Nits (22:00–06:00)</summary><div class="manual-body"><p>Al comptador de nits només es compten les hores entre <strong>22:00 i 06:00</strong>. La resta del torn va al còmput general.</p></div></details>
+<details><summary>8. Guàrdies nit/dia</summary><div class="manual-body"><p>El saldo inicial configurable és de 175,5 h. Es descompten les hores de nit (22:00–06:00) i les guàrdies diürnes planificades en cap de setmana o festiu. Les jornades planificades deixen de comptar com a previsió quan es registra la jornada real, per evitar duplicats.</p></div></details>
 <details><summary>9. Vacances, AP, Dies Blaus, GNP i extres</summary><div class="manual-body"><ul><li><strong>Vacances:</strong> resten del bo de vacances.</li><li><strong>Assumptes personals:</strong> resten del bo d'AP i del còmput general.</li><li><strong>Dies Blaus:</strong> resten del bo i del còmput general.</li><li><strong>GNP:</strong> només del bo GNP.</li><li><strong>Hores acumulades:</strong> ús contra el saldo d'acumulades.</li><li><strong>Hores extres:</strong> només al comptador d'extres.</li></ul></div></details>
 <details><summary>10. Calendari, setmana i resum mensual</summary><div class="manual-body"><ul><li><strong>Calendari:</strong> vista mensual amb colors i icones.</li><li><strong>Resum mensual:</strong> llista ordenada dels dies i les hores.</li><li><strong>Setmana:</strong> mostra els dies de la setmana i el balanç d'hores.</li></ul></div></details>
 <details><summary>11. Acumulades</summary><div class="manual-body"><p><strong>Saldo d'acumulades = inicials + hores generades − hores utilitzades.</strong> Toca la targeta d'acumulades per veure els moviments.</p></div></details>
@@ -1111,8 +1111,9 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <script src="ui.js?v=2.4.7"></script>
 <script src="merge.js?v=2.4.7"></script>
 <script src="home.js?v=2.4.10"></script>
-<script src="app.js?v=2.12.9"></script>
+<script src="app.js?v=2.13.0"></script>
 <script src="shift-profiles.js?v=2.8.0"></script>
+<script src="payroll.js?v=2.13.0"></script>
 <script src="sync.js?v=2.4.7"></script>
 </body>
 </html>
