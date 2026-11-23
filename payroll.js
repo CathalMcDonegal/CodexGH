@@ -87,7 +87,7 @@ function isDayHoliday(k){return isWeekendDate(dateOf(k))||isHolidayDate(k)}
 function weightedOvertimeForRecord(k,r,sh){
  const actual=window.recordHours(r,sh),base=window.shiftBase(sh),over=Math.max(0,actual-base);if(over<=0)return 0;
  const startMin=mins(r.entrada||sh.inici);if(startMin===null)return over;
- let t=dateOf(k).getTime()+startMin*60000+base*60000,end=t+over*60000,total=0;
+ let t=dateOf(k).getTime()+startMin*60000+base*3600000,end=t+over*3600000,total=0;
  while(t<end){const d=new Date(t),dk=key(d),coef=isNightMinute(d)?1.5:(isDayHoliday(dk)?1.75:1.25);total+=coef/60;t+=60000}
  return total;
 }
