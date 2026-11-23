@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.12.8";
+const APP_VERSION="2.13.0";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -28,7 +28,7 @@ const DEFAULT_HOLIDAYS={"2026-01-01":"Cap d'Any","2026-01-06":"Reis","2026-04-03
 let state=defaultState(), currentMonth=new Date(), weekAnchor=startOfWeek(new Date()), selected=new Set(), multi=false, editingDay=null, editingTrial=null, trialDateFilter="", deferredPrompt=null;
 let shiftSimulations=[]; // Memòria temporal: mai no es desa ni entra al còmput real.
 
-function defaultState(){return {titol:"Codex GH",subtitol:"Personal",tip:"",darkMode:"auto",notifyDaily:false,anyInici:2026,horesAnuals:1580,vacancesTotals:200,assumptesTotals:68,blausTotals:0,gnpTotals:0,gnitTotals:0,acumTotals:0,torns:clone(DEFAULT_SHIFTS),festius:clone(DEFAULT_HOLIDAYS),registres:{},judicis:[],historic:{}}}
+function defaultState(){return {titol:"Codex GH",subtitol:"Personal",tip:"",darkMode:"auto",notifyDaily:false,anyInici:2026,horesAnuals:1580,vacancesTotals:200,assumptesTotals:68,blausTotals:0,gnpTotals:0,gnitTotals:175.5,acumTotals:0,torns:clone(DEFAULT_SHIFTS),festius:clone(DEFAULT_HOLIDAYS),registres:{},judicis:[],historic:{}}}
 function clone(x){return JSON.parse(JSON.stringify(x))}
 function pad(n){return String(n).padStart(2,"0")}
 function key(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
@@ -101,7 +101,7 @@ function migrate(raw){
   out.registres=raw.registres||{};out.judicis=raw.judicis||[];out.historic=raw.historic||{};
   out.festius=raw.festius||clone(DEFAULT_HOLIDAYS); const defaultColors={mati:"#38bdf8",tarda:"#fb923c",nit:"#7c3aed",cs_dia:"#eab308",cs_nit:"#14b8a6",fd:"#f472b6",fn:"#1e3a8a",festa:"#4ade80"},legacyColors={mati:"#f4d35e",tarda:"#f59e0b",nit:"#60a5fa",cs_dia:"#fff4a8",cs_nit:"#6366f1",fd:"#ffe8b8",fn:"#312e81"}; out.torns.forEach(t=>{if(!t.color||["#facc15","#22c55e","#16a34a","#94a3b8"].includes(t.color)||(legacyColors[t.id]&&String(t.color).toLowerCase()===legacyColors[t.id]))t.color=defaultColors[t.id]||t.color||"#93c5fd"});
   if(out.titol==="Registre Horari")out.titol="Codex GH"; // canvi de nom de l'app
-  out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=raw.gnitTotals||0;out.acumTotals=raw.acumTotals||0;
+  out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=Number(raw.gnitTotals)>0?Number(raw.gnitTotals):base.gnitTotals;out.acumTotals=raw.acumTotals||0;
   // Torns fixos: horaris marc sempre vigents (conserva el color triat).
   out.torns.forEach(t=>{const f=FIXED_SHIFTS[t.id];if(f)Object.assign(t,f)});
   // Registres de treball: hores = entrada→sortida; el matí mai per sota de 8 h (07:00–15:00).
@@ -295,7 +295,7 @@ function renderHome(){
   ["purple",plainHours(state.vacancesTotals-c.vac)+" h","Vacances restants","vacances"],
   ["cyan",plainHours(state.assumptesTotals-c.pers)+" h","Assumptes restants","assumptes"],
   ["blue",plainHours(c.gnp)+" h","GNP fetes","gnp"],
-  ["pink",plainHours(c.gnit)+" h","Nits","nits"],
+  ["pink",plainHours(c.gnit)+" h","Guàrdies nit/dia","nits"],
   ["orange",plainHours(c.extra)+" h","Extres","extres"],
   ["green",plainHours(Math.max(0,(state.blausTotals||0)-c.blue))+" h","Dies Blaus","dies_blaus"],
   ["purple",String(state.judicis.filter(j=>!j.celebrat&&!j.suspes).length),"Judicis pendents","judicis"]
@@ -459,7 +459,7 @@ function renderStats(){
  const annualTitle=document.getElementById("annualTitle");if(annualTitle)annualTitle.textContent=`Calendari anual · ${state.anyInici}/${String(state.anyInici+1).slice(-2)}`;
  const annual=document.getElementById("annualCalendar");
  if(annual)annual.innerHTML=months.map(x=>`<button type="button" class="annual-month" onclick="openAnnualMonth(${x.year},${x.month})"><span class="annual-month-head">${MONTHS[x.month]} <small>${x.year}</small></span><strong>${plainHours(x.hours)} h</strong><span class="annual-month-meta">${x.days} dies registrats · ${x.trials} judicis</span></button>`).join("");
- const c=calc();document.getElementById("statsDetail").innerHTML=[["blue",plainHours(c.worked)+" h","Còmput efectiu"],["green",plainHours(c.accum)+" h","Acumulades"],["pink",plainHours(c.gnit)+" h","Nits"],["orange",plainHours(c.extra)+" h","Extres"],["purple",plainHours(c.vac)+" h","Vacances usades"],["cyan",plainHours(c.pers)+" h","AP usats"],["blue",plainHours(c.gnp)+" h","GNP"],["green",plainHours(c.blue)+" h","Blaus usats"]].map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
+ const c=calc();document.getElementById("statsDetail").innerHTML=[["blue",plainHours(c.worked)+" h","Còmput efectiu"],["green",plainHours(c.accum)+" h","Acumulades"],["pink",plainHours(c.gnit)+" h","Guàrdies nit/dia"],["orange",plainHours(c.extra)+" h","Extres"],["purple",plainHours(c.vac)+" h","Vacances usades"],["cyan",plainHours(c.pers)+" h","AP usats"],["blue",plainHours(c.gnp)+" h","GNP"],["green",plainHours(c.blue)+" h","Blaus usats"]].map(x=>`<div class="stat ${x[0]}"><b>${x[1]}</b><span>${x[2]}</span></div>`).join("");
  const start=new Date(state.anyInici,1,1),end=new Date(state.anyInici+1,0,31),today=new Date();start.setHours(0,0,0,0);end.setHours(0,0,0,0);const day=new Date(today.getFullYear(),today.getMonth(),today.getDate());
  const totalDays=Math.max(1,Math.round((end-start)/86400000)+1),elapsedDays=day<start?0:day>end?totalDays:Math.min(totalDays,Math.round((day-start)/86400000)+1),fraction=elapsedDays/totalDays;
  const elapsedWeeks=elapsedDays/7,remainingWeeks=Math.max(0,(totalDays-elapsedDays)/7),rate=elapsedWeeks>0?c.worked/elapsedWeeks:0,projection=fraction>0?c.worked/fraction:0,needed=remainingWeeks>0?Math.max(0,state.horesAnuals-c.worked)/remainingWeeks:0,diff=projection-state.horesAnuals;
@@ -673,7 +673,7 @@ function renderPermisos(){
 }
 
 function openDetail(kind){
-  const titles={accum:"Hores acumulades",vacances:"Vacances",assumptes:"Assumptes personals",gnp:"GNP (Guàrdia No Presencial)",nits:"Nits (22:00–06:00)",extres:"Hores extres",dies_blaus:"Dies Blaus",judicis:"Judicis pendents"};
+  const titles={accum:"Hores acumulades",vacances:"Vacances",assumptes:"Assumptes personals",gnp:"GNP (Guàrdia No Presencial)",nits:"Guàrdies nit/dia",extres:"Hores extres",dies_blaus:"Dies Blaus",judicis:"Judicis pendents"};
   const c=calc();
   const items=[];
   if(kind==="judicis"){
