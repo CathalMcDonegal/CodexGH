@@ -57,10 +57,10 @@ function shiftBase(s){return isMorning(s)?7.5:Number(s?.hores)||0}
 /* Minuts des de 00:00; torns que passen de mitjanit: fi < inici */
 function timeToMin(t){if(!t||!/^\d{1,2}:\d{2}$/.test(t))return null;const[h,m]=t.split(":").map(Number);if(h>23||m>59)return null;return h*60+m}
 /** Hores de nit estrictes: solapament amb [22:00, 06:00] (8 h de finestra, creua mitjanit). */
-function nightHoursInRange(startStr,endStr){
+function nightHoursInRange(startStr,endStr,forceNextDay=false){
   let a=timeToMin(startStr),b=timeToMin(endStr);
   if(a===null||b===null)return 0;
-  if(b<=a)b+=24*60; // creua mitjanit
+  if(b<a)b+=24*60;else if(forceNextDay)b+=24*60; // creua mitjanit o sortida 24 h més tard
   // Finestra nit: 22:00 dia0 → 06:00 dia1 (= 30*60)
   const winA=22*60, winB=30*60;
   const lo=Math.max(a,winA), hi=Math.min(b,winB);
@@ -79,7 +79,7 @@ function nightHoursInRange(startStr,endStr){
 function nightHoursForRecord(r,s){
   const start=r.entrada||s?.inici||"";
   const end=r.sortida||s?.fi||"";
-  let nh=nightHoursInRange(start,end);
+  let nh=nightHoursInRange(start,end,!!r?.sortidaDiaSeguent);
   // Si no hi ha hores calculables però és torn de nit conegut, usar taula estàndard
   if(nh<=0 && isNightShift(s)){
     if(s.id==="nit") nh=8;          // 22-07 → 22-06 = 8h nit
