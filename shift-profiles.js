@@ -25,12 +25,34 @@
   if(p.kind==="investigacio"){
    const d0=new Date(dateKey+"T12:00:00");
    const weekend=d0.getDay()===0||d0.getDay()===6;
-   const festiu=!!state.festius?.[dateKey];
+   const festiu=typeof window.isHolidayDate==="function"?window.isHolidayDate(dateKey):!!state.festius?.[dateKey];
    if(weekend||festiu)return "";
   }
   const d=new Date(dateKey+"T12:00:00"),a=new Date(p.anchorDate+"T12:00:00");
   const diff=p.unit==="day"?Math.round((d-a)/86400000):Math.round((weekStart(d)-weekStart(a))/604800000);
   return p.pattern[mod(diff+(Number(p.phase)||0),p.pattern.length)]||"";
+ }
+ function plannedInterval(date,id){
+  const sh=state.torns.find(x=>x.id===id);if(!sh)return null;
+  const parse=t=>{const m=String(t||"").match(/^(\d{1,2}):(\d{2})$/);return m&&Number(m[1])<=23&&Number(m[2])<=59?m:null};
+  const a=parse(sh.inici),b=parse(sh.fi);if(!a||!b)return null;
+  const start=new Date(date+"T"+String(a[1]).padStart(2,"0")+":"+a[2]+":00").getTime();
+  let end=new Date(date+"T"+String(b[1]).padStart(2,"0")+":"+b[2]+":00").getTime();if(end<=start)end+=86400000;
+  return {start,end};
+ }
+ function dateOffset(date,n){const d=new Date(date+"T12:00:00");d.setDate(d.getDate()+n);return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0")}
+ function hasPlanOverlap(date,id,mode){
+  const candidate=plannedInterval(date,id);if(!candidate)return true;
+  for(let delta=-1;delta<=1;delta++){
+   const day=dateOffset(date,delta),base=planForDate(day);
+   if(base&&!(mode==="override"&&day===date)){
+    const range=plannedInterval(day,base);if(range&&candidate.start<range.end&&candidate.end>range.start)return true;
+   }
+   for(const extra of (state.planExtras?.[day]||[])){
+    const range=plannedInterval(day,extra);if(range&&candidate.start<range.end&&candidate.end>range.start)return true;
+   }
+  }
+  return false;
  }
  function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
  function plannedText(id,s){
@@ -161,10 +183,17 @@
  window.savePlanOverride=function(){
   const date=document.getElementById("overrideDate")?.value,id=document.getElementById("overrideShift")?.value;
   if(!date||!state.torns.some(s=>s.id===id)){toast("Tria una data i un servei");return}
+  if(hasPlanOverlap(date,id,"override")){toast("Aquest servei se solapa amb un altre servei planificat. Revisa els horaris abans de desar.");return}
   state.planOverrides[date]=id;save();renderAll();toast("Servei afegit al pla");
  };
  window.removePlanOverride=function(date){delete state.planOverrides[date];save();renderAll();toast("Servei puntual eliminat")};
- window.savePlanExtra=function(){const date=document.getElementById("extraDate")?.value,id=document.getElementById("extraShift")?.value;if(!date||!state.torns.some(s=>s.id===id)){toast("Tria una data i un servei");return}if(!Array.isArray(state.planExtras[date]))state.planExtras[date]=[];state.planExtras[date].push(id);save();renderAll();toast("Servei addicional afegit")};
+ window.savePlanExtra=function(){
+  const date=document.getElementById("extraDate")?.value,id=document.getElementById("extraShift")?.value;
+  if(!date||!state.torns.some(s=>s.id===id)){toast("Tria una data i un servei");return}
+  if(hasPlanOverlap(date,id,"extra")){toast("Aquest servei se solapa amb un altre servei planificat o ja està afegit. Revisa els horaris.");return}
+  if(!Array.isArray(state.planExtras[date]))state.planExtras[date]=[];
+  state.planExtras[date].push(id);save();renderAll();toast("Servei addicional afegit");
+ };
  window.removePlanExtra=function(date,index){if(!Array.isArray(state.planExtras[date]))return;state.planExtras[date].splice(index,1);if(!state.planExtras[date].length)delete state.planExtras[date];save();renderAll();toast("Servei addicional eliminat")};
  const oldCalendar=renderCalendar,oldWeek=renderWeek,oldMore=renderMore;
  renderCalendar=function(){oldCalendar();decorateCalendar()};
