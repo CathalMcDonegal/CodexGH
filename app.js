@@ -378,13 +378,19 @@ function renderMonthly(){
  list.innerHTML='<div class="monthly-summary"><div><strong>'+registered+'</strong><span>dies planificats/registrats</span></div><div><strong>'+plainHours(totalHours)+' h</strong><span>hores del mes</span></div><div><strong>'+trials+'</strong><span>judicis</span></div></div>'+(rows.join("")||'<div class="empty">Encara no hi ha dies registrats ni planificats aquest mes.</div>');
 }
 function isoWeekNumber(d){const x=new Date(d);x.setHours(0,0,0,0);x.setDate(x.getDate()+3-(x.getDay()+6)%7);const w1=new Date(x.getFullYear(),0,4);return 1+Math.round(((x-w1)/86400000-3+(w1.getDay()+6)%7)/7)}
+function weeklyCreditedHours(r){
+ if(!r?.tipus)return 0;
+ if(r.tipus==="treball"){const sh=getShift(r.torn);return r.torn==="festa"?-recordHours(r,sh):recordHours(r,sh)}
+ if(["assumptes","dies_blaus","baixa"].includes(r.tipus))return Number(r.horesConcepte)||0;
+ return 0;
+}
 function renderWeek(){
  const start=weekAnchor;document.getElementById("weekTitle").textContent=`Setmana ${isoWeekNumber(start)} · ${start.getDate()} ${MONTHS[start.getMonth()]} – ${new Date(start.getTime()+6*86400000).getDate()} ${MONTHS[new Date(start.getTime()+6*86400000).getMonth()]}`;
- let total=0;const rows=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=key(d),r=state.registres[k],s=r?.tipus==="treball"?getShift(r.torn):null;const h=r?(r.tipus==="treball"?Number(r.hores)||0:Number(r.horesConcepte)||0):0;total+=r?.tipus==="treball"&&s?.id==="festa"?-h:h;const noteIcon=r?.noteIcon||"";const noteHtml=noteIcon==="red_plus"?'<span class="note-icon red-plus" title="Observació">➕</span>':(noteIcon?`<span class="note-icon" title="Observació">${escapeHtml(noteIcon)}</span>`:"");rows.push(`<div class="week-row ${r?(r.tipus==="treball"?(s?.id||"work"):(r.tipus||"")):""} ${selected.has(k)?"selected":""} ${r?.notes?.trim()?"has-note":""}" ${recordStyle(r)} onclick="event.preventDefault();clickWeekDay('${k}')"><div class="week-date"><b>${d.getDate()}</b><small>${DOW[d.getDay()]}</small></div><div><strong>${escapeHtml(r?(r.tipus==="treball"?s?.nom||"Treball":r.tipus==="planificat"?(r.notes||"Dia planificat"):(TYPE_NAMES[r.tipus]||r.tipus)):"Sense registre")}</strong><small>${r?(r.tipus==="treball"?`${r.entrada||s?.inici||""} → ${r.sortida||s?.fi||""}`:(r.notes||"")):"Toca per registrar"} ${noteHtml}</small></div><div class="week-sum">${r?plainHours(h)+" h":"—"}</div></div>`)}
+ let total=0;const rows=[];for(let i=0;i<7;i++){const d=new Date(start);d.setDate(start.getDate()+i);const k=key(d),r=state.registres[k],s=r?.tipus==="treball"?getShift(r.torn):null;const h=r?(r.tipus==="treball"?recordHours(r,s):Number(r.horesConcepte)||0):0;total+=r?.tipus==="treball"&&s?.id==="festa"?-h:h;const noteIcon=r?.noteIcon||"";const noteHtml=noteIcon==="red_plus"?'<span class="note-icon red-plus" title="Observació">➕</span>':(noteIcon?`<span class="note-icon" title="Observació">${escapeHtml(noteIcon)}</span>`:"");rows.push(`<div class="week-row ${r?(r.tipus==="treball"?(s?.id||"work"):(r.tipus||"")):""} ${selected.has(k)?"selected":""} ${r?.notes?.trim()?"has-note":""}" ${recordStyle(r)} onclick="event.preventDefault();clickWeekDay('${k}')"><div class="week-date"><b>${d.getDate()}</b><small>${DOW[d.getDay()]}</small></div><div><strong>${escapeHtml(r?(r.tipus==="treball"?s?.nom||"Treball":r.tipus==="planificat"?(r.notes||"Dia planificat"):(TYPE_NAMES[r.tipus]||r.tipus)):"Sense registre")}</strong><small>${r?(r.tipus==="treball"?`${r.entrada||s?.inici||""} → ${r.sortida||s?.fi||""}`:(r.notes||"")):"Toca per registrar"} ${noteHtml}</small></div><div class="week-sum">${r?plainHours(h)+" h":"—"}</div></div>`)}
  document.getElementById("weekList").innerHTML=rows.join("");
- const weekWorked=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);const r=state.registres[key(d)],s=r?.tipus==="treball"?getShift(r.torn):null;return r?.tipus==="treball"&&s?.id!=="festa"?Number(r.hores)||0:0}).reduce((a,b)=>a+b,0);
+ const weekWorked=Array.from({length:7},(_,i)=>{const d=new Date(start);d.setDate(start.getDate()+i);return weeklyCreditedHours(state.registres[key(d)])}).reduce((a,b)=>a+b,0);
  const remaining=Math.max(0,37.5-weekWorked);
- document.getElementById("weekStats").innerHTML=`<div class="stat blue"><b>${plainHours(weekWorked)} h</b><span>Fetes aquesta setmana</span></div><div class="stat green"><b>${plainHours(remaining)} h</b><span>Ritme restant (37,5 h)</span></div>`;
+ document.getElementById("weekStats").innerHTML=`<div class="stat blue"><b>${plainHours(weekWorked)} h</b><span>Hores computables aquesta setmana</span></div><div class="stat green"><b>${plainHours(remaining)} h</b><span>Ritme restant (37,5 h)</span></div>`;
 }
 function expectedWeek(){return 37.5}
 
@@ -881,6 +887,7 @@ updateInstallBanner();
     ["input","change"].forEach(ev=>{
       start.addEventListener(ev, calcHoursFromTimes);
       end.addEventListener(ev, calcHoursFromTimes);
+      document.getElementById("dayEndNext")?.addEventListener(ev,calcHoursFromTimes);
     });
   }
 })();
