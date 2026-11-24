@@ -33,7 +33,8 @@ function windowsForYear(y){
 function specialPayForRecord(dateKey,r){
  const s=st();if(!s||r?.tipus!=='treball')return {eligible:false,hours:0,amount:0,windows:[]};
  const aMin=mins(r.entrada),bMin=mins(r.sortida);if(aMin===null||bMin===null)return {eligible:false,hours:0,amount:0,windows:[]};
- const start=dateOf(dateKey).getTime()+aMin*60000;let end=dateOf(dateKey).getTime()+bMin*60000;if(end<=start)end+=86400000;
+ if(aMin===bMin&&!r?.sortidaDiaSeguent)return {eligible:false,hours:0,amount:0,windows:[],invalid:true,workedHours:0};
+ const start=dateOf(dateKey).getTime()+aMin*60000;let end=dateOf(dateKey).getTime()+bMin*60000;if(r?.sortidaDiaSeguent||end<=start)end+=86400000;
  let windows=[];const y=dateOf(dateKey).getFullYear();
  for(let yy=y-1;yy<=y+1;yy++)windows.push(...windowsForYear(yy));
  const byMinute=new Map();
@@ -64,7 +65,7 @@ function plannedGuardForShift(k,id){
 }
 function guardAccounting(){
  const s=st();if(!s)return {used:0,planned:0,items:[]};
- let used=0,planned=0,items=[];
+ let used=0,planned=0,items=[],plannedRanges=[];
  for(const [k,r] of Object.entries(s.registres||{})){
   if(r?.tipus!=='treball')continue;
   const sh=s.torns.find(x=>x.id===r.torn);if(!sh||r.torn==='festa')continue;
@@ -77,13 +78,16 @@ function guardAccounting(){
  const from=new Date(Number(s.anyInici)||new Date().getFullYear(),1,1),to=new Date((Number(s.anyInici)||new Date().getFullYear())+1,0,31);
  for(let d=new Date(from);d<=to;d=addDays(d,1)){
   const k=key(d),existing=s.registres?.[k];if(existing?.tipus&&existing.tipus!=='planificat')continue;
-  const ids=[profileShiftForDate(k),...(s.planExtras?.[k]||[])].filter(Boolean);
-  for(const id of ids){const h=plannedGuardForShift(k,id);if(h>0){planned+=h;items.push({date:k,hours:h,kind:'planned',name:s.torns.find(x=>x.id===id)?.nom||id})}}
+  const ids=[...new Set([profileShiftForDate(k),...(s.planExtras?.[k]||[])].filter(Boolean))];
+  for(const id of ids){const h=plannedGuardForShift(k,id);if(h<=0)continue;const sh=s.torns.find(x=>x.id===id);if(!sh)continue;const a=mins(sh.inici),b=mins(sh.fi);if(a===null||b===null)continue;const start=dateOf(k).getTime()+a*60000;let end=dateOf(k).getTime()+b*60000;if(end<=start)end+=86400000;const overlaps=plannedRanges.some(x=>start<x.end&&end>x.start);if(overlaps)continue;plannedRanges.push({start,end});planned+=h;items.push({date:k,hours:h,kind:'planned',name:sh.nom||id})}
  }
  return {used,planned,items};
 }
 function isNightMinute(d){const h=d.getHours();return h>=22||h<6}
 function isDayHoliday(k){return isWeekendDate(dateOf(k))||isHolidayDate(k)}
+// Classificació única de festius per als perfils i els càlculs.
+window.isHolidayDate=isHolidayDate;
+window.CodexPayrollTest={windowsForYear,specialPayForRecord,weightedOvertimeForRecord,guardAccounting,nightHoursInRange,isDayHoliday};
 function weightedOvertimeForRecord(k,r,sh){
  const actual=window.recordHours(r,sh),base=window.shiftBase(sh),over=Math.max(0,actual-base);if(over<=0)return 0;
  const startMin=mins(r.entrada||sh.inici);if(startMin===null)return over;
