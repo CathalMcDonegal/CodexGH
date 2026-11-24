@@ -54,6 +54,7 @@
   }
   return false;
  }
+ window.CodexShiftPlanTest={plannedInterval,hasPlanOverlap,planForDate};
  function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
  function plannedText(id,s){
   if(id==="mati")return "M";
