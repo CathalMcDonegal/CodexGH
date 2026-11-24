@@ -101,7 +101,7 @@ function migrate(raw){
   out.registres=raw.registres||{};out.judicis=raw.judicis||[];out.historic=raw.historic||{};out.shiftProfiles=Array.isArray(raw.shiftProfiles)?raw.shiftProfiles:[];out.activeShiftProfileId=typeof raw.activeShiftProfileId==="string"?raw.activeShiftProfileId:"";out.planOverrides=raw.planOverrides&&typeof raw.planOverrides==="object"?raw.planOverrides:{};out.planExtras=raw.planExtras&&typeof raw.planExtras==="object"?raw.planExtras:{};
   out.festius=raw.festius||clone(DEFAULT_HOLIDAYS); const defaultColors={mati:"#38bdf8",tarda:"#fb923c",nit:"#7c3aed",cs_dia:"#eab308",cs_nit:"#14b8a6",fd:"#f472b6",fn:"#1e3a8a",festa:"#4ade80"},legacyColors={mati:"#f4d35e",tarda:"#f59e0b",nit:"#60a5fa",cs_dia:"#fff4a8",cs_nit:"#6366f1",fd:"#ffe8b8",fn:"#312e81"}; out.torns.forEach(t=>{if(!t.color||["#facc15","#22c55e","#16a34a","#94a3b8"].includes(t.color)||(legacyColors[t.id]&&String(t.color).toLowerCase()===legacyColors[t.id]))t.color=defaultColors[t.id]||t.color||"#93c5fd"});
   if(out.titol==="Registre Horari")out.titol="Codex GH"; // canvi de nom de l'app
-  out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=raw.gnitTotals==null?base.gnitTotals:(Number.isFinite(Number(raw.gnitTotals))?Number(raw.gnitTotals):base.gnitTotals);out.acumTotals=raw.acumTotals??0;
+  out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=raw.gnitTotals==null||raw.gnitTotals===""?base.gnitTotals:(Number.isFinite(Number(raw.gnitTotals))?Number(raw.gnitTotals):base.gnitTotals);out.acumTotals=raw.acumTotals??0;
   // Torns fixos: horaris marc sempre vigents (conserva el color triat).
   out.torns.forEach(t=>{const f=FIXED_SHIFTS[t.id];if(f)Object.assign(t,f)});
   // Registres de treball: hores = entrada→sortida; el matí mai per sota de 8 h (07:00–15:00).
@@ -513,7 +513,7 @@ function saveConfig(){
  state.assumptesTotals=Number(document.getElementById("cfgPers").value)||0;
  state.blausTotals=Number(document.getElementById("cfgBlue").value)||0;
  state.gnpTotals=Number(document.getElementById("cfgGnp").value)||0;
- state.gnitTotals=Number.isFinite(Number(document.getElementById("cfgGnit").value))?Number(document.getElementById("cfgGnit").value):175.5;
+ const guardTargetInput=String(document.getElementById("cfgGnit").value??"").trim();state.gnitTotals=guardTargetInput===""?175.5:(Number.isFinite(Number(guardTargetInput))?Number(guardTargetInput):175.5);
  state.acumTotals=Number(document.getElementById("cfgAccum").value)||0;
  state.titol=document.getElementById("cfgTitle").value.trim()||"Codex GH";
  state.subtitol=document.getElementById("cfgSubtitle").value.trim();
