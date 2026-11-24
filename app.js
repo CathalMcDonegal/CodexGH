@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.13.4";
+const APP_VERSION="2.14.0";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -28,7 +28,7 @@ const DEFAULT_HOLIDAYS={"2026-01-01":"Cap d'Any","2026-01-06":"Reis","2026-04-03
 let state=defaultState(), currentMonth=new Date(), weekAnchor=startOfWeek(new Date()), selected=new Set(), multi=false, editingDay=null, editingTrial=null, trialDateFilter="", deferredPrompt=null;
 let shiftSimulations=[]; // Memòria temporal: mai no es desa ni entra al còmput real.
 
-function defaultState(){return {titol:"Codex GH",subtitol:"Personal",tip:"",darkMode:"auto",notifyDaily:false,anyInici:2026,horesAnuals:1580,vacancesTotals:200,assumptesTotals:68,blausTotals:0,gnpTotals:0,gnitTotals:175.5,acumTotals:0,torns:clone(DEFAULT_SHIFTS),festius:clone(DEFAULT_HOLIDAYS),registres:{},judicis:[],historic:{}}}
+function defaultState(){return {titol:"Codex GH",subtitol:"Personal",tip:"",darkMode:"auto",notifyDaily:false,anyInici:2026,horesAnuals:1580,vacancesTotals:200,assumptesTotals:68,blausTotals:0,gnpTotals:0,gnitTotals:175.5,acumTotals:0,torns:clone(DEFAULT_SHIFTS),festius:clone(DEFAULT_HOLIDAYS),registres:{},judicis:[],historic:{},shiftProfiles:[],activeShiftProfileId:"",planOverrides:{},planExtras:{}}}
 function clone(x){return JSON.parse(JSON.stringify(x))}
 function pad(n){return String(n).padStart(2,"0")}
 function key(d){return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`}
@@ -44,10 +44,10 @@ function isNightShift(s){const n=(s?.nom||"").toLowerCase();return ["nit","cs_ni
 function isMorning(s){return s?.id==="mati"||(s?.nom||"").toLowerCase().includes("matí")||(s?.nom||"").toLowerCase().includes("mati")}
 function defaultShiftHours(s){return isMorning(s)?8:Number(s?.hores)||7.5}
 /* Hores transcorregudes entre entrada i sortida (passa de mitjanit si sortida<entrada); null si no són vàlides */
-function elapsedHours(a,b){const x=timeToMin(a),y=timeToMin(b);if(x===null||y===null)return null;let d=y-x;if(d<0)d+=1440;return d/60}
+function elapsedHours(a,b,forceNextDay=false){const x=timeToMin(a),y=timeToMin(b);if(x===null||y===null)return null;let d=y-x;if(d<0)d+=1440;else if(forceNextDay)d+=1440;if(d===0)return null;return d/60}
 /* Hores que compta un registre de treball (única font de veritat). Matí: mai menys de 8 h (marc 7,5 + 0,5 que va a acumulades). */
 function recordHours(r,s){
-  let hr=elapsedHours(r?.entrada,r?.sortida);
+  let hr=elapsedHours(r?.entrada,r?.sortida,!!r?.sortidaDiaSeguent);
   if(hr===null)hr=Number(r?.hores);
   if(!Number.isFinite(hr)||hr<=0)hr=defaultShiftHours(s);
   if(isMorning(s)&&r?.torn!=="festa"&&hr<=7.5)hr=8;
@@ -55,7 +55,7 @@ function recordHours(r,s){
 }
 function shiftBase(s){return isMorning(s)?7.5:Number(s?.hores)||0}
 /* Minuts des de 00:00; torns que passen de mitjanit: fi < inici */
-function timeToMin(t){if(!t||!/^\d{1,2}:\d{2}$/.test(t))return null;const[h,m]=t.split(":").map(Number);return h*60+m}
+function timeToMin(t){if(!t||!/^\d{1,2}:\d{2}$/.test(t))return null;const[h,m]=t.split(":").map(Number);if(h>23||m>59)return null;return h*60+m}
 /** Hores de nit estrictes: solapament amb [22:00, 06:00] (8 h de finestra, creua mitjanit). */
 function nightHoursInRange(startStr,endStr){
   let a=timeToMin(startStr),b=timeToMin(endStr);
@@ -98,10 +98,10 @@ function migrate(raw){
   if(!raw||typeof raw!=="object") return base;
   const out={...base,...raw};
   out.torns=Array.isArray(raw.torns)&&raw.torns.length?raw.torns:clone(DEFAULT_SHIFTS);
-  out.registres=raw.registres||{};out.judicis=raw.judicis||[];out.historic=raw.historic||{};
+  out.registres=raw.registres||{};out.judicis=raw.judicis||[];out.historic=raw.historic||{};out.shiftProfiles=Array.isArray(raw.shiftProfiles)?raw.shiftProfiles:[];out.activeShiftProfileId=typeof raw.activeShiftProfileId==="string"?raw.activeShiftProfileId:"";out.planOverrides=raw.planOverrides&&typeof raw.planOverrides==="object"?raw.planOverrides:{};out.planExtras=raw.planExtras&&typeof raw.planExtras==="object"?raw.planExtras:{};
   out.festius=raw.festius||clone(DEFAULT_HOLIDAYS); const defaultColors={mati:"#38bdf8",tarda:"#fb923c",nit:"#7c3aed",cs_dia:"#eab308",cs_nit:"#14b8a6",fd:"#f472b6",fn:"#1e3a8a",festa:"#4ade80"},legacyColors={mati:"#f4d35e",tarda:"#f59e0b",nit:"#60a5fa",cs_dia:"#fff4a8",cs_nit:"#6366f1",fd:"#ffe8b8",fn:"#312e81"}; out.torns.forEach(t=>{if(!t.color||["#facc15","#22c55e","#16a34a","#94a3b8"].includes(t.color)||(legacyColors[t.id]&&String(t.color).toLowerCase()===legacyColors[t.id]))t.color=defaultColors[t.id]||t.color||"#93c5fd"});
   if(out.titol==="Registre Horari")out.titol="Codex GH"; // canvi de nom de l'app
-  out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=Number(raw.gnitTotals)>0?Number(raw.gnitTotals):base.gnitTotals;out.acumTotals=raw.acumTotals||0;
+  out.blausTotals=raw.blausTotals??base.blausTotals;out.gnpTotals=raw.gnpTotals??0;out.gnitTotals=raw.gnitTotals==null?base.gnitTotals:(Number.isFinite(Number(raw.gnitTotals))?Number(raw.gnitTotals):base.gnitTotals);out.acumTotals=raw.acumTotals??0;
   // Torns fixos: horaris marc sempre vigents (conserva el color triat).
   out.torns.forEach(t=>{const f=FIXED_SHIFTS[t.id];if(f)Object.assign(t,f)});
   // Registres de treball: hores = entrada→sortida; el matí mai per sota de 8 h (07:00–15:00).
@@ -224,9 +224,10 @@ window.addEventListener("pagehide",saveOnHide);
 function setActiveYear(y){
   y=Number(y);if(!y||y===state.anyInici)return;
   ensureHistory();state.historic[String(state.anyInici)]=snapshot();const d=state.historic[String(y)];
+  const configuredGuardTarget=Number.isFinite(Number(state.gnitTotals))?Number(state.gnitTotals):175.5;
   state.anyInici=y;
-  if(d){state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=Number(d.gnitTotals)>0?Number(d.gnitTotals):175.5;state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[]}
-  else {state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=0;state.acumTotals=0;state.festius=clone(DEFAULT_HOLIDAYS);state.registres={};state.judicis=[]}
+  if(d){state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=d.gnitTotals==null?configuredGuardTarget:(Number.isFinite(Number(d.gnitTotals))?Number(d.gnitTotals):configuredGuardTarget);state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[]}
+  else {state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=configuredGuardTarget;state.acumTotals=0;state.festius=clone(DEFAULT_HOLIDAYS);state.registres={};state.judicis=[]}
   currentMonth=new Date(y,1,1);weekAnchor=startOfWeek(new Date(y,1,1));selected.clear();save();renderAll();toast(`Any ${y} actiu`)
 }
 function years(){return [...new Set([...Object.keys(state.historic).map(Number),state.anyInici,state.anyInici+1])].sort((a,b)=>a-b)}
@@ -390,12 +391,12 @@ function expectedWeek(){return 37.5}
 function changeWeek(days){weekAnchor=new Date(weekAnchor);weekAnchor.setDate(weekAnchor.getDate()+days);renderWeek()}
 
 function openDay(k){openDayBase(k);window.HomeActions&&HomeActions.fillSpecial(k)}
-function openDayBase(k){editingDay=k;const d=parseKey(k),r=state.registres[k]||{},s=getShift(r.torn)||state.torns[0];document.getElementById("dayModalTitle").textContent=`${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;document.getElementById("dayType").value=r.tipus==="planificat"?"":(r.tipus||"treball");fillShiftSelects();document.getElementById("dayShift").value=r.torn||s?.id||"";document.getElementById("dayStart").value=r.entrada||s?.inici||"07:00";document.getElementById("dayEnd").value=r.sortida||s?.fi||"14:30";document.getElementById("dayHours").value=r.hores??defaultShiftHours(s);document.getElementById("conceptHours").value=r.horesConcepte??7.5;document.getElementById("dayNotes").value=r.notes||"";document.getElementById("dayNoteIcon").value=r.noteIcon||"";updateNoteIconButton();document.getElementById("deleteDayBtn").style.display=r.tipus?"block":"none";updateDayForm();calcHoursFromTimes();openModal("dayModal")}
+function openDayBase(k){editingDay=k;const d=parseKey(k),r=state.registres[k]||{},s=getShift(r.torn)||state.torns[0];document.getElementById("dayModalTitle").textContent=`${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;document.getElementById("dayType").value=r.tipus==="planificat"?"":(r.tipus||"treball");fillShiftSelects();document.getElementById("dayShift").value=r.torn||s?.id||"";document.getElementById("dayStart").value=r.entrada||s?.inici||"07:00";document.getElementById("dayEnd").value=r.sortida||s?.fi||"14:30";if(document.getElementById("dayEndNext"))document.getElementById("dayEndNext").checked=!!r.sortidaDiaSeguent;document.getElementById("dayHours").value=r.hores??defaultShiftHours(s);document.getElementById("conceptHours").value=r.horesConcepte??7.5;document.getElementById("dayNotes").value=r.notes||"";document.getElementById("dayNoteIcon").value=r.noteIcon||"";updateNoteIconButton();document.getElementById("deleteDayBtn").style.display=r.tipus?"block":"none";updateDayForm();calcHoursFromTimes();openModal("dayModal")}
 function updateNoteIconButton(){const icon=document.getElementById("dayNoteIcon")?.value||"";const b=document.getElementById("noteIconBtn");if(!b)return;b.innerHTML=icon?'<span class="note-icon-current">'+icon+'</span> Canviar icona':'➕ Tria una icona'}
 function openNoteIconPicker(){updateNoteIconButton();openModal("noteIconPicker")}
 function selectNoteIcon(icon){document.getElementById("dayNoteIcon").value=icon||"";updateNoteIconButton();closeModal("noteIconPicker")}
 function fillShiftSelects(){const opts=state.torns.map(s=>`<option value="${escapeHtml(s.id)}">${escapeHtml(s.abbr||s.nom)} · ${escapeHtml(s.nom)} (${s.hores}h)</option>`).join("");document.getElementById("dayShift").innerHTML=opts;document.getElementById("bulkShift").innerHTML=opts}
-function shiftChanged(){const s=getShift(document.getElementById("dayShift").value);if(s){document.getElementById("dayStart").value=s.inici;document.getElementById("dayEnd").value=s.fi;calcHoursFromTimes()}}
+function shiftChanged(){const s=getShift(document.getElementById("dayShift").value);if(s){document.getElementById("dayStart").value=s.inici;document.getElementById("dayEnd").value=s.fi;if(document.getElementById("dayEndNext"))document.getElementById("dayEndNext").checked=false;calcHoursFromTimes()}}
 function updateHint(){const s=getShift(document.getElementById("dayShift").value),el=document.getElementById("dayCalcHint");if(!el)return;if(!s){el.textContent="";return}const rec={torn:s.id,entrada:document.getElementById("dayStart").value,sortida:document.getElementById("dayEnd").value,hores:Number(document.getElementById("dayHours").value)||0},h=recordHours(rec,s),base=shiftBase(s),extra=Math.max(0,h-base);el.textContent=isMorning(s)&&s.id!=="festa"?`Matí: marc ${base} h · compta ${h} h al general · ${extra.toFixed(2)} h a acumulades`:`Base del torn: ${base} h · Acumulades generades si superes la base: ${extra.toFixed(2)} h`}
 function minutesFromTime(value){
   if(!value) return null;
@@ -412,13 +413,14 @@ function calcHoursFromTimes(){
   const b=minutesFromTime(endEl.value);
   if(a===null||b===null){ return; }
   let d=b-a;
-  if(d<0) d+=1440; // passa de mitjanit
+  if(d<0)d+=1440;else if(document.getElementById("dayEndNext")?.checked)d+=1440;
+  if(d===0){hoursEl.value="";const hint=document.getElementById("dayCalcHint");if(hint)hint.textContent="Entrada i sortida coincideixen. Marca «Sortida l’endemà» si realment és una jornada de 24 hores o més.";return}
   const h=Math.round((d/60)*100)/100;
   hoursEl.value=String(h);
   updateHint();
 }
 function updateDayForm(){const t=document.getElementById("dayType").value,work=t==="treball";document.getElementById("workFields").style.display=work?"block":"none";document.getElementById("conceptFields").style.display=!work&&t?"block":"none";if(work)updateHint()}
-function saveDay(){if(!editingDay)return;const t=document.getElementById("dayType").value,notes=document.getElementById("dayNotes").value.trim(),noteIcon=document.getElementById("dayNoteIcon").value||"";if(!t){if(notes||noteIcon)state.registres[editingDay]={tipus:"planificat",notes,noteIcon,horesConcepte:0};else delete state.registres[editingDay]}else{const r={tipus:t,notes,noteIcon};if(t==="treball"){r.torn=document.getElementById("dayShift").value;r.entrada=document.getElementById("dayStart").value;r.sortida=document.getElementById("dayEnd").value;r.hores=Number(document.getElementById("dayHours").value)||0;if(window.HomeActions)Object.assign(r,HomeActions.readSpecial())}else r.horesConcepte=Number(document.getElementById("conceptHours").value)||0;state.registres[editingDay]=r}save();closeModal("dayModal");renderAll();toast("Jornada desada ✓","success")}
+function saveDay(){if(!editingDay)return;const t=document.getElementById("dayType").value,notes=document.getElementById("dayNotes").value.trim(),noteIcon=document.getElementById("dayNoteIcon").value||"";if(!t){if(notes||noteIcon)state.registres[editingDay]={tipus:"planificat",notes,noteIcon,horesConcepte:0};else delete state.registres[editingDay]}else{const r={tipus:t,notes,noteIcon};if(t==="treball"){r.torn=document.getElementById("dayShift").value;r.entrada=document.getElementById("dayStart").value;r.sortida=document.getElementById("dayEnd").value;r.sortidaDiaSeguent=!!document.getElementById("dayEndNext")?.checked;if(timeToMin(r.entrada)===null||timeToMin(r.sortida)===null||((r.entrada===r.sortida)&&!r.sortidaDiaSeguent)){toast("Horari no vàlid: si la sortida és 24 hores o més tard, marca «Sortida l’endemà».");return}r.hores=Number(document.getElementById("dayHours").value)||0;if(window.HomeActions)Object.assign(r,HomeActions.readSpecial())}else r.horesConcepte=Number(document.getElementById("conceptHours").value)||0;state.registres[editingDay]=r}save();closeModal("dayModal");renderAll();toast("Jornada desada ✓","success")}
 async function deleteDay(){if(!editingDay)return;if(!await uiConfirm("Esborrar aquest registre?",{ok:"Esborrar",danger:true}))return;delete state.registres[editingDay];save();closeModal("dayModal");renderAll();toast("Registre esborrat")}
 function openBulk(){if(!selected.size)return toast("Selecciona almenys un dia");document.getElementById("bulkCount").textContent=`${selected.size} dia(s) seleccionat(s)`;fillShiftSelects();updateBulk();openModal("bulkModal")}
 function updateBulk(){const t=document.getElementById("bulkType").value;document.getElementById("bulkWork").style.display=t==="treball"?"block":"none";document.getElementById("bulkHours").style.display=!["treball","esborrar"].includes(t)?"block":"none"}
@@ -505,7 +507,7 @@ function saveConfig(){
  state.assumptesTotals=Number(document.getElementById("cfgPers").value)||0;
  state.blausTotals=Number(document.getElementById("cfgBlue").value)||0;
  state.gnpTotals=Number(document.getElementById("cfgGnp").value)||0;
- state.gnitTotals=Number(document.getElementById("cfgGnit").value)||175.5;
+ state.gnitTotals=Number.isFinite(Number(document.getElementById("cfgGnit").value))?Number(document.getElementById("cfgGnit").value):175.5;
  state.acumTotals=Number(document.getElementById("cfgAccum").value)||0;
  state.titol=document.getElementById("cfgTitle").value.trim()||"Codex GH";
  state.subtitol=document.getElementById("cfgSubtitle").value.trim();
