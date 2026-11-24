@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-title" content="Codex GH">
 <meta name="description" content="Registre horari personal">
 <link rel="manifest" href="manifest.json">
-<script src="firebase-config.js?v=2.4.6"></script>
+<script src="firebase-config.js??v=2.14.0"></script>
 <link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <title>Codex GH 2.12.9</title>
@@ -963,6 +963,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <div id="workFields">
 <label>Torn</label><select id="dayShift" onchange="shiftChanged()"></select>
 <div class="form-grid"><div><label>Entrada</label><input type="time" id="dayStart"></div><div><label>Sortida</label><input type="time" id="dayEnd"></div></div>
+<div class="check" style="margin:6px 0 10px"><input type="checkbox" id="dayEndNext"><label for="dayEndNext">Sortida l’endemà (jornades de 24 h o més)</label></div>
 <label>Hores computables / reals</label><input type="number" id="dayHours" min="0" max="24" step=".25" readonly title="Calculades automàticament a partir de l'entrada i la sortida"><div class="hint" id="dayCalcHint"></div>
 </div>
 <div id="conceptFields" style="display:none"><label>Hores del concepte</label><input type="number" id="conceptHours" min="0" max="24" step=".25"></div>
@@ -1108,12 +1109,12 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="ui.js?v=2.4.7"></script>
-<script src="merge.js?v=2.4.7"></script>
-<script src="home.js?v=2.4.11"></script>
-<script src="app.js?v=2.13.4"></script>
-<script src="shift-profiles.js?v=2.8.0"></script>
-<script src="payroll.js?v=2.13.4"></script>
-<script src="sync.js?v=2.4.7"></script>
+<script src="ui.js??v=2.14.0"></script>
+<script src="merge.js??v=2.14.0"></script>
+<script src="home.js??v=2.14.0"></script>
+<script src="app.js??v=2.14.0"></script>
+<script src="shift-profiles.js??v=2.14.0"></script>
+<script src="payroll.js??v=2.14.0"></script>
+<script src="sync.js??v=2.14.0"></script>
 </body>
 </html>
