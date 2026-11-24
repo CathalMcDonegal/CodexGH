@@ -71,6 +71,16 @@ eq(special.hours,24.5,'hores de pagament especial 24,5');
 eq(special.amount,343,'24,5 h × 14 € = 343 €');
 
 // Les hores setmanals computables segueixen la mateixa regla que el còmput anual.
+// Jornada de 24,5 h: es diferencia explícitament d'un tram de només 30 minuts.
+const longShift={id:'long',nom:'Servei llarg',hores:24.5,inici:'06:00',fi:'06:30'};
+eq(A.recordHours({torn:'long',entrada:'06:00',sortida:'06:30',sortidaDiaSeguent:true},longShift),24.5,'sortida l’endemà = 24,5 h');
+eq(A.nightHoursForRecord({torn:'long',entrada:'06:00',sortida:'06:30',sortidaDiaSeguent:true},longShift),8,'una jornada de 24,5 h inclou 8 h nocturnes 22–06');
+
+// Guàrdies planificades: nits entre setmana i serveis diürns en dissabte.
+const guardState=A.getState();guardState.planOverrides={'2026-03-02':'cs_nit','2026-03-07':'mati'};guardState.planExtras={'2026-03-02':['cs_nit']};A.setState(guardState);
+const guard=payroll.guardAccounting();
+eq(guard.planned,16,'8 h de nit + 8 h de dia de cap de setmana; duplicat ignorat');
+
 eq(A.weeklyCreditedHours({tipus:'assumptes',horesConcepte:7.5}),7.5,'AP computa a la setmana');
 eq(A.weeklyCreditedHours({tipus:'dies_blaus',horesConcepte:7.5}),7.5,'Dies Blaus computen a la setmana');
 eq(A.weeklyCreditedHours({tipus:'baixa',horesConcepte:7.5}),7.5,'Baixa computa a la setmana');
