@@ -1,6 +1,6 @@
 // Codex GH 2.3 – + pestanya Permisos (cerca llicències PDF nov 2025)
 const KEY="codexGH";
-const APP_VERSION="2.14.0";
+const APP_VERSION="2.14.1";
 const MONTHS=["Gener","Febrer","Març","Abril","Maig","Juny","Juliol","Agost","Setembre","Octubre","Novembre","Desembre"];
 const DOW=["Dg","Dl","Dt","Dc","Dj","Dv","Ds"];
 const TYPE_NAMES={treball:"Treball",vacances:"Vacances",assumptes:"Assumptes personals",dies_blaus:"Dies Blaus",baixa:"Baixa",guardia_np:"Guàrdia No Presencial",hores_acum:"Hores acumulades",hores_extres:"Hores extres",altres:"Permís per hores",altres_general:"Altres"};
@@ -54,6 +54,23 @@ function recordHours(r,s){
   return hr;
 }
 function shiftBase(s){return isMorning(s)?7.5:Number(s?.hores)||0}
+/* Coeficients vigents des del 23/11/2026. El mig hora estructural del matí (07:00–15:00) no porta coeficient. */
+const COEFFICIENT_START_DATE="2026-11-23";
+function accumulationMultiplier(dateKey,s){
+  if(isNightShift(s))return 1.50;
+  const d=parseKey(dateKey);
+  return (isWeekend(d)||holiday(d))?1.75:1.25;
+}
+function accumulatedExtraForRecord(dateKey,r,s,hr){
+  const extra=Math.max(0,hr-shiftBase(s));
+  if(!extra||dateKey<COEFFICIENT_START_DATE)return extra;
+  if(isMorning(s)){
+    const baseExtra=Math.min(0.5,extra);
+    const overtime=Math.max(0,hr-8);
+    return num(baseExtra+overtime*accumulationMultiplier(dateKey,s));
+  }
+  return num(extra*accumulationMultiplier(dateKey,s));
+}
 /* Minuts des de 00:00; torns que passen de mitjanit: fi < inici */
 function timeToMin(t){if(!t||!/^\d{1,2}:\d{2}$/.test(t))return null;const[h,m]=t.split(":").map(Number);if(h>23||m>59)return null;return h*60+m}
 /** Hores de nit estrictes: solapament amb [22:00, 06:00] (8 h de finestra, creua mitjanit). */
@@ -244,14 +261,14 @@ function calc(){
     - Assumptes i Dies Blaus: el seu bo + còmput general · Baixa: còmput general
     - Torn festa: resta del còmput general */
  let worked=0,accExtra=0,vac=0,pers=0,blue=0,gnp=0,gnit=0,extra=0,accUsed=0;
- for(const r of Object.values(state.registres)){
+ for(const [dateKey,r] of Object.entries(state.registres)){
   if(!r?.tipus)continue;
   if(r.tipus==="treball"){
     const s=getShift(r.torn),hr=recordHours(r,s);
     if(r.torn==="festa")worked-=hr;
     else{
       worked+=hr;
-      accExtra+=Math.max(0,hr-shiftBase(s));
+      accExtra+=accumulatedExtraForRecord(dateKey,r,s,hr);
       if(isNightShift(s))gnit+=nightHoursForRecord(r,s);
     }
   }
@@ -701,10 +718,9 @@ function openDetail(kind){
         if(r.tipus==="hores_acum"){hours=-(Number(r.horesConcepte)||7.5);sub="Ús d'acumulades"}
         else if(r.tipus==="treball" && r.torn!=="festa"){
           const s=getShift(r.torn);
-          let hr=Number(r.hores); if(!Number.isFinite(hr)||hr===0) hr=defaultShiftHours(s);
-          if(isMorning(s) && hr<=7.5) hr=8;
-          const over=isMorning(s)?Math.max(0,hr-7.5):Math.max(0,hr-(Number(s?.hores)||0));
-          if(over>0){hours=over;sub=`Generades · ${s?.nom||"Treball"}`}
+          const hr=recordHours(r,s);
+          const over=accumulatedExtraForRecord(k,r,s,hr);
+          if(over>0){hours=over;sub=`Generades · ${s?.nom||"Treball"}${k>=COEFFICIENT_START_DATE?" · amb coeficient si escau":""}`}
         }
       } else if(kind==="nits" && r.tipus==="treball"){
         const s=getShift(r.torn);
