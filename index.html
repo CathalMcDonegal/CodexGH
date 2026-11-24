@@ -964,7 +964,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <label>Torn</label><select id="dayShift" onchange="shiftChanged()"></select>
 <div class="form-grid"><div><label>Entrada</label><input type="time" id="dayStart"></div><div><label>Sortida</label><input type="time" id="dayEnd"></div></div>
 <div class="check" style="margin:6px 0 10px"><input type="checkbox" id="dayEndNext"><label for="dayEndNext">Sortida l’endemà (jornades de 24 h o més)</label></div>
-<label>Hores computables / reals</label><input type="number" id="dayHours" min="0" max="24" step=".25" readonly title="Calculades automàticament a partir de l'entrada i la sortida"><div class="hint" id="dayCalcHint"></div>
+<label>Hores computables / reals</label><input type="number" id="dayHours" min="0" max="48" step=".25" readonly title="Calculades automàticament a partir de l'entrada i la sortida"><div class="hint" id="dayCalcHint"></div>
 </div>
 <div id="conceptFields" style="display:none"><label>Hores del concepte</label><input type="number" id="conceptHours" min="0" max="24" step=".25"></div>
 <label>Observació / icona</label><input type="hidden" id="dayNoteIcon"><button type="button" class="btn secondary" id="noteIconBtn" onclick="openNoteIconPicker()" style="width:100%;text-align:left;margin-bottom:10px">➕ Tria una icona</button><label>Notes</label><textarea id="dayNotes" placeholder="Observacions…"></textarea>
