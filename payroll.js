@@ -146,7 +146,7 @@ function addPayFields(){
  ['dayStart','dayEnd','dayHours','dayType'].forEach(id=>document.getElementById(id)?.addEventListener('input',refreshPayPreview));
 }
 function currentPay(){
- const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:document.getElementById('dayType')?.value||'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
+ const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:document.getElementById('dayType')?.value||'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,sortidaDiaSeguent:!!document.getElementById('dayEndNext')?.checked,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
  return specialPayForRecord(k,r);
 }
 function refreshPayPreview(){
@@ -164,7 +164,7 @@ function fillSpecial(k){
  refreshPayPreview();
 }
 function readSpecial(){
- const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
+ const k=typeof editingDay!=='undefined'?editingDay:'',r={tipus:'treball',entrada:document.getElementById('dayStart')?.value,sortida:document.getElementById('dayEnd')?.value,sortidaDiaSeguent:!!document.getElementById('dayEndNext')?.checked,horesExtresCobrades:!!document.getElementById('dayExtraPaid')?.checked};
  const p=specialPayForRecord(k,r);
  return {pagamentEspecial:p.eligible,pagamentEspecialCobrat:p.eligible&&!!document.getElementById('daySpecialPaid')?.checked,pagamentEspecialHores:p.hours,pagamentEspecialImport:p.amount,horesExtresCobrades:!!r.horesExtresCobrades};
 }
