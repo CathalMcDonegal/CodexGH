@@ -28,8 +28,11 @@ jobs:
       - name: Test de còmput i nòmina
         run: node test-calc.js
       - name: Test de fusió
+        if: always()
         run: node test-merge.js
       - name: Test de planificació
+        if: always()
         run: node test-planning.js
       - name: Test de sincronització
+        if: always()
         run: node test-sync.js
