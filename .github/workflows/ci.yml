@@ -1,0 +1,33 @@
+name: Codex GH checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - codexgh-mobile-redesign
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: |
+          for file in app.js ui.js merge.js home.js shift-profiles.js payroll.js radar.js sync.js sw.js; do
+            node --check "$file"
+          done
+      - name: Run regression tests
+        run: |
+          node test-calc.js
+          node test-merge.js
+          node test-planning.js
+          node test-sync.js
