@@ -5,7 +5,7 @@ const pure=src.slice(src.indexOf('const KEY='),src.indexOf('function expectedWee
 const store={};
 const ctx={localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=String(v)},removeItem:k=>{delete store[k]},key:i=>Object.keys(store)[i],get length(){return Object.keys(store).length}},
   document:{getElementById:()=>null,addEventListener(){},createElement:()=>({})},CustomEvent:function(){},console,Date,JSON,Math,Set};
-ctx.window=ctx;ctx.addEventListener=()=>{};ctx.dispatchEvent=()=>{};
+ctx.window=ctx;ctx.location={hash:'#home'};ctx.history={replaceState(){}};ctx.addEventListener=()=>{};ctx.dispatchEvent=()=>{};
 vm.createContext(ctx);
 vm.runInContext(pure+`
 this.api={migrate,calc,recordHours,defaultState,nightHoursForRecord,getShift,setState:s=>{state=s},getState:()=>state,FIXED_SHIFTS,setActiveYear,weeklyCreditedHours};`,ctx);
