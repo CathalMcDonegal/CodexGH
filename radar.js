@@ -8,14 +8,24 @@ function renderRadar(){
  const host=document.getElementById('codexRadar');if(!host||typeof state==='undefined')return;
  const s=state,now=new Date(),today=dateKey(now),limit=new Date(now);limit.setDate(limit.getDate()+21);
  const items=[];
+ const dateValue=v=>{
+  const raw=String(v||'').trim();
+  let m=raw.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];
+  m=raw.match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);
+  return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';
+ };
+ const truth=(o,keys)=>keys.some(k=>[true,1,'true','1','yes','si','sí'].includes(o?.[k]));
  (s.judicis||[]).forEach(j=>{
-  const k=j.data||j.date||'';if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||k<today||k>dateKey(limit)||j.suspes||j.celebrat)return;
-  items.push({date:k,kind:'judici',title:'Judici programat',detail:[j.hora,j.jutjat,j.sala].filter(Boolean).join(' · ')});
+  const k=dateValue(j.data||j.date||j.dataJudici);
+  if(!k||k<today||k>dateKey(limit)||truth(j,['suspes','suspended'])||truth(j,['celebrat','held','celebratJudici','realitzat','fet','judiciCelebrat']))return;
+  items.push({date:k,kind:'judici',title:'Judici programat',detail:[j.hora||j.time||j.horaJudici,j.jutjat||j.court||j.tribunal,j.sala||j.room].filter(Boolean).join(' · ')});
  });
  Object.entries(s.registres||{}).forEach(([k,r])=>{
   if(k<today||k>dateKey(limit)||!r)return;
-  if(r.noteIcon||r.tipus==='planificat'&&r.notes)items.push({date:k,kind:'plan',title:'Dia amb avís',detail:[r.noteIcon==='red_plus'?'Plus vermell':r.noteIcon,r.notes].filter(Boolean).join(' · ')});
-  if(r.pagamentEspecial&&!r.pagamentEspecialCobrat)items.push({date:k,kind:'baixa',title:'Cobrament especial pendent',detail:'Revisa l’import i les hores'});
+  if(r.noteIcon)items.push({date:k,kind:'plan',title:'Dia amb avís',detail:[r.noteIcon==='red_plus'?'Plus vermell':r.noteIcon,r.observacions||r.observacio||r.notes||r.nota].filter(Boolean).join(' · ')});
+  const special=truth(r,['pagamentEspecial','cobramentEspecial','cobroEspecial','specialPayment','paymentSpecial']);
+  const paid=truth(r,['pagamentEspecialCobrat','cobramentEspecialCobrat','cobroEspecialCobrat','specialPaymentPaid','paymentSpecialPaid']);
+  if(special&&!paid)items.push({date:k,kind:'baixa',title:'Cobrament especial pendent',detail:'Revisa l’import i les hores'});
  });
  items.sort((a,b)=>a.date.localeCompare(b.date));
  const count=items.length;
