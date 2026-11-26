@@ -10,8 +10,8 @@ function renderRadar(){
  const limitKey=dateKey(limit),trials=[],notes=[],specials=[],suspended=[],trialPayments=[];
  const dateValue=v=>{
   const raw=String(v||'').trim();
-  let m=raw.match(/^(\\d{4})-(\\d{2})-(\\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];
-  m=raw.match(/^(\\d{1,2})[\\/.-](\\d{1,2})[\\/.-](\\d{4})$/);
+  let m=raw.match(/^(\d{4})-(\d{2})-(\d{2})/);if(m)return m[1]+'-'+m[2]+'-'+m[3];
+  m=raw.match(/^(\d{1,2})[\\/.-](\d{1,2})[\\/.-](\d{4})$/);
   return m?m[3]+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0'):'';
  };
  const truth=(o,keys)=>keys.some(k=>[true,1,'true','1','yes','si','sí'].includes(o?.[k]));
