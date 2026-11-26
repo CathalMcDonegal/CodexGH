@@ -862,6 +862,20 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 .radar-metric.blue strong{color:var(--primary)}.radar-metric.purple strong{color:var(--purple)}.radar-metric.orange strong{color:var(--orange)}
 @media(max-width:600px){.radar-metrics{gap:6px}.radar-metric{padding:9px 6px}.radar-metric strong{font-size:1.05rem}.radar-metric span{font-size:.58rem}}
 
+
+/* FIX CALENDARI: números dels caps de setmana sempre llegibles, també sense registre */
+html.light #view-calendar .day.weekend-empty .num{
+  color:#172033!important;
+  -webkit-text-fill-color:#172033!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
+html.dark #view-calendar .day.weekend-empty .num{
+  color:#f1f5f9!important;
+  -webkit-text-fill-color:#f1f5f9!important;
+  opacity:1!important;
+  visibility:visible!important;
+}
 </style>
 </head>
 <body>
