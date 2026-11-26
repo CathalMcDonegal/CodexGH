@@ -1,0 +1,37 @@
+name: Codex GH checks
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Check JavaScript syntax
+        run: |
+          for file in app.js ui.js merge.js home.js shift-profiles.js payroll.js radar.js sync.js sw.js; do
+            node --check "$file"
+          done
+      - name: Test de còmput i nòmina
+        run: node test-calc.js
+      - name: Test de fusió
+        if: always()
+        run: node test-merge.js
+      - name: Test de planificació
+        if: always()
+        run: node test-planning.js
+      - name: Test de sincronització
+        if: always()
+        run: node test-sync.js

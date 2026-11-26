@@ -17,7 +17,7 @@
 </head>
 <body>
   <h1>Política de privadesa</h1>
-  <p class="meta">App: Codex GH 2.4 · Última actualització: 4 de novembre de 2026</p>
+  <p class="meta">App: Codex GH 3.0 · Última actualització: 26 de novembre de 2026</p>
 
   <div class="box">
     <h2>1. Responsable</h2>
@@ -34,20 +34,20 @@
     <h2>3. On es guarden</h2>
     <ul>
       <li><strong>Al dispositiu:</strong> a l’emmagatzematge local del navegador o de l’app (localStorage), amb còpies locals de seguretat dels darrers dies.</li>
-      <li><strong>Al núvol (només si inicies sessió):</strong> a Google Firebase (Authentication i Firestore, base de dades a la regió europea «eur3»), per sincronitzar les dades entre els teus dispositius. Les dades no es xifren amb una clau teva: es protegeixen amb el control d’accés de Firebase i el xifratge en trànsit i en repòs de Google.</li>
+      <li><strong>Al núvol (només si inicies sessió):</strong> a Google Firebase (Authentication i Firestore, base de dades a la regió europea «eur3»), per sincronitzar les dades entre els teus dispositius. Les dades no es xifren amb una clau teva: es protegeixen amb el control d’accés de Firebase i el xifratge en trànsit i en repòs de Google. La sincronització al núvol és automàtica quan has iniciat sessió i hi ha connexió.</li>
     </ul>
 
     <h2>4. Qui hi pot accedir</h2>
-    <p>Les regles de seguretat de Firestore només permeten llegir i escriure les dades del teu compte a la sessió iniciada amb el teu compte. No es comparteixen amb tercers ni es venen. Tècnicament, l’administrador del projecte Firebase i Google (com a encarregat del tractament) poden accedir a les dades emmagatzemades al núvol.</p>
+    <p>Les regles de seguretat de Firestore han de permetre llegir i escriure només les dades del compte autenticat corresponent. No es comparteixen amb tercers ni es venen. Tècnicament, l’administrador del projecte Firebase i Google (com a encarregat del tractament) poden accedir a les dades emmagatzemades al núvol. Aquesta versió encara permet iniciar sessió des de més d’un dispositiu amb les mateixes credencials: no hi ha una restricció tècnica efectiva a un únic telèfon. Per mantenir l’ús personal, no comparteixis les credencials ni iniciïs sessió en altres dispositius.</p>
 
     <h2>5. Finalitat i base legal</h2>
-    <p>Únicament permetre’t consultar i gestionar el teu registre horari personal i sincronitzar-lo entre els teus dispositius. La base és el teu consentiment en crear el compte i la prestació del servei que sol·licites.</p>
+    <p>Permetre’t consultar i gestionar el teu registre horari personal, guardar-lo al dispositiu i, si inicies sessió, mantenir-ne una còpia sincronitzada al núvol. El sistema actual no impedeix tècnicament l’accés des d’un segon dispositiu amb les mateixes credencials. La base és el teu consentiment en crear el compte i la prestació del servei que sol·licites.</p>
 
     <h2>6. Notificacions</h2>
     <p>Si actives el recordatori diari, el sistema pot mostrar notificacions locals al dispositiu. No surten del teu aparell.</p>
 
     <h2>7. Còpies de seguretat</h2>
-    <p>Pots exportar les dades (JSON, CSV o PDF). Aquests fitxers els gestiones tu; l’app no els puja enlloc.</p>
+    <p>L’app conserva còpies locals diàries dels darrers set dies quan hi ha registres, i pots restaurar manualment l’última còpia local vàlida. També pots exportar les dades (JSON, CSV o PDF); aquests fitxers els gestiones tu i l’app no els puja automàticament enlloc. La sincronització amb Firebase és independent d’aquestes còpies locals.</p>
 
     <h2>8. Conservació i esborrat</h2>
     <ul>

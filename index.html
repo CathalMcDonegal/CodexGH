@@ -9,10 +9,10 @@
 <meta name="apple-mobile-web-app-title" content="Codex GH">
 <meta name="description" content="Registre horari personal">
 <link rel="manifest" href="manifest.json">
-<script src="firebase-config.js?v=2.14.0"></script>
+<script src="firebase-config.js?v=3.0.0"></script>
 <link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Codex GH 2.12.9</title>
+<title>Codex GH 3.0</title>
 <style>
 :root{--bg:#eef5ff;--card:#fff;--text:#10203a;--muted:#5b6b82;--line:#cbd9ee;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;--cyan:#0891b2;--pink:#db2777;--shadow:0 6px 22px rgba(15,23,42,.06);--safe:env(safe-area-inset-bottom,0px);--r:16px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);min-height:100dvh;padding-bottom:calc(82px + var(--safe));line-height:1.4}
@@ -40,7 +40,7 @@ main{width:100%;max-width:1440px;margin:0 auto;padding:clamp(10px,1.5vw,20px)}.v
 #view-calendar .calendar > .day{visibility:visible;display:flex}
 #view-calendar .monthly-list{visibility:visible}
 #view-calendar .month-head{min-height:42px}
-@media(max-width:600px){#view-calendar .calendar{display:grid!important;gap:3px;min-height:0}.#view-calendar .dow{padding:3px 1px}#view-calendar .day{display:flex;min-height:70px;padding:6px 4px}.#view-calendar .day .kind{font-size:.5rem}.#view-calendar .day .hrs{font-size:.48rem}}
+@media(max-width:600px){#view-calendar .calendar{display:grid!important;gap:3px;min-height:0}#view-calendar .dow{padding:3px 1px}#view-calendar .day{display:flex;min-height:70px;padding:6px 4px}#view-calendar .day .kind{font-size:.5rem}#view-calendar .day .hrs{font-size:.48rem}}
 @media (prefers-color-scheme: dark) and (max-width: 0px) {
 :root{--bg:#0b1220;--card:#111b2d;--text:#e5edf8;--muted:#94a3b8;--line:#26364e;--shadow:0 8px 25px rgba(0,0,0,.18)}.appbar,.nav{background:rgba(17,27,45,.95)}.year-pill{background:#172554;border-color:#1e40af}.stat,.day,.row,input,select,textarea{background:#0f192a}.day.weekend{background:#0e1725}.day.work{background:#172554}.day.mati{background:#3f3b0b}.day.tarda{background:#43220d}.day.nit,.day.cs_nit,.day.fn{background:#102c55}.day.vacances{background:#14532d}.day.assumptes{background:#166534}.day.hores_acum{background:#065f46}.day.dies_blaus{background:#047857}.day.festa{background:#15803d}.day.cs_dia{background:rgba(248,231,161,.48)!important;border-color:#8f7300!important;color:#5f4d00!important}.day.fd{background:rgba(246,217,138,.48)!important;border-color:#8a6700!important;color:#5a4500!important}.day.baixa{background:rgba(247,194,194,.48)!important;border-color:#a94f58!important;color:#7f1d1d!important}.day.judici{background:#2e1649}.btn.secondary{background:#1a2639;color:var(--text)}.hero{background:linear-gradient(135deg,#020617,#172554)}}
 /* Poliment visual final */
@@ -215,7 +215,7 @@ main{padding-top:clamp(12px,1.8vw,22px)}
 #view-calendar #legend{display:flex;flex-wrap:wrap;gap:8px;min-height:34px;align-items:center}
 #view-calendar #legend .legend-chip{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid #cbd5e1;background:#f8fafc;color:#172033;font-size:.68rem;font-weight:850;white-space:nowrap}
 #view-calendar #legend .legend-chip::before{display:none}
-#view-calendar #legend .legend-mati::before{background:#38bdf8}.#view-calendar #legend .legend-tarda::before{background:#f59e0b}.#view-calendar #legend .legend-nit::before{background:#312e81}.#view-calendar #legend .legend-vacances::before{background:#22c55e}.#view-calendar #legend .legend-assumptes::before{background:#16a34a}.#view-calendar #legend .legend-baixa::before{background:#ef4444}
+#view-calendar #legend .legend-mati::before{background:#38bdf8}#view-calendar #legend .legend-tarda::before{background:#f59e0b}#view-calendar #legend .legend-nit::before{background:#312e81}#view-calendar #legend .legend-vacances::before{background:#22c55e}#view-calendar #legend .legend-assumptes::before{background:#16a34a}#view-calendar #legend .legend-baixa::before{background:#ef4444}
 @media (prefers-color-scheme: dark) and (max-width: 0px) {#view-calendar #legend .legend-chip{background:#182438;border-color:#3a4b63;color:#eef4ff}}
 @media(max-width:600px){#view-calendar .section.card{margin-top:10px;padding:12px}#view-calendar #legend{gap:6px}#view-calendar #legend .legend-chip{padding:6px 8px;font-size:.62rem}}
 /* Instal·lació i marca d'aigua */
@@ -796,6 +796,65 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
   -webkit-text-fill-color:#d5deea!important;
 }
 
+
+/* Codex GH 3.0 — calendari mòbil, net i respirat */
+:root{--cal-gap:6px;--cal-radius:13px}
+#view-calendar .calendar{gap:var(--cal-gap);min-height:0}
+#view-calendar .day{min-height:82px;padding:8px 7px;border-radius:var(--cal-radius);box-shadow:none;transition:transform .12s,border-color .12s}
+#view-calendar .day:active{transform:scale(.97)}
+#view-calendar .day .num{font-size:.9rem;font-weight:900}
+#view-calendar .day .kind{font-size:.62rem;line-height:1.15;margin-top:8px;-webkit-line-clamp:1}
+#view-calendar .day .hrs{font-size:.58rem;font-weight:750;margin-top:auto}
+#view-calendar .day.weekend{background:#f1f5f9}
+#view-calendar .day.today{outline:2px solid #2563eb;outline-offset:-2px}
+#view-calendar .day.muted{opacity:.28}
+#view-calendar .month-head h2{font-size:1.15rem;font-weight:850;letter-spacing:-.02em}
+#view-calendar .month-head button{width:42px;height:42px;border-radius:13px;font-size:1.15rem}
+#view-calendar #legend .legend-chip{padding:7px 10px;font-size:.66rem;border-radius:10px}
+#view-calendar .calendar-card{padding:12px}
+#view-calendar .dow{font-size:.62rem;letter-spacing:.03em;padding:7px 2px}
+@media(max-width:600px){
+ body{padding-bottom:calc(78px + var(--safe))}
+ main{padding:8px}
+ #view-calendar .calendar{gap:4px}
+ #view-calendar .day{min-height:74px;padding:7px 4px;border-radius:10px}
+ #view-calendar .day .num{font-size:.82rem}
+ #view-calendar .day .kind{font-size:.53rem;margin-top:7px}
+ #view-calendar .day .hrs{font-size:.5rem}
+ #view-calendar .dow{font-size:.56rem;padding:5px 1px}
+ #view-calendar .month-head{margin-bottom:10px}
+ #view-calendar .month-head h2{font-size:1.08rem}
+ #view-calendar .calendar-card{padding:9px}
+}
+@media(max-width:370px){
+ #view-calendar .day{min-height:67px;padding:6px 3px}
+ #view-calendar .day .kind{font-size:.48rem}
+ #view-calendar .day .hrs{font-size:.46rem}
+}
+/* Aplicació d'ús mòbil: bloqueig visual en pantalles d'escriptori */
+@media(min-width:761px){
+ body:before{content:"Codex GH està dissenyat per utilitzar-se exclusivament des del mòbil.\A Obre l'aplicació al telèfon per continuar.";white-space:pre-line;position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;text-align:center;padding:32px;background:#0f172a;color:#fff;font-size:1.25rem;font-weight:750;line-height:1.7}
+ body>*{visibility:hidden}
+ body:before{visibility:visible}
+}
+
+
+/* Radar d'activitat */
+.radar-card{padding:16px}
+.radar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.radar-head h3{margin:2px 0 0;font-size:1.08rem;letter-spacing:-.02em}
+.radar-kicker{font-size:.58rem;font-weight:900;letter-spacing:.11em;color:var(--muted)}
+.radar-count{min-width:32px;height:32px;padding:0 9px;border-radius:11px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-weight:900}
+.radar-list{display:grid;gap:8px}
+.radar-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--card) 92%,var(--primary-soft))}
+.radar-dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#8b5cf6}
+.radar-dot.plan{background:#0ea5e9}.radar-dot.baixa{background:#ef4444}
+.radar-copy{min-width:0;display:grid;gap:3px}
+.radar-copy strong{font-size:.78rem}
+.radar-copy small{font-size:.67rem;color:var(--muted);line-height:1.35}
+.radar-empty{padding:13px;border-radius:12px;background:var(--primary-soft);font-size:.76rem;line-height:1.45;color:var(--text)}
+@media(max-width:600px){.radar-card{padding:13px}.radar-item{padding:9px}.radar-copy small{font-size:.63rem}}
+
 </style>
 </head>
 <body>
@@ -823,6 +882,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <section id="view-home" class="view active">
   <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div></div>
   <div class="section card" id="todayCard"></div>
+  <div class="section card radar-card" id="codexRadar" aria-live="polite"></div>
   <div class="section card hero home-annual-compact">
     <div class="hero-top"><div><div class="eyebrow">Còmput anual</div><h2 id="saldo">+0:00</h2><div class="saldo" id="saldoText">Calculant…</div><div class="balance-detail" id="balanceDetail" aria-hidden="true">Calculant previsió…</div></div><div class="chip" id="progressPct">0%</div></div>
     <div class="progress"><i id="progressBar" style="width:0%"></i></div>
@@ -866,7 +926,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
     <div class="row" id="verifyRow" style="display:none"><div class="grow"><strong>Correu sense verificar</strong><small>Obre l'enllaç que t'hem enviat per correu.</small></div><button class="btn secondary small" onclick="RHSync.resendVerify()">Reenviar</button></div>
     <div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="RHSync.syncNow()">Sincronitzar ara</button><button class="btn danger" onclick="RHSync.logout()">Tancar sessió</button></div>
     <div class="actions" style="margin-top:8px"><button class="btn secondary small" onclick="RHSync.deleteAccount()">Eliminar compte i dades</button></div>
-    <p class="hint" style="margin-top:10px">Les dades queden lligades al teu compte: en iniciar sessió en un altre dispositiu apareixen les mateixes. Una altra persona amb el seu propi compte té les seves dades separades.</p>
+    <p class="hint" style="margin-top:10px">Les dades del núvol queden associades al teu compte i no són públiques si les regles de Firebase estan ben configurades. Aquesta versió encara permet iniciar sessió des d'un altre dispositiu amb les mateixes credencials. Per mantenir l'ús personal, no comparteixis el compte ni iniciïs sessió en ordinadors o altres telèfons. El bloqueig tècnic a un únic dispositiu encara està pendent.</p>
   </div>
   <div class="card"><div class="card-title">Perfils i quadrants de torn</div><p class="hint">Defineix la rotació base del teu escamot. El pla és orientatiu i separat dels registres reals: no suma hores ni crea jornades.</p><div id="shiftProfilesPanel"></div></div>
   <div class="card"><div class="card-title">Configuració</div>
@@ -896,7 +956,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
   </div>
   <div class="card"><div class="card-title">Torns</div><div id="shiftConfig"></div><button class="btn secondary small" onclick="addShift()">＋ Afegir torn</button></div>
   <div class="card"><div class="card-title">Dades i còpies de seguretat</div>
-    <div class="actions"><button class="btn secondary" onclick="exportJSON()">Exportar JSON</button><button class="btn secondary" onclick="importJSON()">Importar JSON</button><button class="btn secondary" onclick="exportCSV()">Exportar CSV</button><button class="btn secondary" onclick="exportPDF()">Exportar PDF / Imprimir</button></div>
+    <div class="actions"><button class="btn secondary" onclick="exportJSON()">Exportar JSON</button><button class="btn secondary" onclick="restoreLatestLocalBackup()">Restaurar última còpia local</button><button class="btn secondary" onclick="importJSON()">Importar JSON</button><button class="btn secondary" onclick="exportCSV()">Exportar CSV</button><button class="btn secondary" onclick="exportPDF()">Exportar PDF / Imprimir</button></div>
     <p class="hint" style="margin-top:10px">La importació reconeix el format de la versió anterior. Abans de substituir dades es crea una còpia local de seguretat.</p>
     <button class="btn danger" onclick="resetAll()">Esborrar dades</button>
   </div>
@@ -904,7 +964,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
   <div class="card"><div class="card-title">Manual d'ús</div>
     <p class="hint" style="margin-top:-4px;margin-bottom:12px">Guia per apartats. Toca un títol per desplegar-lo.</p>
     <div class="manual">
-<details><summary>1. Què és aquesta app</summary><div class="manual-body"><p><strong>Codex GH</strong> és una eina personal per controlar la jornada, hores, permisos, nits, acumulades i judicis.</p><p>L'app treballa amb el còmput anual de <strong>1580 hores efectives</strong> i permet conservar l'històric de diferents anys.</p><p>Les dades es poden guardar localment i, si el compte Firebase està configurat, <strong>sincronitzar-les entre dispositius</strong>.</p></div></details>
+<details><summary>1. Què és aquesta app</summary><div class="manual-body"><p><strong>Codex GH</strong> és una eina personal per controlar la jornada, hores, permisos, nits, acumulades i judicis.</p><p>L'app treballa amb el còmput anual de <strong>1580 hores efectives</strong> i permet conservar l'històric de diferents anys.</p><p>Les dades es guarden localment i, si actives el compte Firebase, es fa una còpia al núvol. En aquesta versió el mateix compte encara pot obrir-se des d'altres dispositius; la restricció tècnica a un únic telèfon està pendent.</p></div></details>
 <details><summary>2. Pantalla d'inici</summary><div class="manual-body"><ul><li><strong>Avui:</strong> mostra el registre del dia actual i permet editar-lo.</li><li><strong>Pròxim:</strong> mostra només judicis futurs i dies futurs amb icona. El dia actual no hi entra.</li><li><strong>Accions pendents:</strong> mostra només <strong>judicis celebrats i encara no cobrats</strong> i <strong>dies marcats amb cobrament especial que encara no s'han cobrat</strong>.</li><li>Un <strong>punt vermell 🔴</strong> al costat d’un judici indica que té observacions guardades. El punt també es mostra a les llistes de judicis; el text de les observacions no apareix als resums.</li><li>Les hores extres, per si soles, <strong>no</strong> generen una acció pendent.</li><li>Els resums es poden tocar per consultar el detall.</li></ul></div></details>
 <details><summary>3. Com registrar un dia</summary><div class="manual-body"><p>1. Toca un dia al calendari/setmana o prem <strong>＋ Registrar</strong>.<br>2. Tria el tipus de registre.<br>3. Si és treball, tria el torn i indica entrada/sortida. Les hores es calculen automàticament.<br>4. Pots seleccionar una <strong>icona</strong> i escriure una <strong>nota</strong>.<br>5. Desa.</p><p>La informació escrita a <strong>Notes</strong> és la que apareix als resums quan correspon; no es mostra cap text genèric d'"observació" si no has escrit res.</p><p>Amb la <strong>selecció múltiple</strong> pots aplicar un mateix registre a diversos dies.</p></div></details>
 <details><summary>4. Cobrament especial d'un dia</summary><div class="manual-body"><p>En registrar una jornada de treball pots marcar <strong>«Aquest dia té cobrament especial»</strong>.</p><p>Quan ho marques apareix <strong>«Cobrament especial cobrat»</strong>.</p><ul><li>Marcat especial + no cobrat → apareix a <strong>Accions pendents</strong>.</li><li>Marcat especial + cobrat → deixa d'aparèixer a pendents.</li><li>Si no marques cobrament especial, el dia <strong>no</strong> apareix a pendents encara que tingui més hores de les previstes.</li></ul></div></details>
@@ -916,7 +976,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <details><summary>10. Calendari, setmana i resum mensual</summary><div class="manual-body"><ul><li><strong>Calendari:</strong> vista mensual amb colors i icones.</li><li><strong>Resum mensual:</strong> llista ordenada dels dies i les hores.</li><li><strong>Setmana:</strong> mostra els dies de la setmana i el balanç d'hores.</li></ul></div></details>
 <details><summary>11. Acumulades</summary><div class="manual-body"><p><strong>Saldo d'acumulades = inicials + hores generades − hores utilitzades.</strong> Toca la targeta d'acumulades per veure els moviments.</p></div></details>
 <details><summary>12. Permisos</summary><div class="manual-body"><p>La pestanya <strong>Permisos</strong> permet buscar i filtrar llicències, permisos i reduccions. La informació és orientativa i no substitueix la normativa oficial ni ATRI.</p></div></details>
-<details><summary>13. Dades, còpies i sincronització</summary><div class="manual-body"><ul><li><strong>Exportar JSON:</strong> crea una còpia completa.</li><li><strong>Importar JSON:</strong> recupera una còpia; es fa una còpia local abans de substituir dades.</li><li><strong>CSV/PDF:</strong> permet consultar o arxivar la informació.</li><li>Si hi ha compte configurat, la sincronització manté les dades entre dispositius <strong>dia a dia</strong>: si edites dies diferents en dos dispositius, es fusionen; si edites el mateix dia, guanya l'última modificació.</li><li>L'app guarda una còpia local diària (7 dies) i t'avisa si fa més d'un mes que no exportes un JSON.</li></ul><p><strong>No esborres les dades del navegador sense haver exportat una còpia.</strong></p></div></details>
+<details><summary>13. Dades, còpies i sincronització</summary><div class="manual-body"><ul><li><strong>Exportar JSON:</strong> crea una còpia completa.</li><li><strong>Importar JSON:</strong> recupera una còpia; es fa una còpia local abans de substituir dades.</li><li><strong>CSV/PDF:</strong> permet consultar o arxivar la informació.</li><li>Si hi ha compte configurat, les dades es sincronitzen automàticament amb Firebase. El sistema actual també permet accedir-hi des d'un altre dispositiu amb les mateixes credencials. No comparteixis el compte ni iniciïs sessió en altres dispositius si vols mantenir l'ús personal. La restricció tècnica a un únic telèfon encara no està implementada.</li><li>L'app guarda una còpia local diària (7 dies) i t'avisa si fa més d'un mes que no exportes un JSON.</li></ul><p><strong>No esborres les dades del navegador sense haver exportat una còpia.</strong></p></div></details>
 <details><summary>14. Mode fosc, recordatoris i instal·lació</summary><div class="manual-body"><ul><li><strong>Mode fosc:</strong> Auto, Clar o Fosc.</li><li><strong>Recordatori diari:</strong> pot avisar si encara no has registrat la jornada.</li><li><strong>PWA:</strong> pots instal·lar l'app al dispositiu per utilitzar-la com una aplicació.</li></ul></div></details>
     </div>
   </div>
@@ -1109,12 +1169,13 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="ui.js?v=2.14.0"></script>
-<script src="merge.js?v=2.14.0"></script>
-<script src="home.js?v=2.14.0"></script>
-<script src="app.js?v=2.14.1"></script>
-<script src="shift-profiles.js?v=2.14.0"></script>
-<script src="payroll.js?v=2.14.0"></script>
-<script src="sync.js?v=2.14.0"></script>
+<script src="ui.js?v=3.0.0"></script>
+<script src="merge.js?v=3.0.0"></script>
+<script src="home.js?v=3.0.0"></script>
+<script src="app.js?v=3.0.0"></script>
+<script src="shift-profiles.js?v=3.0.0"></script>
+<script src="payroll.js?v=3.0.0"></script>
+<script src="radar.js?v=3.0.0"></script>
+<script src="sync.js?v=3.0.0"></script>
 </body>
 </html>
