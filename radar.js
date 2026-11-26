@@ -29,14 +29,22 @@ window.restoreLatestLocalBackup=async function(){
  for(let i=0;i<localStorage.length;i++){const k=localStorage.key(i);if(k&&k.startsWith('codexGHDailyBackup-'))keys.push(k)}
  keys.sort().reverse();
  if(!keys.length){toast('No hi ha cap còpia local disponible');return}
- const key=keys[0];let candidate;
- try{candidate=JSON.parse(localStorage.getItem(key))}catch(e){toast('La còpia no es pot llegir');return}
- if(!candidate||typeof candidate!=='object'||!candidate.registres){toast('La còpia no té un format vàlid');return}
+ let key='',candidate=null;
+ for(const k of keys){
+  try{
+   const parsed=JSON.parse(localStorage.getItem(k));
+   if(parsed&&typeof parsed==='object'&&parsed.registres&&typeof parsed.registres==='object'){
+    key=k;candidate=parsed;break;
+   }
+  }catch(e){}
+ }
+ if(!candidate){toast('No hi ha cap còpia local vàlida');return}
  const n=Object.keys(candidate.registres||{}).length;
  if(!await uiConfirm('Es restaurarà la còpia del '+key.replace('codexGHDailyBackup-','')+' amb '+n+' registres. Abans es guardarà l’estat actual com a còpia de seguretat. Vols continuar?',{title:'Restaurar còpia local',ok:'Restaurar'}))return;
  try{
   const current=localStorage.getItem('codexGH');
   if(current)localStorage.setItem('codexGHRestoreBefore-'+Date.now(),current);
+  candidate._savedAt=Date.now();
   const payload=JSON.stringify(candidate);
   localStorage.setItem('codexGH',payload);localStorage.setItem('codexGH.latest',payload);
   toast('Còpia restaurada');setTimeout(()=>location.reload(),500);
