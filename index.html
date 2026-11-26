@@ -855,6 +855,13 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 .radar-empty{padding:13px;border-radius:12px;background:var(--primary-soft);font-size:.76rem;line-height:1.45;color:var(--text)}
 @media(max-width:600px){.radar-card{padding:13px}.radar-item{padding:9px}.radar-copy small{font-size:.63rem}}
 
+.radar-metrics{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:0 0 10px}
+.radar-metric{min-width:0;padding:10px 8px;border:1px solid var(--line);border-radius:12px;background:var(--primary-soft);display:flex;flex-direction:column;gap:3px}
+.radar-metric strong{font-size:1.15rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.radar-metric span{font-size:.62rem;color:var(--muted);font-weight:750;line-height:1.25}
+.radar-metric.blue strong{color:var(--primary)}.radar-metric.purple strong{color:var(--purple)}.radar-metric.orange strong{color:var(--orange)}
+@media(max-width:600px){.radar-metrics{gap:6px}.radar-metric{padding:9px 6px}.radar-metric strong{font-size:1.05rem}.radar-metric span{font-size:.58rem}}
+
 </style>
 </head>
 <body>
