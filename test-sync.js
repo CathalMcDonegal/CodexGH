@@ -28,7 +28,7 @@ const fakeFirebase={initializeApp(){return{auth:()=>fakeFirebase.auth(),firestor
 
 /* ---- Dispositiu: DOM de joguina + scripts reals ---- */
 function device(){
-  const mk=()=>{const f=function(){};return new Proxy(f,{get:(t,k)=>{if(k===Symbol.toPrimitive)return()=>'';if(k==='length')return 0;if(k==='classList')return{add(){},remove(){},toggle(){},contains:()=>false};if(k==='style'||k==='dataset')return t[k]=t[k]||{};if(k==='querySelectorAll')return()=>[];if(k==='then')return undefined;return t[k]!==undefined?t[k]:(['value','textContent','innerHTML'].includes(k)?'':mk())},set:(t,k,v)=>{t[k]=v;return true},apply:()=>mk()})};
+  const mk=()=>{const f=function(){};return new Proxy(f,{get:(t,k)=>{if(k===Symbol.toPrimitive)return()=>'';if(k==='length')return 0;if(k==='classList')return{add(){},remove(){},toggle(){},contains:()=>false};if(k==='style')return t[k]=t[k]||{setProperty(){}};if(k==='dataset')return t[k]=t[k]||{};if(k==='querySelectorAll')return()=>[];if(k==='then')return undefined;return t[k]!==undefined?t[k]:(['value','textContent','innerHTML'].includes(k)?'':mk())},set:(t,k,v)=>{t[k]=v;return true},apply:()=>mk()})};
   const store={},els={},listeners={};
   const ctx={document:{getElementById:id=>els[id]=els[id]||mk(),querySelector:()=>mk(),querySelectorAll:()=>[],addEventListener(){},createElement:()=>mk(),body:mk(),documentElement:mk(),readyState:'complete',visibilityState:'visible'},
     localStorage:{getItem:k=>store[k]??null,setItem:(k,v)=>{store[k]=String(v)},removeItem:k=>{delete store[k]},key:i=>Object.keys(store)[i],get length(){return Object.keys(store).length}},
