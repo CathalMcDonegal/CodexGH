@@ -880,15 +880,16 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 
 <div class="watermark" id="watermark" aria-hidden="true"></div><div id="installBanner" class="install-banner" role="status"><div class="grow"><strong>Instal·la Codex GH</strong><small>Accedeix més ràpidament des de la pantalla d’inici.</small></div><button class="btn primary small" onclick="installApp()">Instal·lar</button><button class="btn secondary small" onclick="dismissInstall()" aria-label="Tancar">×</button></div><div id="backupBanner" class="install-banner" role="status"><div class="grow"><strong>Fes una còpia de seguretat</strong><small id="backupBannerText"></small></div><button class="btn primary small" onclick="backupNow()">Exportar</button><button class="btn secondary small" onclick="dismissBackupReminder()" aria-label="Ara no">×</button></div><main>
 <section id="view-home" class="view active">
-  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div></div>
-  <div class="section card" id="todayCard"></div>
-  <div class="section card radar-card" id="codexRadar" aria-live="polite"></div>
   <div class="section card hero home-annual-compact">
     <div class="hero-top"><div><div class="eyebrow">Còmput anual</div><h2 id="saldo">+0:00</h2><div class="saldo" id="saldoText">Calculant…</div><div class="balance-detail" id="balanceDetail" aria-hidden="true">Calculant previsió…</div></div><div class="chip" id="progressPct">0%</div></div>
     <div class="progress"><i id="progressBar" style="width:0%"></i></div>
     <div class="hero-foot"><span id="workedLabel">0 h fetes</span><span id="targetLabel">de 0 h</span></div>
     <button class="btn secondary" onclick="showView('stats')" style="width:100%;margin-top:12px"><i class="ic ic-chart"></i> Anàlisi anual i previsió</button>
   </div>
+
+  <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div></div>
+  <div class="section card" id="todayCard"></div>
+  <div class="section card radar-card" id="codexRadar" aria-live="polite"></div>
   <details class="section card" open><summary class="card-title">Pròxim</summary><div id="upcoming"></div></details>
   <details class="section card" open><summary class="card-title">Cobraments</summary><div id="alerts"></div></details>
   <p class="hint" id="homeVersion" style="text-align:center;margin:10px 0 90px"></p>
@@ -1171,11 +1172,11 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="ui.js?v=3.0.0"></script>
 <script src="merge.js?v=3.0.0"></script>
-<script src="home.js?v=3.0.0"></script>
+<script src="home.js?v=3.1.0"></script>
 <script src="app.js?v=3.0.0"></script>
 <script src="shift-profiles.js?v=3.0.0"></script>
 <script src="payroll.js?v=3.0.0"></script>
-<script src="radar.js?v=3.0.0"></script>
+<script src="radar.js?v=3.1.0"></script>
 <script src="sync.js?v=3.0.0"></script>
 </body>
 </html>
