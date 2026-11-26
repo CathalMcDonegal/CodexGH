@@ -838,6 +838,23 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
  body:before{visibility:visible}
 }
 
+
+/* Radar d'activitat */
+.radar-card{padding:16px}
+.radar-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.radar-head h3{margin:2px 0 0;font-size:1.08rem;letter-spacing:-.02em}
+.radar-kicker{font-size:.58rem;font-weight:900;letter-spacing:.11em;color:var(--muted)}
+.radar-count{min-width:32px;height:32px;padding:0 9px;border-radius:11px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);font-weight:900}
+.radar-list{display:grid;gap:8px}
+.radar-item{display:flex;align-items:center;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:12px;background:color-mix(in srgb,var(--card) 92%,var(--primary-soft))}
+.radar-dot{width:9px;height:9px;flex:0 0 9px;border-radius:50%;background:#8b5cf6}
+.radar-dot.plan{background:#0ea5e9}.radar-dot.baixa{background:#ef4444}
+.radar-copy{min-width:0;display:grid;gap:3px}
+.radar-copy strong{font-size:.78rem}
+.radar-copy small{font-size:.67rem;color:var(--muted);line-height:1.35}
+.radar-empty{padding:13px;border-radius:12px;background:var(--primary-soft);font-size:.76rem;line-height:1.45;color:var(--text)}
+@media(max-width:600px){.radar-card{padding:13px}.radar-item{padding:9px}.radar-copy small{font-size:.63rem}}
+
 </style>
 </head>
 <body>
@@ -865,6 +882,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <section id="view-home" class="view active">
   <div class="section card"><div class="card-title">Resum ràpid</div><div class="stats" id="quickStats"></div></div>
   <div class="section card" id="todayCard"></div>
+  <div class="section card radar-card" id="codexRadar" aria-live="polite"></div>
   <div class="section card hero home-annual-compact">
     <div class="hero-top"><div><div class="eyebrow">Còmput anual</div><h2 id="saldo">+0:00</h2><div class="saldo" id="saldoText">Calculant…</div><div class="balance-detail" id="balanceDetail" aria-hidden="true">Calculant previsió…</div></div><div class="chip" id="progressPct">0%</div></div>
     <div class="progress"><i id="progressBar" style="width:0%"></i></div>
@@ -1157,6 +1175,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <script src="app.js?v=2.14.1"></script>
 <script src="shift-profiles.js?v=2.14.0"></script>
 <script src="payroll.js?v=2.14.0"></script>
+<script src="radar.js?v=3.0.0"></script>
 <script src="sync.js?v=2.14.0"></script>
 </body>
 </html>
