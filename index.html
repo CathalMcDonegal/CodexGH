@@ -9,10 +9,10 @@
 <meta name="apple-mobile-web-app-title" content="Codex GH">
 <meta name="description" content="Registre horari personal">
 <link rel="manifest" href="manifest.json">
-<script src="firebase-config.js?v=2.14.0"></script>
+<script src="firebase-config.js?v=3.0.0"></script>
 <link rel="icon" type="image/png" sizes="64x64" href="app-icon.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<title>Codex GH 2.12.9</title>
+<title>Codex GH 3.0</title>
 <style>
 :root{--bg:#eef5ff;--card:#fff;--text:#10203a;--muted:#5b6b82;--line:#cbd9ee;--primary:#2563eb;--primary2:#1d4ed8;--green:#16a34a;--red:#dc2626;--orange:#ea580c;--purple:#7c3aed;--cyan:#0891b2;--pink:#db2777;--shadow:0 6px 22px rgba(15,23,42,.06);--safe:env(safe-area-inset-bottom,0px);--r:16px}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:var(--bg)}body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;color:var(--text);background:var(--bg);min-height:100dvh;padding-bottom:calc(82px + var(--safe));line-height:1.4}
@@ -794,6 +794,48 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
   background:transparent!important;
   color:#d5deea!important;
   -webkit-text-fill-color:#d5deea!important;
+}
+
+
+/* Codex GH 3.0 — calendari mòbil, net i respirat */
+:root{--cal-gap:6px;--cal-radius:13px}
+#view-calendar .calendar{gap:var(--cal-gap);min-height:0}
+#view-calendar .day{min-height:82px;padding:8px 7px;border-radius:var(--cal-radius);box-shadow:none;transition:transform .12s,border-color .12s}
+#view-calendar .day:active{transform:scale(.97)}
+#view-calendar .day .num{font-size:.9rem;font-weight:900}
+#view-calendar .day .kind{font-size:.62rem;line-height:1.15;margin-top:8px;-webkit-line-clamp:1}
+#view-calendar .day .hrs{font-size:.58rem;font-weight:750;margin-top:auto}
+#view-calendar .day.weekend{background:#f1f5f9}
+#view-calendar .day.today{outline:2px solid #2563eb;outline-offset:-2px}
+#view-calendar .day.muted{opacity:.28}
+#view-calendar .month-head h2{font-size:1.15rem;font-weight:850;letter-spacing:-.02em}
+#view-calendar .month-head button{width:42px;height:42px;border-radius:13px;font-size:1.15rem}
+#view-calendar #legend .legend-chip{padding:7px 10px;font-size:.66rem;border-radius:10px}
+#view-calendar .calendar-card{padding:12px}
+#view-calendar .dow{font-size:.62rem;letter-spacing:.03em;padding:7px 2px}
+@media(max-width:600px){
+ body{padding-bottom:calc(78px + var(--safe))}
+ main{padding:8px}
+ #view-calendar .calendar{gap:4px}
+ #view-calendar .day{min-height:74px;padding:7px 4px;border-radius:10px}
+ #view-calendar .day .num{font-size:.82rem}
+ #view-calendar .day .kind{font-size:.53rem;margin-top:7px}
+ #view-calendar .day .hrs{font-size:.5rem}
+ #view-calendar .dow{font-size:.56rem;padding:5px 1px}
+ #view-calendar .month-head{margin-bottom:10px}
+ #view-calendar .month-head h2{font-size:1.08rem}
+ #view-calendar .calendar-card{padding:9px}
+}
+@media(max-width:370px){
+ #view-calendar .day{min-height:67px;padding:6px 3px}
+ #view-calendar .day .kind{font-size:.48rem}
+ #view-calendar .day .hrs{font-size:.46rem}
+}
+/* Aplicació d'ús mòbil: bloqueig visual en pantalles d'escriptori */
+@media(min-width:761px){
+ body:before{content:"Codex GH està dissenyat per utilitzar-se exclusivament des del mòbil.\A Obre l'aplicació al telèfon per continuar.";white-space:pre-line;position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;text-align:center;padding:32px;background:#0f172a;color:#fff;font-size:1.25rem;font-weight:750;line-height:1.7}
+ body>*{visibility:hidden}
+ body:before{visibility:visible}
 }
 
 </style>
