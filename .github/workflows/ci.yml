@@ -25,9 +25,11 @@ jobs:
           for file in app.js ui.js merge.js home.js shift-profiles.js payroll.js radar.js sync.js sw.js; do
             node --check "$file"
           done
-      - name: Run regression tests
-        run: |
-          node test-calc.js
-          node test-merge.js
-          node test-planning.js
-          node test-sync.js
+      - name: Test de còmput i nòmina
+        run: node test-calc.js
+      - name: Test de fusió
+        run: node test-merge.js
+      - name: Test de planificació
+        run: node test-planning.js
+      - name: Test de sincronització
+        run: node test-sync.js
