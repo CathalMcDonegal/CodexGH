@@ -29,7 +29,7 @@ assert.strictEqual(st.registres.d.sortida,'15:00');eq(st.registres.d.hores,8,'mi
 c=run({'d':{tipus:'treball',torn:'tarda',entrada:'14:30',sortida:'22:00',hores:7.5}});eq(c.worked,7.5,'tarda');eq(c.accExtra,0,'tarda sense acumulades');
 c=run({'d':{tipus:'treball',torn:'nit',entrada:'22:00',sortida:'07:00',hores:9}});eq(c.worked,9,'nit');eq(c.gnit,8,'nit: només 22–06');eq(c.accExtra,0,'nit base 9');
 c=run({'d':{tipus:'treball',torn:'cs_dia',entrada:'07:00',sortida:'19:00',hores:12}});eq(c.worked,12,'cs dia');eq(c.accExtra,0,'cs dia base 12');
-c=run({'d':{tipus:'treball',torn:'tarda',entrada:'14:30',sortida:'23:00',hores:8.5}});eq(c.accExtra,1,'tarda allargada → 1 h acumulada');
+c=run({'2026-03-02':{tipus:'treball',torn:'tarda',entrada:'14:30',sortida:'23:00',hores:8.5}});eq(c.accExtra,1,'tarda allargada abans del 23/11/2026 → 1 h acumulada');
 // festa, conceptes
 c=run({'a':{tipus:'treball',torn:'festa',entrada:'07:00',sortida:'15:00',hores:8}});eq(c.worked,-8,'torn festa resta');
 c=run({'a':{tipus:'vacances',horesConcepte:7.5},'b':{tipus:'assumptes',horesConcepte:7.5},'c':{tipus:'dies_blaus',horesConcepte:7.5},'d':{tipus:'guardia_np',horesConcepte:3},'e':{tipus:'hores_extres',horesConcepte:2},'f':{tipus:'baixa',horesConcepte:7.5}});
