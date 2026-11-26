@@ -926,7 +926,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
     <div class="row" id="verifyRow" style="display:none"><div class="grow"><strong>Correu sense verificar</strong><small>Obre l'enllaç que t'hem enviat per correu.</small></div><button class="btn secondary small" onclick="RHSync.resendVerify()">Reenviar</button></div>
     <div class="actions" style="margin-top:10px"><button class="btn secondary" onclick="RHSync.syncNow()">Sincronitzar ara</button><button class="btn danger" onclick="RHSync.logout()">Tancar sessió</button></div>
     <div class="actions" style="margin-top:8px"><button class="btn secondary small" onclick="RHSync.deleteAccount()">Eliminar compte i dades</button></div>
-    <p class="hint" style="margin-top:10px">Les dades queden lligades al teu compte: en iniciar sessió en un altre dispositiu apareixen les mateixes. Una altra persona amb el seu propi compte té les seves dades separades.</p>
+    <p class="hint" style="margin-top:10px">Les dades del núvol queden associades al teu compte i no són públiques. La sincronització actual permet recuperar-les iniciant sessió amb aquest compte; la restricció tècnica a un únic telèfon requereix una capa addicional de seguretat.</p>
   </div>
   <div class="card"><div class="card-title">Perfils i quadrants de torn</div><p class="hint">Defineix la rotació base del teu escamot. El pla és orientatiu i separat dels registres reals: no suma hores ni crea jornades.</p><div id="shiftProfilesPanel"></div></div>
   <div class="card"><div class="card-title">Configuració</div>
@@ -956,7 +956,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
   </div>
   <div class="card"><div class="card-title">Torns</div><div id="shiftConfig"></div><button class="btn secondary small" onclick="addShift()">＋ Afegir torn</button></div>
   <div class="card"><div class="card-title">Dades i còpies de seguretat</div>
-    <div class="actions"><button class="btn secondary" onclick="exportJSON()">Exportar JSON</button><button class="btn secondary" onclick="importJSON()">Importar JSON</button><button class="btn secondary" onclick="exportCSV()">Exportar CSV</button><button class="btn secondary" onclick="exportPDF()">Exportar PDF / Imprimir</button></div>
+    <div class="actions"><button class="btn secondary" onclick="exportJSON()">Exportar JSON</button><button class="btn secondary" onclick="restoreLatestLocalBackup()">Restaurar última còpia local</button><button class="btn secondary" onclick="importJSON()">Importar JSON</button><button class="btn secondary" onclick="exportCSV()">Exportar CSV</button><button class="btn secondary" onclick="exportPDF()">Exportar PDF / Imprimir</button></div>
     <p class="hint" style="margin-top:10px">La importació reconeix el format de la versió anterior. Abans de substituir dades es crea una còpia local de seguretat.</p>
     <button class="btn danger" onclick="resetAll()">Esborrar dades</button>
   </div>
@@ -1169,13 +1169,13 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-<script src="ui.js?v=2.14.0"></script>
-<script src="merge.js?v=2.14.0"></script>
-<script src="home.js?v=2.14.0"></script>
-<script src="app.js?v=2.14.1"></script>
-<script src="shift-profiles.js?v=2.14.0"></script>
-<script src="payroll.js?v=2.14.0"></script>
+<script src="ui.js?v=3.0.0"></script>
+<script src="merge.js?v=3.0.0"></script>
+<script src="home.js?v=3.0.0"></script>
+<script src="app.js?v=3.0.0"></script>
+<script src="shift-profiles.js?v=3.0.0"></script>
+<script src="payroll.js?v=3.0.0"></script>
 <script src="radar.js?v=3.0.0"></script>
-<script src="sync.js?v=2.14.0"></script>
+<script src="sync.js?v=3.0.0"></script>
 </body>
 </html>
