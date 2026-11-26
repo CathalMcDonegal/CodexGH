@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - main
-      - codexgh-mobile-redesign
 
 permissions:
   contents: read
