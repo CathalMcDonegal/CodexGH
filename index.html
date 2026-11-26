@@ -862,6 +862,36 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 .radar-metric.blue strong{color:var(--primary)}.radar-metric.purple strong{color:var(--purple)}.radar-metric.orange strong{color:var(--orange)}
 @media(max-width:600px){.radar-metrics{gap:6px}.radar-metric{padding:9px 6px}.radar-metric strong{font-size:1.05rem}.radar-metric span{font-size:.58rem}}
 
+
+/* Correcció definitiva: caselles del calendari en mode fosc */
+html.dark #view-calendar .calendar > .day{
+  background:#111b2d!important;
+  border-color:#33465f!important;
+  color:#e8eef7!important;
+}
+html.dark #view-calendar .calendar > .day.weekend,
+html.dark #view-calendar .calendar > .day.muted{
+  background:#172235!important;
+  border-color:#33465f!important;
+  color:#d5deeb!important;
+}
+html.dark #view-calendar .calendar > .day .num,
+html.dark #view-calendar .calendar > .day .kind{color:#e8eef7!important;-webkit-text-fill-color:#e8eef7!important}
+html.dark #view-calendar .calendar > .day .hrs{color:#b8c6d9!important;-webkit-text-fill-color:#b8c6d9!important}
+html.dark #view-calendar .calendar > .day.work{background:#172554!important;border-color:#60a5fa!important}
+html.dark #view-calendar .calendar > .day.mati{background:#164e63!important;border-color:#38bdf8!important}
+html.dark #view-calendar .calendar > .day.tarda{background:#78350f!important;border-color:#f59e0b!important}
+html.dark #view-calendar .calendar > .day.nit,
+html.dark #view-calendar .calendar > .day.cs_nit,
+html.dark #view-calendar .calendar > .day.fn{background:#312e81!important;border-color:#818cf8!important}
+html.dark #view-calendar .calendar > .day.vacances,
+html.dark #view-calendar .calendar > .day.assumptes,
+html.dark #view-calendar .calendar > .day.dies_blaus,
+html.dark #view-calendar .calendar > .day.festa{background:#14532d!important;border-color:#4ade80!important}
+html.dark #view-calendar .calendar > .day.baixa{background:#512a32!important;border-color:#c77984!important}
+html.dark #view-calendar .calendar > .day.judici{background:#2e1649!important;border-color:#c084fc!important}
+html.dark #view-calendar .calendar > .day.selected{outline-color:#3b82f6!important}
+
 </style>
 </head>
 <body>
