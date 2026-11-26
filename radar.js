@@ -5,8 +5,8 @@ const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&
 const dateKey=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const fmt=k=>{const d=new Date(k+'T00:00:00');return d.toLocaleDateString('ca',{weekday:'short',day:'numeric',month:'short'})};
 function renderRadar(){
- const host=document.getElementById('codexRadar');if(!host||!window.state)return;
- const s=window.state,now=new Date(),today=dateKey(now),limit=new Date(now);limit.setDate(limit.getDate()+21);
+ const host=document.getElementById('codexRadar');if(!host||typeof state==='undefined')return;
+ const s=state,now=new Date(),today=dateKey(now),limit=new Date(now);limit.setDate(limit.getDate()+21);
  const items=[];
  (s.judicis||[]).forEach(j=>{
   const k=j.data||j.date||'';if(!/^\d{4}-\d{2}-\d{2}$/.test(k)||k<today||k>dateKey(limit))return;
