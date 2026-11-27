@@ -91,7 +91,11 @@ window.CodexPayrollTest={windowsForYear,specialPayForRecord,weightedOvertimeForR
 function weightedOvertimeForRecord(k,r,sh){
  const actual=window.recordHours(r,sh),base=window.shiftBase(sh),over=Math.max(0,actual-base);if(over<=0)return 0;
  const startMin=mins(r.entrada||sh.inici);if(startMin===null)return over;
- let t=dateOf(k).getTime()+startMin*60000+base*3600000,end=t+over*3600000,total=0;\n // Els perllongaments només generen hores ponderades a partir del 23/11/2026.\n const coefficientStart=dateOf('2026-11-23').getTime();\n if(end<=coefficientStart)return 0;\n t=Math.max(t,coefficientStart);
+ let t=dateOf(k).getTime()+startMin*60000+base*3600000,end=t+over*3600000,total=0;
+ // Els perllongaments només generen hores ponderades a partir del 23/11/2026.
+ const coefficientStart=dateOf('2026-11-23').getTime();
+ if(end<=coefficientStart)return 0;
+ t=Math.max(t,coefficientStart);
  while(t<end){const d=new Date(t),dk=key(d),coef=isNightMinute(d)?1.5:(isDayHoliday(dk)?1.75:1.25);total+=coef/60;t+=60000}
  return total;
 }
