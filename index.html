@@ -805,7 +805,7 @@ html.dark #view-calendar #legend .legend-chip *:not(i){
 #view-calendar .day .num{font-size:.9rem;font-weight:900}
 #view-calendar .day .kind{font-size:.62rem;line-height:1.15;margin-top:8px;-webkit-line-clamp:1}
 #view-calendar .day .hrs{font-size:.58rem;font-weight:750;margin-top:auto}
-#view-calendar .day.weekend{background:#f1f5f9}
+html:not(.dark) #view-calendar .day.weekend{background:#f1f5f9}
 #view-calendar .day.today{outline:2px solid #2563eb;outline-offset:-2px}
 #view-calendar .day.muted{opacity:.28}
 #view-calendar .month-head h2{font-size:1.15rem;font-weight:850;letter-spacing:-.02em}
@@ -879,6 +879,12 @@ html.dark #view-calendar .day.weekend-empty .num{
 
 /* Capçaleres de dissabte i diumenge: text negre, independentment del tema */
 #view-calendar .dow.weekend{color:#000!important;-webkit-text-fill-color:#000!important;}
+
+/* FIX MODE FOSC: caps de setmana amb fons fosc (abans quedava clar amb lletra blanca) */
+html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat){background:#101a2c!important;border-color:#33465f}
+html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat) .num,
+html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat) .kind{color:#f1f5f9!important;-webkit-text-fill-color:#f1f5f9!important}
+html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat) .hrs{color:#cbd5e1!important;-webkit-text-fill-color:#cbd5e1!important}
 </style>
 </head>
 <body>
