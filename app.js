@@ -238,7 +238,7 @@ function backupNow(){exportJSON();document.getElementById("backupBanner")?.class
 function saveOnHide(){try{save()}catch(e){}}
 window.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")saveOnHide()});
 window.addEventListener("pagehide",saveOnHide);
-function recordYear(k){const m=String(k||"").match(/^(\\d{4})-/)||String(k||"").match(/^(\\d{1,2})[\\/.-](\\d{1,2})[\\/.-](\\d{4})$/);return m?Number(m[1]&&m[1].length===4?m[1]:m[3]):null}
+function recordYear(k){const m=String(k||"").match(/^(\d{4})-/)||String(k||"").match(/^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/);return m?Number(m[1]&&m[1].length===4?m[1]:m[3]):null}
 function archiveCrossYearRecords(){
  state.historic=state.historic||{};
  const groups={};
