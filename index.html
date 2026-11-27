@@ -885,6 +885,10 @@ html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa)
 html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat) .num,
 html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat) .kind{color:#f1f5f9!important;-webkit-text-fill-color:#f1f5f9!important}
 html.dark #view-calendar .day.weekend:not([style*="--record-color"]):not(.baixa):not(.today):not(.fd):not(.cs_dia):not(.planificat) .hrs{color:#cbd5e1!important;-webkit-text-fill-color:#cbd5e1!important}
+
+/* FIX CALENDARI: la icona de judici (⚖️) ja no tapa el número del dia; va a la cantonada inferior dreta */
+#view-calendar .day .trial-icon{top:auto!important;left:auto!important;bottom:5px;right:5px;font-size:.9rem}
+#view-calendar .day .trial-icon b{font-size:.52rem;padding:1px 3px}
 </style>
 </head>
 <body>
