@@ -238,13 +238,29 @@ function backupNow(){exportJSON();document.getElementById("backupBanner")?.class
 function saveOnHide(){try{save()}catch(e){}}
 window.addEventListener("visibilitychange",()=>{if(document.visibilityState==="hidden")saveOnHide()});
 window.addEventListener("pagehide",saveOnHide);
+function recordYear(k){const m=String(k||"").match(/^(\\d{4})-/)||String(k||"").match(/^(\\d{1,2})[\\/.-](\\d{1,2})[\\/.-](\\d{4})$/);return m?Number(m[1]&&m[1].length===4?m[1]:m[3]):null}
+function archiveCrossYearRecords(){
+ state.historic=state.historic||{};
+ const groups={};
+ Object.entries(state.registres||{}).forEach(([k,r])=>{const y=recordYear(k);if(y){groups[y]=groups[y]||{};groups[y][k]=r}});
+ Object.entries(groups).forEach(([y,records])=>{const old=state.historic[y]||{};state.historic[y]={...old,registres:{...(old.registres||{}),...records}}});
+ const trialGroups={};
+ (state.judicis||[]).forEach(j=>{const y=recordYear(j.data||j.date||j.dataJudici);if(y){trialGroups[y]=trialGroups[y]||[];trialGroups[y].push(j)}});
+ Object.entries(trialGroups).forEach(([y,items])=>{const old=state.historic[y]||{};const merged=[...(old.judicis||[])];items.forEach(j=>{if(!merged.some(x=>JSON.stringify(x)===JSON.stringify(j)))merged.push(j)});state.historic[y]={...old,judicis:merged}});
+}
 function setActiveYear(y){
   y=Number(y);if(!y||y===state.anyInici)return;
-  ensureHistory();state.historic[String(state.anyInici)]=snapshot();const d=state.historic[String(y)];
+  archiveCrossYearRecords();
+  ensureHistory();
+  const current=String(state.anyInici),currentSnapshot=snapshot();
+  currentSnapshot.registres=Object.fromEntries(Object.entries(state.registres||{}).filter(([k])=>recordYear(k)===Number(current)));
+  currentSnapshot.judicis=(state.judicis||[]).filter(j=>recordYear(j.data||j.date||j.dataJudici)===Number(current));
+  state.historic[current]={...(state.historic[current]||{}),...currentSnapshot};
+  const d=state.historic[String(y)];
   const configuredGuardTarget=Number.isFinite(Number(state.gnitTotals))?Number(state.gnitTotals):175.5;
   state.anyInici=y;
   if(d){state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=d.gnitTotals==null?configuredGuardTarget:(Number.isFinite(Number(d.gnitTotals))?Number(d.gnitTotals):configuredGuardTarget);state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[]}
-  else {state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=configuredGuardTarget;state.acumTotals=0;state.festius=clone(DEFAULT_HOLIDAYS);state.registres={};state.judicis=[]}
+  else {state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=configuredGuardTarget;state.acumTotals=0;state.festius=clone(DEFAULT_HOLIDAYS);state.registres=state.historic[String(y)]?.registres||{};state.judicis=state.historic[String(y)]?.judicis||[]}
   currentMonth=new Date(y,1,1);weekAnchor=startOfWeek(new Date(y,1,1));selected.clear();save();renderAll();toast(`Any ${y} actiu`)
 }
 function years(){return [...new Set([...Object.keys(state.historic).map(Number),state.anyInici,state.anyInici+1])].sort((a,b)=>a-b)}
@@ -354,7 +370,7 @@ function syncViewFromHistory(){
 }
 window.addEventListener("popstate",syncViewFromHistory);
 if(!location.hash)history.replaceState({view:"home"},"","#home");
-function changeMonth(n){currentMonth=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+n,1);renderCalendar()}
+function changeMonth(n){const next=new Date(currentMonth.getFullYear(),currentMonth.getMonth()+n,1);if(next.getFullYear()!==state.anyInici){setActiveYear(next.getFullYear());currentMonth=next;renderCalendar();return}currentMonth=next;renderCalendar()}
 function goToday(){const d=new Date();currentMonth=new Date(d.getFullYear(),d.getMonth(),1);renderCalendar()}
 function syncMultiUi(){
  const a=document.getElementById("multiApply"),b=document.getElementById("weekMultiApply"),c=document.getElementById("calendarMultiToggle"),d=document.getElementById("weekMultiToggle");
