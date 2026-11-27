@@ -45,7 +45,7 @@ let yr=A.migrate(Object.assign(A.defaultState(),{gnitTotals:142.25}));A.setState
 vm.runInContext('setActiveYear(2027)',ctx);
 eq(A.getState().gnitTotals,142.25,'any nou hereta el valor preestablert configurat');
 
-// Nou còmput ponderat de perllongaments: dia ×1,25, nit ×1,50, diumenge/festiu diürn ×1,75.
+// Còmput ponderat: només a partir del 23/11/2026.
 const payroll=ctx.CodexPayrollTest;
 let custom=A.defaultState();custom.torns.push(
  {id:'nit_ext',nom:'Torn nit ampliat',hores:7,inici:'21:00',fi:'06:00',color:'#000000'},
@@ -53,15 +53,16 @@ let custom=A.defaultState();custom.torns.push(
 );
 A.setState(A.migrate(custom));
 let overtime=payroll.weightedOvertimeForRecord('2026-03-02',{tipus:'treball',torn:'mati',entrada:'07:00',sortida:'15:15'},A.getState().torns.find(x=>x.id==='mati'));
-eq(overtime,0.9375,'45 min diürns ×1,25 = 56 min 15 s');
-overtime=payroll.weightedOvertimeForRecord('2026-03-02',{tipus:'treball',torn:'nit_ext',entrada:'21:00',sortida:'06:00'},A.getState().torns.find(x=>x.id==='nit_ext'));
-eq(overtime,3,'2 h nocturnes ×1,50 = 3 h');
-const holidayState=A.getState();holidayState.festius['2026-03-03']='Festiu de prova';A.setState(holidayState);
-overtime=payroll.weightedOvertimeForRecord('2026-03-03',{tipus:'treball',torn:'dia_ext',entrada:'07:00',sortida:'20:00'},A.getState().torns.find(x=>x.id==='dia_ext'));
+eq(overtime,0,'perllongament anterior al 23/11/2026 no aplica coeficient');
+overtime=payroll.weightedOvertimeForRecord('2026-11-24',{tipus:'treball',torn:'mati',entrada:'07:00',sortida:'15:15'},A.getState().torns.find(x=>x.id==='mati'));
+eq(overtime,0.9375,'45 min diürns ×1,25 = 56 min 15 s des del 23/11/2026');
+overtime=payroll.weightedOvertimeForRecord('2026-11-24',{tipus:'treball',torn:'nit_ext',entrada:'21:00',sortida:'06:00'},A.getState().torns.find(x=>x.id==='nit_ext'));
+eq(overtime,3,'2 h nocturnes ×1,50 = 3 h des del 23/11/2026');
+const holidayState=A.getState();holidayState.festius['2026-11-26']='Festiu de prova';A.setState(holidayState);
+overtime=payroll.weightedOvertimeForRecord('2026-11-26',{tipus:'treball',torn:'dia_ext',entrada:'07:00',sortida:'20:00'},A.getState().torns.find(x=>x.id==='dia_ext'));
 eq(overtime,1.75,'1 h diürna festiva ×1,75 = 1 h 45 min');
-overtime=payroll.weightedOvertimeForRecord('2026-03-02',{tipus:'treball',torn:'dia_ext',entrada:'07:00',sortida:'20:00'},A.getState().torns.find(x=>x.id==='dia_ext'));
+overtime=payroll.weightedOvertimeForRecord('2026-11-25',{tipus:'treball',torn:'dia_ext',entrada:'07:00',sortida:'20:00'},A.getState().torns.find(x=>x.id==='dia_ext'));
 eq(overtime,1.25,'1 h diürna feiner ×1,25');
-
 // Les finestres especials 06:00–06:30 de l'endemà són 24,5 h, no 30 minuts.
 const specialWindow=payroll.windowsForYear(2026).find(x=>x.label==='6 de desembre');
 eq((specialWindow.b-specialWindow.a)/3600000,24.5,'finestra especial del 6 de desembre = 24,5 h');
