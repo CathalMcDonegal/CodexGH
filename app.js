@@ -250,6 +250,9 @@ function archiveCrossYearRecords(){
 }
 function setActiveYear(y){
   y=Number(y);if(!y||y===state.anyInici)return;
+  // El saldo d'acumulades és l'únic comptador transversal: es calcula abans
+  // de canviar d'any i es conserva com a saldo inicial del nou exercici.
+  const accumulatedCarry=calc().accum;
   archiveCrossYearRecords();
   ensureHistory();
   const current=String(state.anyInici),currentSnapshot=snapshot();
@@ -259,8 +262,14 @@ function setActiveYear(y){
   const d=state.historic[String(y)];
   const configuredGuardTarget=Number.isFinite(Number(state.gnitTotals))?Number(state.gnitTotals):175.5;
   state.anyInici=y;
-  if(d){state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=d.gnitTotals==null?configuredGuardTarget:(Number.isFinite(Number(d.gnitTotals))?Number(d.gnitTotals):configuredGuardTarget);state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[]}
-  else {state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=configuredGuardTarget;state.acumTotals=0;state.festius=clone(DEFAULT_HOLIDAYS);state.registres=state.historic[String(y)]?.registres||{};state.judicis=state.historic[String(y)]?.judicis||[]}
+  if(d){
+    // En consultar un any ja guardat, recuperar-ne exactament els seus valors.
+    state.horesAnuals=d.horesAnuals??1580;state.vacancesTotals=d.vacancesTotals??200;state.assumptesTotals=d.assumptesTotals??68;state.blausTotals=d.blausTotals??0;state.gnpTotals=d.gnpTotals??0;state.gnitTotals=d.gnitTotals==null?configuredGuardTarget:(Number.isFinite(Number(d.gnitTotals))?Number(d.gnitTotals):configuredGuardTarget);state.acumTotals=d.acumTotals??0;state.festius=d.festius||clone(DEFAULT_HOLIDAYS);state.registres=d.registres||{};state.judicis=d.judicis||[];
+  }else{
+    // Exercici nou: els comptadors anuals comencen nets, però l'històric
+    // queda arxivat i les hores acumulades passen íntegres al nou any.
+    state.horesAnuals=1580;state.vacancesTotals=200;state.assumptesTotals=68;state.blausTotals=0;state.gnpTotals=0;state.gnitTotals=configuredGuardTarget;state.acumTotals=accumulatedCarry;state.festius=clone(DEFAULT_HOLIDAYS);state.registres={};state.judicis=[];
+  }
   currentMonth=new Date(y,1,1);weekAnchor=startOfWeek(new Date(y,1,1));selected.clear();save();renderAll();toast(`Any ${y} actiu`)
 }
 function years(){return [...new Set([...Object.keys(state.historic).map(Number),state.anyInici,state.anyInici+1])].sort((a,b)=>a-b)}
